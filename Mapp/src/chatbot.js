@@ -6,7 +6,7 @@ const Chatbot = () => {
   const [input, setInput] = useState("");
 
   // API 키를 여기 직접 넣음
-  const OPENAI_API_KEY = "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";
+  const OPENAI_API_KEY = "공백";
 
   const handleSubmit = async (e) => {
     e.preventDefault();

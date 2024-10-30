@@ -18,8 +18,8 @@ function Cloverbot() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-NCP-APIGW-API-KEY-ID': 'NTA0MjU2MWZlZTcxNDJiY/trNUS747jsV0SKnrWmYxOQlJU9UupR1TWomKBzNQ69',  // API 키 ID
-          'X-NCP-APIGW-API-KEY': '9jdQl76LkujH5AfoZxRjPa6mSgd5V34c2pQeCULw',        // API 키
+          'X-NCP-APIGW-API-KEY-ID': '공백',  // API 키 ID
+          'X-NCP-APIGW-API-KEY': '공백',        // API 키
         },
         body: JSON.stringify({
           version: 'v2',
