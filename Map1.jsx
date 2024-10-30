@@ -4,7 +4,7 @@ import { NaverMap, Marker } from 'react-naver-maps';
 const NaverMapComponent = () => {
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=plu21651xm`;
+    script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=공백`;
     script.async = true;
     document.head.appendChild(script);
     
