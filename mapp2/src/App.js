@@ -10,7 +10,7 @@ function App() {
     useEffect(() => {
       const loadNaverMapScript = () => {
         const script = document.createElement('script');
-        script.src = 'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=plu21651xm';
+        script.src = 'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=네이버지도키';
         script.async = true;
         document.head.appendChild(script);
       };
