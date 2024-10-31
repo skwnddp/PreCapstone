@@ -1,0 +1,92 @@
+.home-container {
+    background-color: #1c1b43;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 5vh;
+  }
+  
+  .home-header {
+    display: flex;
+    justify-content: space-between;
+    width: 50%;
+    padding: 0 20px;
+  }
+  
+  .profile-icon {
+    font-size: 1.5rem;
+    color: #fff;
+  }
+  
+  .login-button {
+    background-color: #8b84ff;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 15px;
+    cursor: pointer;
+  }
+  
+  .home-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 5vh;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+    margin-bottom: 5px;
+  }
+  
+  .title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0 0 2vh 0;
+  }
+  
+  .menu {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 3vh;
+  }
+  
+  .menu-button {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .search-container {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 30px;
+    padding: 10px 15px;
+    width: 70%;
+  }
+  
+  .hamburger {
+    font-size: 1rem;
+    background-color: transparent;
+    border: none;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+  }
+  
+  .search-button {
+    font-size: 1rem;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
