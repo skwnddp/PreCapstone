@@ -1,92 +1,134 @@
 .home-container {
-    background-color: #1c1b43;
-    color: #fff;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 5vh;
-  }
-  
-  .home-header {
-    display: flex;
-    justify-content: space-between;
-    width: 50%;
-    padding: 0 20px;
-  }
-  
-  .profile-icon {
-    font-size: 1.5rem;
-    color: #fff;
-  }
-  
-  .login-button {
-    background-color: #8b84ff;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 15px;
-    cursor: pointer;
-  }
-  
-  .home-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-top: 5vh;
-  }
-  
-  .subtitle {
-    font-size: 1rem;
-    margin-bottom: 5px;
-  }
-  
-  .title {
-    font-size: 2rem;
-    font-weight: bold;
-    margin: 0 0 2vh 0;
-  }
-  
-  .menu {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 3vh;
-  }
-  
-  .menu-button {
-    background-color: transparent;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-  }
-  
-  .search-container {
-    display: flex;
-    align-items: center;
-    background-color: #fff;
-    border-radius: 30px;
-    padding: 10px 15px;
-    width: 70%;
-  }
-  
-  .hamburger {
-    font-size: 1rem;
-    background-color: transparent;
-    border: none;
-    margin-right: 10px;
-    cursor: pointer;
-  }
-  
-  .search-input {
-    flex: 1;
-    border: none;
-    outline: none;
-  }
-  
-  .search-button {
-    font-size: 1rem;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-  }
+  background-color: #1c1b43;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 5vh;
+}
+
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+  padding: 0 20px;
+}
+
+.profile-icon {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.login-button {
+  background-color: #8b84ff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.home-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 5vh;
+}
+
+.subtitle {
+  font-size: 1rem;
+  margin-bottom: 5px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0 0 2vh 0;
+}
+
+.menu {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 3vh;
+}
+
+.menu-button {
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 30px;
+  padding: 10px 15px;
+  width: 70%;
+}
+
+.hamburger {
+  font-size: 1rem;
+  background-color: transparent;
+  border: none;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+}
+
+.search-button {
+  font-size: 1rem;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* 로그인 양식 스타일 추가 */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px; /* 중앙 정렬을 위해 마진 추가 */
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #2b2a56; /* 양식 배경 색상 */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.form input {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc; /* 경계선 색상 */
+  width: 80%; /* 양식 너비 */
+}
+
+.form-submit, .form-toggle {
+  background-color: #8b84ff; /* 버튼 배경 색상 */
+  color: #fff; /* 버튼 글자 색상 */
+  border: none;
+  padding: 10px 15px;
+  border-radius: 15px; /* 버튼 경계선 둥글게 */
+  cursor: pointer;
+  width: 80%; /* 버튼 너비 */
+}
+
+.form-toggle {
+  margin-top: 10px; /* 버튼 사이 간격 */
+  background-color: transparent; /* 회원가입 버튼 배경색 투명 */
+  color: #fff; /* 회원가입 버튼 글자 색상 */
+}
