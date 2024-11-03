@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import './Home.css';
 
@@ -7,6 +8,7 @@ function Home() {
   const [isProfileFormVisible, setProfileFormVisible] = useState(false); // 프로필 수정 양식 표시 여부
   const [username, setUsername] = useState(''); // 로그인 후 사용자 이름
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
+  const navigate = useNavigate();
 
   const toggleLoginForm = () => {
     setLoginFormVisible(!isLoginFormVisible); // 로그인 양식 토글
@@ -90,6 +92,7 @@ function Home() {
               <button className="menu-button" onClick={() => handleMenuClick('메뉴추천')}>메뉴추천</button>
               <button className="menu-button" onClick={() => handleMenuClick('즐겨찾기')}>즐겨찾기</button>
               <button className="menu-button" onClick={() => handleMenuClick('리뷰 보기')}>리뷰 보기</button>
+              <button className="menu-button" onClick={() => navigate('/Main')}>임시 버튼 : 메인으로 이동</button>
             </nav>
 
             {/* 검색 Section - 로그인 양식이 보이지 않을 때만 표시 */}
