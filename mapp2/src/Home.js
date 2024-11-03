@@ -68,7 +68,7 @@ function Home() {
       {/* Main Content Section */}
       <div className="home-content">
         <div className="subtitle">맛집 추천 플랫폼</div>
-        <h1 className="title">내맘데로드</h1>
+        <h1 className="title">내맘대로드</h1>
 
         {/* 로그인 후 사용자 이름 표시 */}
         {isLoggedIn && <h2>환영합니다, {username}님!</h2>}
