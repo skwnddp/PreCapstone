@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loadNaverMapScript } from './Map';
+import Chat from './Chat';
 import './Main.css';
 
 const Main = () => {
+
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('즐겨찾기');
+  const [activeTab, setActiveTab] = useState('채팅하기');
 
   const renderTabContent = () => {
     switch (activeTab) {
       case '채팅하기':
-        return <div>채팅하기 내용</div>;
+        return (
+          <Chat />
+          //채팅 컴포넌트
+        )
       case '즐겨찾기':
         return <div>즐겨찾기 내용</div>;
       case '리뷰보기':
@@ -23,26 +29,13 @@ const Main = () => {
     }
   };
 
+  //네이버 지도 로드
   useEffect(() => {
-    const { naver } = window;
+    const cleanup = loadNaverMapScript();
+    return cleanup; // 컴포넌트가 언마운트될 때 스크립트 정리
+  })
 
-    if (naver) {
-      const mapOptions = {
-        center: new naver.maps.LatLng(37.5665, 126.9780), // 서울의 위도와 경도
-        zoom: 10,
-      };
-
-      const map = new naver.maps.Map('map', mapOptions);
-
-      // 마커 추가 예시
-      new naver.maps.Marker({
-        position: new naver.maps.LatLng(37.5665, 126.9780),
-        map,
-      });
-    }
-  }, []);
-
-return (
+  return (
     <div className="main-container">
       <header className="header">
         <h1>무엇을 먹고 싶으세요?</h1>
@@ -50,35 +43,32 @@ return (
         <button className="login-btn">로그아웃</button>
       </header>
 
-      <nav className="sidebar">
-        <div onClick={() => setActiveTab('채팅하기')}>채팅하기</div>
-        <div onClick={() => setActiveTab('즐겨찾기')}>즐겨찾기</div>
-        <div onClick={() => setActiveTab('리뷰보기')}>리뷰보기</div>
-        <div onClick={() => setActiveTab('검색내역')}>검색내역</div>
-        <div onClick={() => setActiveTab('맛집정보')}>맛집정보</div>
-        <>
+      <div>
+        <nav className="sidebar">
+          <div onClick={() => setActiveTab('채팅하기')}>채팅하기</div>
+          <div onClick={() => setActiveTab('즐겨찾기')}>즐겨찾기</div>
+          <div onClick={() => setActiveTab('리뷰보기')}>리뷰보기</div>
+          <div onClick={() => setActiveTab('검색내역')}>검색내역</div>
+          <div onClick={() => setActiveTab('맛집정보')}>맛집정보</div>
+          <>
             <br></br>
-        </>
+          </>
+        </nav>
         <section className="content-section">
-            {renderTabContent()}
+          {renderTabContent()}
         </section>
-      </nav>
-
+      </div>
 
       <section className="map-section">
         <div id="map" className="map">
-            테스트
+          지도 보이는지 테스트
           {/* 네이버 지도가 이 div 안에 로드됨 */}
+          <div style={{ position: 'absolute', top: '100px', left: '100px', fontSize: '24px' }}>
+            🌟
+          </div>
+          {/* 맵 오버레이 아이콘 */}
         </div>
       </section>
-
-      <section className="chat-section">
-        <div className="chat-message">
-            채팅
-        </div>
-        <input type="text" placeholder="요구사항을 더 입력해보세요!" className="chat-input" />
-      </section>
-
     </div>
   );
 };
