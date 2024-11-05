@@ -54,10 +54,9 @@
 }
 
 .map {
-    background-color: #e0e0e0;
+    background-color: #a7a7a7;
     padding: 20px;
     border-radius: 10px;
-    
     width: 50%;
     height: 50%;
 }
@@ -88,31 +87,59 @@
 }
 
 .chat-messages {
-    flex: 1; /*남은 공간을 차지하도록 */
-    overflow-y: auto; /* 스크롤 가능하도록 */
-    min-height: 400px; /* 원하는 세로 고정 크기 */
-    max-height: 400px; /* 원하는 세로 고정 크기 */
+    flex: 1;
+    /*남은 공간을 차지하도록 */
+    overflow-y: auto;
+    /* 스크롤 가능하도록 */
+    min-height: 400px;
+    /* 원하는 세로 고정 크기 */
+    max-height: 400px;
+    /* 원하는 세로 고정 크기 */
     padding: 10px;
     border: 1px solid #ddd;
     margin-bottom: 10px;
 }
 
 .chat-input-container {
-    flex-direction: row; /* 수직 배치 */
-    align-items: center; /* 수직 중앙 정렬 */
+    flex-direction: row;
+    /* 수직 배치 */
+    align-items: center;
+    /* 수직 중앙 정렬 */
 }
 
 .chat-input {
-    margin-right: 10px; /* 버튼과의 간격 */
-    padding: 10px; /* 패딩 추가 */
-    border: 1px solid #ccc; /* 테두리 스타일 */
-    border-radius: 10px; /* 둥근 모서리 */
-    resize: vertical; /* 수직으로만 크기 조정 가능 */
-    width: 80%; /* 가능한 모든 너비 차지 */
+    margin-right: 10px;
+    /* 버튼과의 간격 */
+    padding: 10px;
+    /* 패딩 추가 */
+    border: 1px solid #ccc;
+    /* 테두리 스타일 */
+    border-radius: 10px;
+    /* 둥근 모서리 */
+    resize: vertical;
+    /* 수직으로만 크기 조정 가능 */
+    width: 80%;
+    /* 가능한 모든 너비 차지 */
     max-height: 150px;
 }
 
 .chat-input:focus {
-    outline: none; /* 포커스 시 테두리 제거 */
-    border-color: #007bff; /* 포커스 시 테두리 색상 변경 */
+    outline: none;
+    /* 포커스 시 테두리 제거 */
+    border-color: #a7622a;
+    /* 포커스 시 테두리 색상 변경 */
+}
+
+.sidebar div:hover {
+    background-color: #c5191993;
+    /* 호버 시 배경색 변화 */
+}
+
+.active-tab {
+    background-color: #ffffffa1;
+    /* 활성화된 탭의 배경색 */
+    color: rgb(255, 0, 0);
+    /* 활성화된 탭의 글자색 */
+    font-weight: bold;
+    /* 글자 두껍게 */
 }

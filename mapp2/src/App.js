@@ -7,15 +7,8 @@ import Main from './Main';
 import './App.css';
 
 function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route exact path="/" element={<Navigate to="/Home" replace/>} /> 
-        <Route path="/Home" element={<Home />} />
-        <Route path="/Main" element={<Main />} />
-      </Routes>
-    </Router>
-  );
+  //App > index로 코드 이동해서 해결 완료
+  return;
 }
 
 export default App;

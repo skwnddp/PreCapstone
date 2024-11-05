@@ -3,13 +3,22 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Home from './Home';
+import Main from './Main';
 
+//App > index로 코드 이동해서 해결 완료
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigate to="/Home" replace/>} /> 
+        <Route path="/Home" element={<Home />} />
+        <Route path="/Main" element={<Main />} />
+      </Routes>
+    </Router>
   </React.StrictMode>
-  
 );
 
 // If you want to start measuring performance in your app, pass a function
