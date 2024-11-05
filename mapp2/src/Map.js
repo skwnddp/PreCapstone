@@ -135,7 +135,7 @@ export const MapComponent = () => {
 
   return (
     <div>
-      <div id="map" style={{ width: '80%', height: '400px' }}></div>
+      <div id="map" style={{ width: '80%', height: '500px' }}></div>
       <br />
       <button onClick={() => handleGpsClick(map)}>현재 위치 📍</button> <span/><span/>
       <button onClick={addMarker}>한성대 마커 추가</button> 
