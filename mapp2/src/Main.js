@@ -87,8 +87,18 @@ const Main = () => {
 
       {/* 지도를 아래에 배치해야 오버레이 잘 보임 */}
       <section className="map-section">
+        <label>
+          <input type="checkbox" name="option1" /> 한식 맛집
+        </label>____
+        <label>
+          <input type="checkbox" name="option1" /> 분위기 좋은
+        </label>____
+        <label>
+          <input type="checkbox" name="option1" /> 배달 가능
+        </label>____
         <MapComponent />
       </section>
+
     </div >
   );
 };
