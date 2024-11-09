@@ -1,5 +1,7 @@
-import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from './firebase';  // firebase.js에서 auth 객체 가져오기
 import './Home.css';
 
 function Home() {
@@ -115,23 +117,28 @@ function Home() {
 
 // 로그인 양식 컴포넌트
 const LoginForm = ({ onLoginSuccess, onSignUpClick }) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = (event) => {
-    event.preventDefault(); // 기본 폼 제출 방지
-    onLoginSuccess(username); // 로그인 성공 시 사용자 이름 전달
-    setUsername('');
-    setPassword('');
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      onLoginSuccess(email); // 로그인 성공 후, 이메일을 사용자 이름으로 설정
+      setEmail('');
+      setPassword('');
+    } catch (error) {
+      alert("로그인 실패: " + error.message);
+    }
   };
 
   return (
     <form onSubmit={handleLogin} className="form">
       <input 
-        type="text" 
-        value={username} 
-        onChange={(e) => setUsername(e.target.value)} 
-        placeholder="Username" 
+        type="email" 
+        value={email} 
+        onChange={(e) => setEmail(e.target.value)} 
+        placeholder="Email" 
         required 
       />
       <input 
@@ -142,66 +149,50 @@ const LoginForm = ({ onLoginSuccess, onSignUpClick }) => {
         required 
       />
       <button type="submit" className="form-submit">Login</button>
-      <button type="button" className="form-toggle" onClick={onSignUpClick}>회원가입</button> {/* 회원가입 버튼 */}
+      <button type="button" className="form-toggle" onClick={onSignUpClick}>회원가입</button>
     </form>
   );
 };
 
 // 회원가입 양식 컴포넌트
 const SignUpForm = ({ onLoginSuccess }) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
 
-  const validatePassword = (pwd) => {
-    const minLength = 8;
-    const hasNumber = /\d/;
-    const hasLetter = /[a-zA-Z]/;
-    
-    if (pwd.length < minLength || !hasNumber.test(pwd) || !hasLetter.test(pwd)) {
-      setPasswordError('8자 이상, 숫자, 영어 조합');
-    } else {
-      setPasswordError('');
-    }
-  };
-
-  const handleSignUp = (event) => {
-    event.preventDefault(); // 기본 폼 제출 방지
+  const handleSignUp = async (event) => {
+    event.preventDefault();
     if (password === confirmPassword) {
-      if (!passwordError) {
-        onLoginSuccess(username); // 회원가입 후 사용자 이름 전달
-        setUsername('');
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        onLoginSuccess(email); // 회원가입 성공 후, 이메일을 사용자 이름으로 설정
+        setEmail('');
         setPassword('');
         setConfirmPassword('');
-      } else {
-        alert("비밀번호 조건을 만족하지 않습니다."); // 비밀번호 조건 불충족 시 경고
+      } catch (error) {
+        alert("회원가입 실패: " + error.message);
       }
     } else {
-      alert("비밀번호가 일치하지 않습니다."); // 비밀번호 불일치 시 경고
+      alert("비밀번호가 일치하지 않습니다.");
     }
   };
 
   return (
     <form onSubmit={handleSignUp} className="form">
       <input 
-        type="text" 
-        value={username} 
-        onChange={(e) => setUsername(e.target.value)} 
-        placeholder="Username" 
+        type="email" 
+        value={email} 
+        onChange={(e) => setEmail(e.target.value)} 
+        placeholder="Email" 
         required 
       />
       <input 
         type="password" 
         value={password} 
-        onChange={(e) => {
-          setPassword(e.target.value);
-          validatePassword(e.target.value); // 비밀번호 검증
-        }} 
+        onChange={(e) => setPassword(e.target.value)} 
         placeholder="Password" 
         required 
       />
-      {passwordError && <div className="error">{passwordError}</div>}
       <input 
         type="password" 
         value={confirmPassword} 
@@ -209,34 +200,31 @@ const SignUpForm = ({ onLoginSuccess }) => {
         placeholder="Confirm Password" 
         required 
       />
-      <button type="submit" className="form-submit">회원가입</button>
+      <button type="submit" className="form-submit">Sign Up</button>
     </form>
   );
 };
 
-// 프로필 수정 컴포넌트
+// 프로필 수정 양식 컴포넌트
 const ProfileForm = ({ username, onUsernameChange, onClose }) => {
   const [newUsername, setNewUsername] = useState(username);
 
-  const handleProfileUpdate = (event) => {
-    event.preventDefault();
-    onUsernameChange(newUsername); // 새로운 사용자 이름으로 업데이트
-    onClose(); // 양식 닫기
+  const handleProfileUpdate = () => {
+    onUsernameChange(newUsername);
+    onClose(); // 프로필 수정 후 양식 숨김
   };
 
   return (
-    <form onSubmit={handleProfileUpdate} className="form">
-      <h2>회원 정보 수정</h2>
+    <div className="profile-form">
+      <h3>Profile</h3>
       <input 
         type="text" 
         value={newUsername} 
         onChange={(e) => setNewUsername(e.target.value)} 
-        placeholder="새로운 사용자 이름" 
-        required 
       />
-      <button type="submit" className="form-submit">수정 완료</button>
-      <button type="button" className="form-toggle" onClick={onClose}>닫기</button> {/* 닫기 버튼 */}
-    </form>
+      <button onClick={handleProfileUpdate}>Update Profile</button>
+      <button onClick={onClose}>Close</button>
+    </div>
   );
 };
 
