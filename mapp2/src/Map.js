@@ -36,23 +36,6 @@ export const MapComponent = () => {
     loadNaverMapScript();
   }, []); // 의존성 배열이 빈 배열이므로, 처음 한 번만 실행
 
-  // const MyInfoWindow = () => {
-  //   if (!map) {
-  //     console.error('Naver Maps API가 로드되지 않았습니다.');
-  //     return null;
-  //   } // map이 없으면 렌더링하지 않음
-
-  //   const infowindow = new window.naver.maps.InfoWindow({
-  //     content: `<div style="padding:20px;"><h5 style="margin-bottom:10px;color:blue;">Test</div>`,
-  //     disableAutoPan: true
-  //   });
-
-  //   const center = map.getCenter();
-  //   infowindow.open(map, center);
-
-  //   // return null; // 컴포넌트는 렌더링하지 않고, InfoWindow만 열리도록
-  // };MyInfoWindow();
-
   const initMap = () => {
     if (!window.naver) {
       console.error('Naver Maps API가 로드되지 않았습니다.');
@@ -105,7 +88,7 @@ export const MapComponent = () => {
 
   // textarea의 값 변경 감지하고 addMarker 호출
   const handleTextareaInput = () => {
-    const textarea = document.getElementById('ssddff');
+    const textarea = document.getElementById('hiddenLatLng');
 
     //if (textarea) {
     const inputText = textarea.value;
@@ -297,7 +280,7 @@ export const MapComponent = () => {
           placeholder="맛집 이름 또는 주소 입력"
         />
         <button onClick={handleSearch}>검색</button>
-        <textarea id='ssddff'></textarea>
+        <textarea id='hiddenLatLng'></textarea>
       </div>
     </div>
   );

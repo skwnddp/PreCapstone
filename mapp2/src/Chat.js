@@ -57,7 +57,19 @@ const Chat = ({ }) => {
                 });
 
                 // textarea의 value에 위치 정보 삽입
-                document.getElementById('ssddff').value = locations; // 'your-textarea-id'는 textarea의 id로 변경
+                document.getElementById('hiddenLatLng').value = locations; // 'hiddenLatLng'는 textarea의 id로 변경
+
+                // floatingList id를 가진 div에 restaurant name을 추가
+                const listDiv = document.getElementById('floatingList'); // 'floatingList' div 가져오기
+                // 기존의 자식 요소들을 모두 제거
+                while (listDiv.firstChild) {
+                    listDiv.removeChild(listDiv.firstChild);
+                }
+                extractedRestaurants.forEach((restaurant) => {
+                    const nameDiv = document.createElement('div');  // 새로운 <div> 요소 생성
+                    nameDiv.textContent = restaurant.name;  // restaurant.name 값을 <div>에 추가
+                    listDiv.appendChild(nameDiv);  // 'floatingList' div에 추가
+                }); // if <div> 요소가 잇다면 지우고 다시그리기 구현
             }
 
             return extractedRestaurants;
@@ -66,7 +78,8 @@ const Chat = ({ }) => {
         try {
             const GPTKey = process.env.REACT_APP_GPT_KEY;
 
-            let prompt = userMessage;
+            // let userName = "손님";  // 고정된 사용자명
+            // let prompt = `${userName}: ${userMessage}\nGPT:`;  // 질문 앞에 사용자명 추가
             let isRestaurantRequest = false;
 
             // 사용자가 맛집 추천을 요청하는 경우에만 특정 메시지 추가
@@ -83,6 +96,8 @@ const Chat = ({ }) => {
                 'https://api.openai.com/v1/chat/completions',
                 {
                     model: 'gpt-4o',
+                    max_tokens: 100,  // 응답 길이
+                    temperature: 0.7,  // 창의성 설정
                     messages: [{ role: 'user', content: prompt }],
                 },
                 {
@@ -129,11 +144,11 @@ const Chat = ({ }) => {
         <section className="chat-section">
             <div className="chat-messages">
                 {messages.map((message, index) => (
-                    <div key={index} className={`chat-message ${message.sender}`}>
+                    <div key={index} className={`chat-message ${message.sender}`} style={{color: message.sender === 'user' ? 'white' : 'pink'}}>
                         <div className="timestamp" style={{ fontSize: '0.8em', color: '#888' }}>
                             {message.timestamp}
                         </div>
-                        <span>{message.text}</span>
+                        <span>{message.sender === 'user' ? `손님: ${message.text}` : `챗봇: ${message.text}`}</span>
                     </div>
                 ))}
                 <div ref={messagesEndRef} /> {/* 자동 스크롤용 참조 */}
@@ -143,7 +158,7 @@ const Chat = ({ }) => {
                     ref={textareaRef} // textarea에 ref 할당
                     value={userMessage}
                     onChange={(e) => setUserMessage(e.target.value)}
-                    placeholder="요구사항을 더 입력해보세요!"
+                    placeholder="맛집 키워드를 넣어서 입력해보세요!"
                     className="chat-input"
                     disabled={isLocked} // 잠금 상태에 따라 비활성화
                     onKeyPress={(e) => {

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 // import { handleGpsClick } from './Map';
 // import { initMap } from './Map';
 // import { loadNaverMapScript } from './Map';
-import { MapComponent } from './Map';
+import { MapComponent } from './Map2';
 import Favorites from './Favorites';
 import Chat from './Chat';
 import Review from './Review';
@@ -112,7 +112,7 @@ const Main = () => {
         </label>____
         <MapComponent />
       </section>
-      {/* <textarea id='ssddff'>테스트</textarea> */}
+      {/* <textarea id='hiddenLatLng'>테스트</textarea> */}
     </div >
   );
 };
