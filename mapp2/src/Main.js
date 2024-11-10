@@ -17,6 +17,16 @@ const Main = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('채팅하기');
 
+  // textarea의 상태 관리
+  const [text, setText] = useState("");
+
+  // Chat.js에서 받은 텍스트를 textarea에 업데이트하는 함수
+  const updateText = (newText) => {
+      setText((prevText) => prevText + "\n" + newText); // 이전 텍스트에 추가
+  };
+
+  const extractedRestaurants = [];
+
   // const renderTabContent 삭제
   // 렌더링이 매번 되는 이슈 > 부모 Main에서 관리하던가 따로 손봐줘야 돼서 귀찮아짐 > 썡 div 생성
 
@@ -67,8 +77,12 @@ const Main = () => {
         <section className="content-section">
           {/* {renderTabContent()} */}
           {/* 각 탭의 내용을 항상 렌더링하되, visible 상태로 표시 */}
-          <div style={{ display: activeTab === '채팅하기' ? 'block' : 'none' }}>
-            <Chat />
+          <div style={{
+            display: activeTab === '채팅하기' ? 'block' : 'none',
+            whiteSpace: 'pre-wrap',
+            fontSize: '14px'
+          }}>
+            <Chat extractedRestaurants={extractedRestaurants} updateText={updateText} />
           </div>
           <div style={{ display: activeTab === '즐겨찾기' ? 'block' : 'none' }}>
             <Favorites />
@@ -88,7 +102,7 @@ const Main = () => {
       {/* 지도를 아래에 배치해야 오버레이 잘 보임 */}
       <section className="map-section">
         <label>
-          <input type="checkbox" name="option1" /> 한식 맛집
+          <input style={{ width: "33px", height: "33px" }} type="checkbox" name="option1" /> 한식 맛집
         </label>____
         <label>
           <input type="checkbox" name="option1" /> 분위기 좋은
@@ -98,7 +112,7 @@ const Main = () => {
         </label>____
         <MapComponent />
       </section>
-
+      {/* <textarea id='ssddff'>테스트</textarea> */}
     </div >
   );
 };

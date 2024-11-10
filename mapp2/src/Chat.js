@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import axios from 'axios';
+import { MapComponent } from './Map';
 //npm run build 해야됨
 
-const Chat = () => {
+const Chat = ({ }) => {
     const [userMessage, setUserMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [isLocked, setIsLocked] = useState(false); // 잠금 상태를 관리할 상태 추가
@@ -30,32 +31,86 @@ const Chat = () => {
         };
         setMessages((prevMessages) => [...prevMessages, newMessage]);
 
+        // 함수 선언 (try 블록 외부)
+        // 원인 뭔지도 모름 걍 수십번 물어보다가 해결됨
+        const parseRestaurants = (rawText) => {
+            const restaurantRegex = /\[NAME\](.*?)\[\/NAME\].*?\[INFO\](.*?)\[\/INFO\].*?\[LAT\](.*?)\[\/LAT\].*?\[LNG\](.*?)\[\/LNG\]/gs;
+            const extractedRestaurants = [];
+            let match;
+
+            while ((match = restaurantRegex.exec(rawText)) !== null) {
+                const [_, name, description, latitude, longitude] = match;
+                extractedRestaurants.push({
+                    name: name.trim(),
+                    description: description.trim(),
+                    latitude: parseFloat(latitude.trim()),
+                    longitude: parseFloat(longitude.trim())
+                });
+            }
+
+            if (extractedRestaurants.length > 0) {
+                let locations = ""; // 위치 값을 저장할 변수
+
+                extractedRestaurants.forEach((restaurant) => {
+                    // (restaurant.latitude, restaurant.longitude)를 문자열로 만들어서 locations에 추가
+                    locations += `${restaurant.latitude}, ${restaurant.longitude}\n`;
+                });
+
+                // textarea의 value에 위치 정보 삽입
+                document.getElementById('ssddff').value = locations; // 'your-textarea-id'는 textarea의 id로 변경
+            }
+
+            return extractedRestaurants;
+        };
+
         try {
             const GPTKey = process.env.REACT_APP_GPT_KEY;
-            const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-                model: 'gpt-4o',
-                messages: [{ role: 'user', content: userMessage }],
-            }, {
-                headers: {
-                    'Authorization': `Bearer ${GPTKey}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            // 응답 포맷팅 왜 안됨
-            const rawText = response.data.choices[0]?.message?.content?.trim() || '응답을 받지 못했습니다.';
-            const formattedText = rawText
-                .split('\n') // 줄 바꿈으로 나누기
-                .map(line => line.trim()) // 각 줄 앞뒤 공백 제거
-                .filter(line => line) // 빈 줄 제거
-                .join('\n'); // 다시 줄 바꿈으로 합치기
 
+            let prompt = userMessage;
+            let isRestaurantRequest = false;
+
+            // 사용자가 맛집 추천을 요청하는 경우에만 특정 메시지 추가
+            if (userMessage.includes('맛집')) {
+                prompt += `. 여러 맛집을 추천해줘. 각 맛집 정보는 아래와 같이 제공해줘:
+                - [NAME]맛집명[/NAME]
+                - [INFO]설명[/INFO]
+                - [LAT]숫자[/LAT]
+                - [LNG]숫자[/LNG]`;
+                isRestaurantRequest = true;
+            }
+
+            const response = await axios.post(
+                'https://api.openai.com/v1/chat/completions',
+                {
+                    model: 'gpt-4o',
+                    messages: [{ role: 'user', content: prompt }],
+                },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${GPTKey}`,
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+            // GPT의 원본 응답 텍스트를 그대로 가져옴
+            const rawText = response.data.choices[0]?.message?.content?.trim() || '응답을 받지 못했습니다.';
+
+            // GPT 응답을 그대로 사용자에게 보여주기
             const gptMessage = {
                 sender: 'gpt',
-                text: formattedText, // 포맷팅된 텍스트 사용
+                text: rawText,
                 timestamp: new Date().toLocaleString(),
             };
             setMessages((prevMessages) => [...prevMessages, gptMessage]);
-        } catch (error) {
+
+            // 맛집 정보를 파싱
+            const extractedRestaurants = parseRestaurants(rawText);
+
+            // 추출된 맛집 정보 로그 출력
+            console.log("추출된 맛집 정보:", extractedRestaurants);
+        }
+        catch (error) {
             console.error('Error sending message:', error);
             const errorMessage = {
                 sender: 'gpt',
