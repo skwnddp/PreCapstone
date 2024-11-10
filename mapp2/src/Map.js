@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, forwardRef } from 'react';
 
 // MapKey 주소 안에 넣을 때 따옴표 ㄴㄴ 백틱(물결키)
 // 지도 클릭 이벤트 등록
@@ -271,7 +271,7 @@ class MoveLocation {
 }
 
 // 지도 컴포넌트
-export const MapComponent = () => {
+export const MapComponent = ({ locations }) => {
     const [map, setMap] = useState(null);
     const [location, setLocation] = useState('');  // 위치 상태
     const [searchQuery, setSearchQuery] = useState('');
@@ -364,21 +364,20 @@ export const MapComponent = () => {
     };
 
     // 버튼 클릭 시 마커와 폴리라인 그리기
-    const handleButtonClick = () => {
+    const handleButtonClick = (e) => {
+        e.preventDefault(); // 폼 리셋 방지
+
         const inputText = textareaInput;  // textareaInput 상태에서 텍스트 가져오기
 
-        // 입력된 텍스트를 줄바꿈 기준으로 분리하여 좌표 배열로 변환
         const newCoordinates = inputText.split('\n').map(line => {
             const [lat, lng] = line.split(',').map(Number);
             return [lat, lng];
         }).filter(([lat, lng]) => !isNaN(lat) && !isNaN(lng));  // 유효한 좌표만 필터링
 
-        // 좌표 배열을 위도(lat) 기준으로 오름차순 정렬
-        newCoordinates.sort((a, b) => a[0] - b[0]);
+        newCoordinates.sort((a, b) => a[0] - b[0]);  // 위도 기준으로 정렬
 
-        // 새로운 좌표 배열을 상태에 저장
         setCoordinates(newCoordinates);  // 좌표 상태 업데이트
-        setTrigger(true);  // 버튼 클릭 시 트리거 상태 변경
+        setTrigger(true);  // 트리거 상태 변경
     };
 
     return (
@@ -402,25 +401,26 @@ export const MapComponent = () => {
                 zIndex: 1 // 리스트가 지도 위로 오도록 설정
             }}>
             </div>
-            <button onClick={handleGpsClick}>현재 위치 📍</button> <span/>
-            <button onClick={handleAddMarker}>한성대 마커 추가</button> <span/>
-            <button onClick={handleRemoveMarkers}>전채 마커 삭제</button> <span/>
+            <button onClick={handleGpsClick}>현재 위치 📍</button> <span />
+            <button onClick={handleAddMarker}>한성대 마커 추가</button> <span />
+            <button onClick={handleRemoveMarkers}>전채 마커 삭제</button> <span />
             {/* <button onClick={handleAddPolyline}>폴리라인 추가</button> 에러뜸 */}
-            <button onClick={handleRemovePolyline}>전체 폴리라인 삭제</button> <span/>
+            <button onClick={handleRemovePolyline}>전체 폴리라인 삭제</button> <span />
             <textarea // 직접 좌표 이동
                 style={{ height: "16px" }}
                 type="text"
                 placeholder="위도,경도로 입력"
-                value={location}
                 onChange={handleChange}
             />
-            <button onClick={handleMove}>위치 이동</button><br />
+            <button onClick={handleMove}>위치 이동</button>
+            <br />
             <textarea // 위도 경도 파싱
                 id="hiddenLatLng"
-                value={textareaInput}
                 onChange={handleTextareaChange}
-                placeholder="챗봇에서 위도,경도 자동 입력 (예: 37.5825, 127.0103)"
-                style={{ width: '20%', height: '100px' }}
+                value={locations}
+                placeholder="챗봇에서 위도,경도 자동 입력
+                                (예: 37.5825, 127.0103)"
+                style={{ width: '20%', height: '100px', whiteSpace: 'pre-line' }}
             ></textarea>
             <button style={{ width: "200px" }} onClick={handleButtonClick}>마커, 폴리라인 직접 추가</button>
             {/* <div>

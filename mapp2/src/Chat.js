@@ -1,14 +1,20 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import axios from 'axios';
-import { MapComponent } from './Map';
+import MapComponent from './Map';
 //npm run build 해야됨
 
-const Chat = ({ }) => {
+const Chat = ({ setLocations }) => {
+    const mapTextareaRef = useRef(null);
     const [userMessage, setUserMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [isLocked, setIsLocked] = useState(false); // 잠금 상태를 관리할 상태 추가
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null); // textarea에 대한 참조 생성
+
+    // const handleLocationAdd = () => {
+    //     // 위치 정보를 부모로 전달
+    //     setLocations((prevLocations) => locations);
+    // };
 
     // 새 메시지가 추가될 때마다 스크롤을 아래로 + 자동 포커싱
     useEffect(() => {
@@ -58,6 +64,10 @@ const Chat = ({ }) => {
 
                 // textarea의 value에 위치 정보 삽입
                 document.getElementById('hiddenLatLng').value = locations; // 'hiddenLatLng'는 textarea의 id로 변경
+                // 안되겟다 location 정보를 부모에게 전달하고, 자식인 Map에 보내주면 될까?
+
+                //onLocationChange(locations);
+                setLocations(locations);  // 부모에 위치 정보 전달                        
 
                 // floatingList id를 가진 div에 restaurant name을 추가
                 const listDiv = document.getElementById('floatingList'); // 'floatingList' div 가져오기
@@ -69,7 +79,7 @@ const Chat = ({ }) => {
                     const nameDiv = document.createElement('div');  // 새로운 <div> 요소 생성
                     nameDiv.textContent = restaurant.name;  // restaurant.name 값을 <div>에 추가
                     listDiv.appendChild(nameDiv);  // 'floatingList' div에 추가
-                }); // if <div> 요소가 잇다면 지우고 다시그리기 구현
+                }); // if <div> 요소가 잇다면 지우고 다시 그리기 구현
             }
 
             return extractedRestaurants;
@@ -78,8 +88,8 @@ const Chat = ({ }) => {
         try {
             const GPTKey = process.env.REACT_APP_GPT_KEY;
 
-            // let userName = "손님";  // 고정된 사용자명
-            // let prompt = `${userName}: ${userMessage}\nGPT:`;  // 질문 앞에 사용자명 추가
+            let userName = "손님";  // 고정된 사용자명
+            let prompt = `${userName}: ${userMessage}\nGPT:`;  // 질문 앞에 사용자명 추가
             let isRestaurantRequest = false;
 
             // 사용자가 맛집 추천을 요청하는 경우에만 특정 메시지 추가
@@ -96,7 +106,7 @@ const Chat = ({ }) => {
                 'https://api.openai.com/v1/chat/completions',
                 {
                     model: 'gpt-4o',
-                    max_tokens: 100,  // 응답 길이
+                    // max_tokens: 100,  // 응답 길이
                     temperature: 0.7,  // 창의성 설정
                     messages: [{ role: 'user', content: prompt }],
                 },
@@ -144,7 +154,7 @@ const Chat = ({ }) => {
         <section className="chat-section">
             <div className="chat-messages">
                 {messages.map((message, index) => (
-                    <div key={index} className={`chat-message ${message.sender}`} style={{color: message.sender === 'user' ? 'white' : 'pink'}}>
+                    <div key={index} className={`chat-message ${message.sender}`} style={{ color: message.sender === 'user' ? 'white' : 'pink' }}>
                         <div className="timestamp" style={{ fontSize: '0.8em', color: '#888' }}>
                             {message.timestamp}
                         </div>
@@ -180,12 +190,12 @@ const Chat = ({ }) => {
                         e.target.style.height = `${Math.max(10, e.target.scrollHeight)}px`; // 최소 높이 10px로 설정
                     }}
                 />
-                <button onClick={handleSendMessage}>전송</button>
+                <button onClick={()=>{handleSendMessage();}}>전송</button>
             </div>
         </section>
     ), [messages, userMessage]); // 의존성 배열에 필요한 상태 추가
 
     return memoizedChat; // memoizedChat을 반환
-};
+}
 
 export default Chat;
