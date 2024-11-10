@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 // import { handleGpsClick } from './Map';
 // import { initMap } from './Map';
 // import { loadNaverMapScript } from './Map';
-import { MapComponent } from './Map2';
+import { MapComponent } from './Map';
 import Favorites from './Favorites';
 import Chat from './Chat';
 import Review from './Review';

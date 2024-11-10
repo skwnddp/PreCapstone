@@ -158,7 +158,7 @@ const Chat = ({ }) => {
                     ref={textareaRef} // textarea에 ref 할당
                     value={userMessage}
                     onChange={(e) => setUserMessage(e.target.value)}
-                    placeholder="맛집 키워드를 넣어서 입력해보세요!"
+                    placeholder="'맛집' 키워드를 넣어서 입력해보세요!"
                     className="chat-input"
                     disabled={isLocked} // 잠금 상태에 따라 비활성화
                     onKeyPress={(e) => {
