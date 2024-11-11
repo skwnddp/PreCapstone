@@ -270,6 +270,50 @@ class MoveLocation {
     };
 }
 
+class CoordinateSorter {
+
+    // 두 점 사이의 거리 계산 메서드
+    static calculateDistance(point1, point2) {
+        const [lat1, lng1] = point1;
+        const [lat2, lng2] = point2;
+        return Math.sqrt((lat1 - lat2) ** 2 + (lng1 - lng2) ** 2);
+    }
+
+    // 최단 거리 경로를 찾는 메서드 (탐욕적 알고리즘)
+    static findShortestPath(points) {
+        const n = points.length;
+        const visited = new Array(n).fill(false);
+        const path = [0]; // 첫 번째 점을 시작점으로 선택
+        visited[0] = true;
+
+        for (let i = 1; i < n; i++) {
+            const lastPointIndex = path[path.length - 1];
+            let nearestIndex = -1;
+            let minDistance = Infinity;
+
+            // 방문하지 않은 점 중 가장 가까운 점 찾기
+            for (let j = 0; j < n; j++) {
+                if (!visited[j]) {
+                    const dist = CoordinateSorter.calculateDistance(points[lastPointIndex], points[j]);
+                    if (dist < minDistance) {
+                        minDistance = dist;
+                        nearestIndex = j;
+                    }
+                }
+            }
+
+            // 가장 가까운 점을 경로에 추가
+            if (nearestIndex !== -1) {
+                path.push(nearestIndex);
+                visited[nearestIndex] = true;
+            }
+        }
+
+        // 정렬된 좌표 배열 반환
+        return path.map((index) => points[index]);
+    }
+}
+
 // 지도 컴포넌트
 export const MapComponent = ({ locations }) => {
     const [map, setMap] = useState(null);
@@ -277,6 +321,7 @@ export const MapComponent = ({ locations }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [textareaInput, setTextareaInput] = useState('');
     const [coordinates, setCoordinates] = useState([]);
+    const [sortedCoordinates, setSortedCoordinates] = useState([]);
     const [trigger, setTrigger] = useState(false); // 버튼 클릭 트리거 상태
 
     useEffect(() => {
@@ -357,10 +402,15 @@ export const MapComponent = ({ locations }) => {
         }).filter(([lat, lng]) => !isNaN(lat) && !isNaN(lng));  // 유효한 좌표만 필터링
 
         // 좌표 배열을 위도(lat) 기준으로 오름차순 정렬
-        newCoordinates.sort((a, b) => a[0] - b[0]);  // a[0]이 lat 값, a[1]이 lng 값
+        // newCoordinates.sort((a, b) => a[0] - b[0]);  // a[0]이 lat 값, a[1]이 lng 값
+
+        // 최단 거리 정렬로 대체
+        const sortedCoords = CoordinateSorter.findShortestPath(newCoordinates);
+        setCoordinates(sortedCoords);
+        // setSortedCoordinates(sortedCoords);
 
         // 새로운 좌표 배열을 상태에 저장
-        setCoordinates(newCoordinates);
+        // setCoordinates(newCoordinates);
     };
 
     // 버튼 클릭 시 마커와 폴리라인 그리기
@@ -375,9 +425,11 @@ export const MapComponent = ({ locations }) => {
             return [lat, lng];
         }).filter(([lat, lng]) => !isNaN(lat) && !isNaN(lng));  // 유효한 좌표만 필터링
 
-        newCoordinates.sort((a, b) => a[0] - b[0]);  // 위도 기준으로 정렬
+        // 최단 거리 정렬로 대체
+        const sortedCoords = CoordinateSorter.findShortestPath(newCoordinates);
+        setCoordinates(sortedCoords);
 
-        setCoordinates(newCoordinates);  // 좌표 상태 업데이트
+        //setCoordinates(newCoordinates);  // 좌표 상태 업데이트
         setTrigger(true);  // 트리거 상태 변경
     };
 
