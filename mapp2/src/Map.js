@@ -367,7 +367,8 @@ export const MapComponent = ({ locations }) => {
     const handleButtonClick = (e) => {
         e.preventDefault(); // 폼 리셋 방지
 
-        const inputText = textareaInput;  // textareaInput 상태에서 텍스트 가져오기
+        // const inputText = textareaInput;  // textareaInput 상태에서 텍스트 가져오기
+        const inputText = document.getElementById('hiddenLatLng').value
 
         const newCoordinates = inputText.split('\n').map(line => {
             const [lat, lng] = line.split(',').map(Number);
