@@ -347,6 +347,12 @@ export const MapComponent = ({ locations }) => {
     const [coordinates, setCoordinates] = useState([]);
     const [sortedCoordinates, setSortedCoordinates] = useState([]);
     const [trigger, setTrigger] = useState(false); // 버튼 클릭 트리거 상태
+    const [isListVisible, setIsListVisible] = useState(true);
+
+    // 버튼 클릭 시 리스트 표시/숨기기 토글
+    const toggleListVisibility = () => {
+        setIsListVisible(prevState => !prevState);
+    };
 
     useEffect(() => {
         const mapManager = new MapManager(process.env.REACT_APP_MAP_KEY, setMap);
@@ -461,26 +467,37 @@ export const MapComponent = ({ locations }) => {
         <div>
             <div id="map" style={{ width: '100%', height: '500px' }}></div>
             <br />
-            <div id="floatingList" style={{
+            {isListVisible && (
+                <div id="floatingList" style={{
+                    position: 'absolute',
+                    top: '300px', // 지도에서 리스트의 상단 위치 조정
+                    left: '40%', // 지도에서 리스트의 좌측 위치 조정
+                    width: '160px',
+                    height: '200px',
+                    border: '2px solid black',
+                    borderRadius: "10%",
+                    padding: '10px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-around',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // 배경 색상 투명하게 설정 (선택사항)
+                    color: 'black', // 글자는 불투명하게 설정
+                    zIndex: 1 // 리스트가 지도 위로 오도록 설정
+                }}>
+                </div>)}
+            <button id="floatingList" style={{
                 position: 'absolute',
-                top: '300px', // 지도에서 리스트의 상단 위치 조정
-                left: '40%', // 지도에서 리스트의 좌측 위치 조정
-                width: '160px',
-                height: '200px',
-                border: '2px solid black',
-                borderRadius: "10%",
-                padding: '10px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-around',
-                backgroundColor: 'rgba(255, 255, 255, 0.8)', // 배경 색상 투명하게 설정 (선택사항)
-                color: 'black', // 글자는 불투명하게 설정
+                top: '540px', // 지도에서 리스트의 상단 위치 조정
+                left: '44%', // 지도에서 리스트의 좌측 위치 조정}
+                width: '100px',
+                height: '30px',
                 zIndex: 1 // 리스트가 지도 위로 오도록 설정
-            }}>
-            </div>
-            ㅡ이하 기능들은 테스트 용도이고, 추후 숨기거나 삭제할 예정입니다ㅡ<br />
+            }} onClick={toggleListVisibility}>
+                {isListVisible ? '숨기기' : '보이기'}
+            </button>< br />
+            ㅡ이하 기능들은 테스트 용도이고, 추후 숨기거나 삭제할 예정입니다ㅡ < br />
             {/* <button onClick={handleGpsClick}>현재 위치 📍</button> <span /> */}
-            <button onClick={handleAddMarker}>한성대 마커 추가</button> <span />
+            < button onClick={handleAddMarker} > 한성대 마커 추가</button > <span />
             <button onClick={handleRemoveMarkers}>전채 마커 삭제</button> <span />
             {/* <button onClick={handleAddPolyline}>폴리라인 추가</button> 에러뜸 */}
             <button onClick={handleRemovePolyline}>전체 폴리라인 삭제</button> <span />
@@ -513,7 +530,7 @@ export const MapComponent = ({ locations }) => {
                 <textarea id='hiddenLatLng'>
                 </textarea>
             </div> */}
-        </div>
+        </div >
     );
 };
 

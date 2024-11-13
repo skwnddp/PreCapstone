@@ -166,7 +166,6 @@ const Main = () => {
           />{" "}
           [한식 맛집]
         </label>
-        ____
         <label>
           <input
             type="checkbox"
@@ -175,7 +174,6 @@ const Main = () => {
           />{" "}
           [분위기 좋은]
         </label>
-        ____
         <label>
           <input
             type="checkbox"
@@ -184,7 +182,6 @@ const Main = () => {
           />{" "}
           [배달 가능]
         </label>
-        ____
         {/* {memoizedChat} */}
         <Map locatiosn={locations} />
       </section>
