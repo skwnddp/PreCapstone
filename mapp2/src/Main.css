@@ -41,11 +41,10 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-gap: 20px;
-    border: 2px solid white;
     margin: 2px;
     padding: 10px;
     height: 40px;
-    background-color: #5280ff;
+    background-color: #5280ff00;
 }
 
 .map-section {
@@ -96,7 +95,6 @@
     max-height: 400px;
     /* 원하는 세로 고정 크기 */
     padding: 10px;
-    border: 1px solid #ddd;
     margin-bottom: 10px;
 }
 
@@ -126,20 +124,20 @@
 .chat-input:focus {
     outline: none;
     /* 포커스 시 테두리 제거 */
-    border-color: #a7622a;
+    border-color: #000000;
     /* 포커스 시 테두리 색상 변경 */
 }
 
 .sidebar div:hover {
-    background-color: #c5191993;
-    /* 호버 시 배경색 변화 */
+    background-color: #ffffff1f;
+    /*호버 시 배경색 변화*/
 }
 
 .active-tab {
-    background-color: #ffffffa1;
-    /* 활성화된 탭의 배경색 */
-    color: rgb(255, 0, 0);
-    /* 활성화된 탭의 글자색 */
+    /* background-color: #ffffffa1;
+     활성화된 탭의 배경색 비활성화*/
+    /* color: rgb(255, 0, 0);
+    활성화된 탭의 글자색 비활성화 */
     font-weight: bold;
     /* 글자 두껍게 */
 }

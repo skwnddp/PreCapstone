@@ -41,7 +41,7 @@ const Main = () => {
   return (
     <div className="main-container">
       <header className="header">
-        <h1>무엇을 먹고 싶으세요?</h1>
+        <h1>내맘대로드</h1>
         <button className="back-btn" onClick={() => navigate('/Home')}>처음으로</button>
         <button className="login-btn">로그인 / 로그아웃</button>
       </header>

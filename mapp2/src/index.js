@@ -1,27 +1,38 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Home from './Home';
 import Main from './Main';
+import './transitions.css'; // 화면 전환 css, npm install react-transition-group 라이브러리 설치
 
-//App > index로 코드 이동해서 해결 완료
+// 애니메이션을 적용하는 컴포넌트
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <TransitionGroup>
+      <CSSTransition key={location.key} timeout={500} classNames="fade">
+        <Routes location={location}>
+          <Route path="/" element={<Navigate to="/Home" replace />} />
+          <Route path="/Home" element={<Home />} />
+          <Route path="/Main" element={<Main />} />
+        </Routes>
+      </CSSTransition>
+    </TransitionGroup>
+  );
+};
+
+// index.js에서 App을 감싸서 애니메이션 추가
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to="/Home" replace/>} /> 
-        <Route path="/Home" element={<Home />} />
-        <Route path="/Main" element={<Main />} />
-      </Routes>
+      <AnimatedRoutes />
     </Router>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

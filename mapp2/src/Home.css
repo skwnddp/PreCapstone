@@ -21,7 +21,7 @@
 }
 
 .login-button {
-  background-color: #8b84ff;
+  background-color: #28005c;
   color: #fff;
   border: none;
   padding: 5px 10px;
@@ -43,7 +43,7 @@
 }
 
 .title {
-  font-size: 2rem;
+  font-size: 30pt;
   font-weight: bold;
   margin: 0 0 2vh 0;
 }
