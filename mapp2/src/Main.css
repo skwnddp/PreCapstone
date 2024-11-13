@@ -101,10 +101,10 @@
 }
 
 .chat-input-container {
-    flex-direction: row;
-    /* 수직 배치 */
-    align-items: center;
-    /* 수직 중앙 정렬 */
+    display: flex;
+    justify-content: center;  /* 가로 중앙 정렬 */
+    align-items: center;      /* 세로 중앙 정렬 */
+    height: 100%;             /* 컨테이너가 부모의 전체 높이를 차지하도록 설정 */
 }
 
 .chat-input {
