@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, updateProfile } from 'firebase/auth';
 import { auth } from './firebase';  // firebase.js에서 auth 객체 가져오기
 import './Home.css';
 
@@ -162,18 +162,36 @@ const SignUpForm = ({ onLoginSuccess }) => {
 
   const handleSignUp = async (event) => {
     event.preventDefault();
-    if (password === confirmPassword) {
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        onLoginSuccess(email); // 회원가입 성공 후, 이메일을 사용자 이름으로 설정
-        setEmail('');
-        setPassword('');
-        setConfirmPassword('');
-      } catch (error) {
-        alert("회원가입 실패: " + error.message);
-      }
-    } else {
+    if (password !== confirmPassword) {
       alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    const auth = getAuth(); // Firebase auth 객체 가져오기
+
+    try {
+      // 이메일 중복 확인
+      const methods = await fetchSignInMethodsForEmail(auth, email); // 이메일로 등록된 방법 확인
+      if (methods.length > 0) {
+        alert("이미 가입된 이메일입니다. 다른 이메일을 사용해주세요.");
+        return;
+      }
+
+      // 회원가입 진행
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // 사용자 이름 설정
+      await updateProfile(user, {
+        displayName: email.split('@')[0], // 예: 이메일 앞부분을 이름으로 설정
+      });
+
+      onLoginSuccess(user.displayName); // 설정된 사용자 이름으로 로그인 처리
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+    } catch (error) {
+      alert("회원가입 실패: " + error.message);
     }
   };
 
@@ -229,3 +247,4 @@ const ProfileForm = ({ username, onUsernameChange, onClose }) => {
 };
 
 export default Home;
+
