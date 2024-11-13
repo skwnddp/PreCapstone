@@ -35,6 +35,30 @@ class MapManager {
             },
         });
         this.setMap(map);
+
+        // 버튼 생성
+        const button = document.createElement('button');
+        button.innerHTML = '현재 위치로 이동';
+        button.style.position = 'absolute';
+        button.style.top = '10px';
+        button.style.left = '10px';
+        button.style.zIndex = '1000';
+        button.style.padding = '10px';
+        button.style.backgroundColor = '#008CBA';
+        button.style.color = 'white';
+        button.style.border = 'none';
+        button.style.borderRadius = '10px';
+        button.style.cursor = 'pointer';
+
+        // 버튼을 지도 컨테이너에 추가
+        const mapContainer = document.getElementById('map');
+        mapContainer.appendChild(button);
+
+        // 버튼 클릭 시 GpsManager 메서드 호출
+        button.addEventListener('click', () => {
+            new GpsManager(map).handleGpsClick();
+        });
+
         return map;
     }
 }
@@ -57,7 +81,7 @@ class GpsManager {
                     const { latitude, longitude } = position.coords;
                     const moveLatLon = new window.naver.maps.LatLng(latitude, longitude);
                     this.map.setCenter(moveLatLon); // 현재 위치로 지도의 중심 이동
-                    console.log("현재 위치로 이동:", latitude, longitude);
+                    console.log("현재 위치로 이동 : ", latitude, ",", longitude);
                 },
                 (error) => {
                     console.error("Geolocation error:", error);
@@ -454,7 +478,8 @@ export const MapComponent = ({ locations }) => {
                 zIndex: 1 // 리스트가 지도 위로 오도록 설정
             }}>
             </div>
-            <button onClick={handleGpsClick}>현재 위치 📍</button> <span />
+            ㅡ이하 기능들은 테스트 용도이고, 추후 숨기거나 삭제할 예정입니다ㅡ<br />
+            {/* <button onClick={handleGpsClick}>현재 위치 📍</button> <span /> */}
             <button onClick={handleAddMarker}>한성대 마커 추가</button> <span />
             <button onClick={handleRemoveMarkers}>전채 마커 삭제</button> <span />
             {/* <button onClick={handleAddPolyline}>폴리라인 추가</button> 에러뜸 */}

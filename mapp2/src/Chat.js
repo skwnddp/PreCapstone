@@ -140,6 +140,7 @@ const Chat = ({ setLocations }) => {
                 text: rawText,
                 timestamp: new Date().toLocaleString(),
             };
+        
             setMessages((prevMessages) => [...prevMessages, gptMessage]);
 
             parseRestaurants(rawText);

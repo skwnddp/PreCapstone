@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth"; // Firebase 인증 기능 추가
 import { getAnalytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration
- const FierebaseApiKey = process.env.REACT_APP_FIREBASE_KEY
+const FierebaseApiKey = process.env.REACT_APP_FIREBASE_KEY
 
 const firebaseConfig = {
   apiKey: FierebaseApiKey,
