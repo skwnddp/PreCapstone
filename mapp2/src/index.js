@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'r
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Home from './Home';
 import Main from './Main';
+import Search from './Search';
 import './transitions.css'; // 화면 전환 css, npm install react-transition-group 라이브러리 설치
 
 // 애니메이션을 적용하는 컴포넌트
@@ -18,6 +19,7 @@ const AnimatedRoutes = () => {
         <Routes location={location}>
           <Route path="/" element={<Navigate to="/Home" replace />} />
           <Route path="/Home" element={<Home />} />
+          {/* <Route path="/Home" element={<Search />} /> */}
           <Route path="/Main" element={<Main />} />
         </Routes>
       </CSSTransition>
