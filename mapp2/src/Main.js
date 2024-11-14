@@ -17,6 +17,11 @@ const Main = () => {
   const [activeTab, setActiveTab] = useState("채팅하기");
   const [locations, setLocations] = useState("");
   const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션들
+  const [isToggled, setIsToggled] = useState(true);
+
+  const handleToggle = () => {
+    setIsToggled((prev) => !prev);
+  };
 
   const handleCheckboxChange = (event) => {
     const chatInput = document.querySelector(".filtering-input");
@@ -67,7 +72,7 @@ const Main = () => {
       <header className="header">
         <h1>내맘대로드</h1>
         <button className="back-btn" onClick={() => navigate('/Home')}>처음으로</button>
-        <button className="login-btn">로그인 / 로그아웃</button>
+        <button className="login-btn">로그아웃</button>
       </header>
 
       <div>
@@ -135,6 +140,7 @@ const Main = () => {
             <Info />
           </div>
         </section>
+        ㅡ하단 필터링 박스도 숨길 예정
         <textarea
           readOnly
           placeholder="필터링을 선택해보세요!"
@@ -157,36 +163,112 @@ const Main = () => {
 
       {/* 지도를 아래에 배치해야 오버레이 잘 보임 */}
       <section className="map-section">
-        <label>
-          <input
-            style={{ width: "16px", height: "16px" }}
-            type="checkbox"
-            name="option1"
-            onChange={handleCheckboxChange}
-          />{" "}
-          [한식 맛집]
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="option2"
-            onChange={handleCheckboxChange}
-          />{" "}
-          [분위기 좋은]
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="option2"
-            onChange={handleCheckboxChange}
-          />{" "}
-          [배달 가능]
-        </label>
+        <div
+          style={{
+            margin: "5px",
+            padding: "2px 10px",
+            border: "1px solid #ccc", // 구분선 추가
+            width: "500px",
+            borderRadius: "20px", // 모서리 둥글게
+          }}
+        >
+          {/* <button
+            onClick={handleToggle}
+            style={{
+              padding: "1px",
+              backgroundColor: isToggled ? "#4CAF50" : "#f44336",
+              color: "white",
+              border: "none",
+              cursor: "pointer",
+              width: "100%",
+              height: "30px",
+              marginBottom: "20px", // 버튼과 체크박스 사이 간격
+            }}
+          >
+            {isToggled ? "한성대 주변 맛집 | GPT & DB 기반" : "전국 맛집 | GPT 기반"}
+          </button> */}
+
+          {/* 필터링 1행 */}
+          <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+            <label><input
+              // style={{ width: "16px", height: "16px" }}
+              type="checkbox"
+              name="option1"
+              onChange={handleCheckboxChange}
+              disabled={!isToggled} // 토글 상태에 따라 비활성화
+            />{" "}
+              [한식 맛집]</label><label>
+              <input
+                // style={{ width: "16px", height: "16px" }}
+                type="checkbox"
+                name="option2"
+                onChange={handleCheckboxChange}
+                disabled={!isToggled} // 토글 상태에 따라 비활성화
+              />{" "}
+              [중식 맛집]</label> <label>
+              <input
+                // style={{ width: "16px", height: "16px" }}
+                type="checkbox"
+                name="option3"
+                onChange={handleCheckboxChange}
+                disabled={!isToggled} // 토글 상태에 따라 비활성화
+              />{" "}
+              [일식 맛집]</label><label>
+              <input
+                // style={{ width: "16px", height: "16px" }}
+                type="checkbox"
+                name="option4"
+                onChange={handleCheckboxChange}
+                disabled={!isToggled} // 토글 상태에 따라 비활성화
+              />{" "}
+              [양식 맛집]</label>
+          </div>
+
+          {/* 필터링 2행 */}
+          <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+            <label>
+              <input
+                type="checkbox"
+                name="option10"
+                onChange={handleCheckboxChange}
+                disabled={!isToggled} // 토글 상태에 따라 비활성화
+              />{" "}
+              [평점 4점 이상]</label><label>
+              <input
+                type="checkbox"
+                name="option11"
+                onChange={handleCheckboxChange}
+                disabled={!isToggled} // 토글 상태에 따라 비활성화
+              />{" "}
+              [데이트 편한]</label><label>
+              <input
+                type="checkbox"
+                name="option11"
+                onChange={handleCheckboxChange}
+                disabled={!isToggled} // 토글 상태에 따라 비활성화
+              />{" "}
+              [가족끼리 갈만한]</label>
+          </div>
+
+          {/* 필터링 3행 */}
+          {/* <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+            <label>
+              <input
+                type="checkbox"
+                name="option20"
+                onChange={handleCheckboxChange}
+                disabled={!isToggled} // 토글 상태에 따라 비활성화
+              />{" "}
+              [배달 가능]
+            </label>
+          </div> */}
+
+        </div>
         {/* {memoizedChat} */}
         <Map locatiosn={locations} />
-      </section>
+      </section >
       {/* <textarea id='hiddenLatLng'>테스트</textarea> */}
-    </div>
+    </div >
   );
 };
 

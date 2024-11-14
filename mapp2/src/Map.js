@@ -31,24 +31,53 @@ class MapManager {
             zoom: 14,
             zoomControl: true,
             zoomControlOptions: {
-                position: window.naver.maps.Position.TOP_RIGHT,
+                position: window.naver.maps.Position.RIGHT_CENTER,
             },
         });
         this.setMap(map);
 
+        // 이하 GPS 버튼 속성들 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
         // 버튼 생성
         const button = document.createElement('button');
-        button.innerHTML = '현재 위치로 이동';
+        button.innerHTML = '⚙ 현재 위치';
         button.style.position = 'absolute';
         button.style.top = '10px';
-        button.style.left = '10px';
+        button.style.right = '10px';
         button.style.zIndex = '1000';
-        button.style.padding = '10px';
-        button.style.backgroundColor = '#008CBA';
-        button.style.color = 'white';
+        button.style.padding = '12px 18px';
+        button.style.background = 'linear-gradient(45deg, #050042, #00BFFF)';
+        button.style.color = '#ffffff';
         button.style.border = 'none';
-        button.style.borderRadius = '10px';
+        button.style.borderRadius = '30px';
+        button.style.fontSize = '14px';
+        button.style.fontWeight = 'bold';
         button.style.cursor = 'pointer';
+        button.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.1)';
+        button.style.transition = 'all 0.3s ease';
+
+        // 호버 및 클릭 효과 추가
+        button.addEventListener('mouseover', () => {
+            button.style.background = 'linear-gradient(45deg, #050042, #050000)';
+            button.style.boxShadow = '0 12px 20px rgba(0, 0, 0, 0.2)';
+            button.style.transform = 'translateY(-3px)';
+        });
+
+        button.addEventListener('mouseout', () => {
+            button.style.background = 'linear-gradient(45deg, #050042, #00BFFF)';
+            button.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.1)';
+            button.style.transform = 'translateY(0)';
+        });
+
+        button.addEventListener('mousedown', () => {
+            button.style.transform = 'translateY(2px)';
+            button.style.boxShadow = '0 5px 10px rgba(0, 0, 0, 0.1)';
+        });
+
+        button.addEventListener('mouseup', () => {
+            button.style.transform = 'translateY(-2px)';
+            button.style.boxShadow = '0 12px 20px rgba(0, 0, 0, 0.2)';
+        });
+        // 이상 GPS 버튼 속성들 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
         // 버튼을 지도 컨테이너에 추가
         const mapContainer = document.getElementById('map');
@@ -295,7 +324,6 @@ class MoveLocation {
 }
 
 class CoordinateSorter {
-
     // 두 점 사이의 거리 계산 메서드
     static calculateDistance(point1, point2) {
         const [lat1, lng1] = point1;
@@ -303,22 +331,66 @@ class CoordinateSorter {
         return Math.sqrt((lat1 - lat2) ** 2 + (lng1 - lng2) ** 2);
     }
 
+    // 교차 여부 확인 함수
+    static isIntersecting(p1, p2, q1, q2) {
+        const orientation = (a, b, c) =>
+            (b[1] - a[1]) * (c[0] - b[0]) - (b[0] - a[0]) * (c[1] - b[1]);
+
+        const o1 = orientation(p1, p2, q1);
+        const o2 = orientation(p1, p2, q2);
+        const o3 = orientation(q1, q2, p1);
+        const o4 = orientation(q1, q2, p2);
+
+        return o1 * o2 < 0 && o3 * o4 < 0;
+    }
+
+    // 경로에서 교차하는 선분을 수정하는 함수
+    static fixIntersections(path, points) {
+        const n = path.length;
+        let modified = true;
+
+        while (modified) {
+            modified = false;
+            for (let i = 0; i < n - 2; i++) {
+                for (let j = i + 2; j < n - 1; j++) {
+                    const p1 = points[path[i]];
+                    const p2 = points[path[i + 1]];
+                    const q1 = points[path[j]];
+                    const q2 = points[path[j + 1]];
+
+                    if (CoordinateSorter.isIntersecting(p1, p2, q1, q2)) {
+                        // 교차 발생 시 경로 수정 (두 선분을 스왑)
+                        [path[i + 1], path[j]] = [path[j], path[i + 1]];
+                        modified = true;
+                    }
+                }
+            }
+        }
+        return path;
+    }
+
     // 최단 거리 경로를 찾는 메서드 (탐욕적 알고리즘)
     static findShortestPath(points) {
         const n = points.length;
+        if (n === 0) return [];
+
         const visited = new Array(n).fill(false);
         const path = [0]; // 첫 번째 점을 시작점으로 선택
         visited[0] = true;
 
+        // 탐욕적 알고리즘을 사용하여 최단 경로 찾기
         for (let i = 1; i < n; i++) {
             const lastPointIndex = path[path.length - 1];
             let nearestIndex = -1;
             let minDistance = Infinity;
 
-            // 방문하지 않은 점 중 가장 가까운 점 찾기
+            // 방문하지 않은 점 중에서 가장 가까운 점 찾기
             for (let j = 0; j < n; j++) {
                 if (!visited[j]) {
-                    const dist = CoordinateSorter.calculateDistance(points[lastPointIndex], points[j]);
+                    const dist = CoordinateSorter.calculateDistance(
+                        points[lastPointIndex],
+                        points[j]
+                    );
                     if (dist < minDistance) {
                         minDistance = dist;
                         nearestIndex = j;
@@ -333,8 +405,10 @@ class CoordinateSorter {
             }
         }
 
-        // 정렬된 좌표 배열 반환
-        return path.map((index) => points[index]);
+        // 교차 수정 알고리즘 적용
+        return CoordinateSorter.fixIntersections(path, points).map(
+            (index) => points[index]
+        );
     }
 }
 
@@ -351,7 +425,32 @@ export const MapComponent = ({ locations }) => {
 
     // 버튼 클릭 시 리스트 표시/숨기기 토글
     const toggleListVisibility = () => {
-        setIsListVisible(prevState => !prevState);
+        setIsListVisible(prevState => {
+            const newState = !prevState;
+    
+            // hiddenDiv의 value 값을 가져오기
+            const hiddenDivContent = document.getElementById('hiddenDiv').value;
+            const floatingList = document.getElementById('floatingList');
+    
+            if (newState) {
+                // hiddenDiv의 내용을 실제 HTML 요소로 변환해서 추가
+                floatingList.innerHTML = ''; // 기존 내용을 초기화
+                //const tempDiv = document.createElement('div');
+                floatingList.innerHTML = hiddenDivContent;
+    
+                // tempDiv의 자식들을 floatingListButton에 추가
+                // Array.from(tempDiv.children).forEach(child => {
+                //     floatingListButton.appendChild(child);
+                //     console.log(tempDiv.children)
+                // });
+                
+            } else {
+                // 상태가 false일 때 기존 내용을 비우기
+                floatingList.innerHTML = '';
+            }
+    
+            return newState;
+        });
     };
 
     useEffect(() => {
@@ -465,36 +564,40 @@ export const MapComponent = ({ locations }) => {
 
     return (
         <div>
-            <div id="map" style={{ width: '100%', height: '500px' }}></div>
-            <br />
-            {isListVisible && (
-                <div id="floatingList" style={{
-                    position: 'absolute',
-                    top: '300px', // 지도에서 리스트의 상단 위치 조정
-                    left: '40%', // 지도에서 리스트의 좌측 위치 조정
-                    width: '160px',
-                    height: '200px',
-                    border: '2px solid black',
-                    borderRadius: "10%",
-                    padding: '10px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-around',
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // 배경 색상 투명하게 설정 (선택사항)
-                    color: 'black', // 글자는 불투명하게 설정
-                    zIndex: 1 // 리스트가 지도 위로 오도록 설정
-                }}>
-                </div>)}
-            <button id="floatingList" style={{
-                position: 'absolute',
-                top: '540px', // 지도에서 리스트의 상단 위치 조정
-                left: '44%', // 지도에서 리스트의 좌측 위치 조정}
-                width: '100px',
-                height: '30px',
-                zIndex: 1 // 리스트가 지도 위로 오도록 설정
-            }} onClick={toggleListVisibility}>
-                {isListVisible ? '숨기기' : '보이기'}
-            </button>< br />
+            <div id="map" style={{ width: '100%', height: '500px' }}>
+                <br />
+                {isListVisible && (
+                    <div id="floatingList" style={{
+                        position: 'absolute',
+                        top: '240px', // 지도에서 리스트의 상단 위치 조정
+                        left: '42%', // 지도에서 리스트의 좌측 위치 조정
+                        width: '160px',
+                        height: '200px',
+                        border: '2px solid black',
+                        borderRadius: "10%",
+                        padding: '10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-around',
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)', // 배경 색상 투명하게 설정 (선택사항)
+                        color: 'black', // 글자는 불투명하게 설정
+                        zIndex: 1 // 리스트가 지도 위로 오도록 설정
+                    }}>
+                    </div>)}
+                <button
+                    id="floatingList"
+                    className="chat-button"  // 'chat-button' 클래스를 추가
+                    style={{
+                        position: 'absolute',
+                        top: '455px', // 지도에서 리스트의 상단 위치 조정
+                        left: '45%', // 지도에서 리스트의 좌측 위치 조정}
+                        width: '120px',
+                        height: '40px',
+                        zIndex: 1 // 리스트가 지도 위로 오도록 설정
+                    }} onClick={toggleListVisibility}>
+                    {isListVisible ? '플로팅 끄기' : '플로팅 켜기'}
+                </button>
+            </div>< br />
             ㅡ이하 기능들은 테스트 용도이고, 추후 숨기거나 삭제할 예정입니다ㅡ < br />
             {/* <button onClick={handleGpsClick}>현재 위치 📍</button> <span /> */}
             < button onClick={handleAddMarker} > 한성대 마커 추가</button > <span />
@@ -518,6 +621,7 @@ export const MapComponent = ({ locations }) => {
                 style={{ width: '20%', height: '100px', whiteSpace: 'pre-line' }}
             ></textarea>
             <button style={{ width: "200px" }} onClick={handleButtonClick}>마커, 폴리라인 직접 추가</button>
+            <textarea id="hiddenDiv"></textarea>
             {/* <div>
                 <h1>맛집 검색</h1>
                 <input

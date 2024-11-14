@@ -47,6 +47,10 @@ const Chat = ({ setLocations }) => {
                 });
             }
 
+            // 사용자에게 보여줄 이름만 추출
+            const restaurantNames = extractedRestaurants.map(restaurant => restaurant.name);
+            // return { extractedRestaurants, restaurantNames };
+
             if (extractedRestaurants.length > 0) {
                 let locations = "";
 
@@ -69,6 +73,7 @@ const Chat = ({ setLocations }) => {
 
                 extractedRestaurants.forEach((restaurant) => {
                     const containerDiv = document.createElement('div');
+                    containerDiv.innerHTML = '⭐'; // 이름 앞에 별 추가 (★ 기호 사용)
                     containerDiv.style.display = 'flex'; // 체크박스와 이름을 한 줄에 정렬
                     containerDiv.style.alignItems = 'center'; // 수직 정렬
                     containerDiv.style.marginBottom = '10px'; // 항목 간 간격 추가
@@ -99,6 +104,9 @@ const Chat = ({ setLocations }) => {
 
                     containerDiv.appendChild(checkbox); // 체크박스를 먼저 추가
                     containerDiv.appendChild(nameDiv); // 이름 추가
+                    document.getElementById('hiddenDiv').value += containerDiv.outerHTML; // containerDiv의 전체 HTML을 추가
+                    console.log(containerDiv.outerHTML)
+                    console.log(containerDiv)
                     listDiv.appendChild(containerDiv);
                 });
             }
@@ -111,12 +119,25 @@ const Chat = ({ setLocations }) => {
             let userName = "손님";
             let prompt = `${userName}: ${userMessage}\nGPT:`;
 
+            let isRestaurantRequest = false;
+
+            // '맛집'이라는 단어가 포함된 경우, 추가 프롬프트 설정
             if (userMessage.includes('맛집')) {
-                prompt += `. 여러 맛집을 추천해줘. 각 맛집 정보는 아래와 같이 제공해줘:
+                // 필터링 입력값 가져오기
+                const filteringInputValue = document.querySelector('.filtering-input').value;
+
+                // 프롬프트 설정
+                prompt = `추천 맛집 정보는 아래와 같이 제공해줘:
                 - [NAME]맛집명[/NAME]
-                - [INFO]설명[/INFO]
+                - [INFO]간단한 설명[/INFO]
                 - [LAT]숫자[/LAT]
                 - [LNG]숫자[/LNG]`;
+
+                // 필터링 입력값과 함께 프롬프트에 추가
+                prompt += `맛집 분위기는 ${filteringInputValue}`;
+                console.log(prompt)
+
+                isRestaurantRequest = true;
             }
 
             const response = await axios.post(
@@ -130,20 +151,45 @@ const Chat = ({ setLocations }) => {
                     headers: {
                         'Authorization': `Bearer ${GPTKey}`,
                         'Content-Type': 'application/json',
-                    },
+                    }
                 }
             );
 
             const rawText = response.data.choices[0]?.message?.content?.trim() || '응답을 받지 못했습니다.';
+
+            // '맛집' 관련 요청일 경우에만 [NAME]과 [INFO] 태그를 추출
+            let extractedNames;
+            if (isRestaurantRequest) {
+                const nameInfoMatches = rawText.match(/\[NAME\](.*?)\[\/NAME\].*?\[INFO\](.*?)\[\/INFO\]/gs);
+
+                if (nameInfoMatches) {
+                    extractedNames = nameInfoMatches
+                        .map(match => {
+                            const [_, name, info] = match.match(/\[NAME\](.*?)\[\/NAME\].*?\[INFO\](.*?)\[\/INFO\]/s);
+                            return `🍽️ ${name.trim()}\n📋 ${info.trim()}`;
+                        })
+                        .join('\n\n') || '추천된 맛집이 없습니다.';
+                    console.log(123)
+                } else {
+                    extractedNames = '추천된 맛집이 없습니다.';
+                    console.log(456)
+                }
+            } else {
+                extractedNames = rawText; // 일반 질문일 경우 GPT 응답 그대로 출력
+            }
+
             const gptMessage = {
                 sender: 'gpt',
-                text: rawText,
+                text: extractedNames,
                 timestamp: new Date().toLocaleString(),
             };
-        
+
             setMessages((prevMessages) => [...prevMessages, gptMessage]);
 
-            parseRestaurants(rawText);
+            // 맛집 관련 요청일 경우에만 parseRestaurants 호출
+            if (isRestaurantRequest) {
+                parseRestaurants(rawText);
+            }
         }
         catch (error) {
             console.error('Error sending message:', error);
@@ -190,10 +236,11 @@ const Chat = ({ setLocations }) => {
                     style={{ resize: 'none' }}
                     onInput={(e) => {
                         e.target.style.height = 'auto';
-                        e.target.style.height = `${Math.max(10, e.target.scrollHeight)}px`;
+                        const newHeight = Math.min(150, Math.max(40, e.target.scrollHeight));
+                        e.target.style.height = `${newHeight}px`;
                     }}
                 />
-                <button onClick={handleSendMessage}>전송</button>
+                <button class="chat-button" onClick={handleSendMessage}>전송</button>
             </div>
         </section>
     ), [messages, userMessage]);

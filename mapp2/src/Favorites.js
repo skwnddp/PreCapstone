@@ -33,7 +33,7 @@ function Favorites() {
     return (
         <div>
             <h2>즐겨찾기 목록</h2>
-            <ul>
+            <ul className="chat-messages">
                 {favorites.map((item) => (
                     <li key={item.id} style={{ marginBottom: "10px" }}>
                         <span>{item.name} - {item.description}</span>

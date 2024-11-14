@@ -17,7 +17,7 @@ function History() {
   };
 
   return (
-    <div>
+    <div className="chat-messages">
       <h2>검색 내역</h2>
       <input
         type="text"

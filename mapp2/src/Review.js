@@ -15,7 +15,7 @@ function Review() {
   };
 
   return (
-    <div>
+    <div className="chat-messages">
       <h2>리뷰 목록</h2>
       <textarea
         value={input}
@@ -33,7 +33,7 @@ function Review() {
         </select>
       </div>
       <button onClick={addReview}>추가</button>
-      
+
       <ul>
         {reviews.length === 0 ? (
           <li>리뷰가 없습니다.</li>

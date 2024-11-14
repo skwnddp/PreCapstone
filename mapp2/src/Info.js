@@ -26,7 +26,7 @@ const infoList = [
 
 function Info() {
   return (
-    <div>
+    <div className="chat-messages">
       <h2>맛집 정보</h2>
       <ul>
         {infoList.map((info) => (
