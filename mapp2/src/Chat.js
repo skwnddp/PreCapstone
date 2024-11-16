@@ -188,7 +188,29 @@ const Chat = ({ setLocations }) => {
 
             // 맛집 관련 요청일 경우에만 parseRestaurants 호출
             if (isRestaurantRequest) {
-                parseRestaurants(rawText);
+                const extractedRestaurants = parseRestaurants(rawText);
+
+                // Firestore에 검색 결과 저장
+                if (extractedRestaurants.length > 0) {
+                    const timestamp = new Date();
+                    const searchData = {
+                        results: extractedRestaurants.map((restaurant) => ({
+                            name: restaurant.name,
+                            description: restaurant.description,
+                            latitude: restaurant.latitude,
+                            longitude: restaurant.longitude,
+                        })),
+                        timestamp: timestamp.toISOString(),
+                    };
+
+                    try {
+                        // Firestore에 저장
+                        await setDoc(doc(collection(db, "searchHistory"), Date.now().toString()), searchData);
+                        console.log("검색 결과가 Firestore에 저장되었습니다:", searchData);
+                    } catch (error) {
+                        console.error("Firestore에 데이터 저장 중 오류 발생:", error);
+                    }
+                }
             }
         }
         catch (error) {

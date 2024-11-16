@@ -2,12 +2,13 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth"; // Firebase 인증 기능 추가
 import { getAnalytics } from "firebase/analytics";
+import { getFirestore } from "firebase/firestore"; // Firestore 기능 추가
 
 // Your web app's Firebase configuration
 const FierebaseApiKey = process.env.REACT_APP_FIREBASE_KEY
 
 const firebaseConfig = {
-  apiKey: FierebaseApiKey,
+  apiKey: "AIzaSyDKEArk2hxmuKvkqb4DODOtCQ7Ny4341B0",
   authDomain: "precap-db.firebaseapp.com",
   projectId: "precap-db",
   storageBucket: "precap-db.firebasestorage.app",
