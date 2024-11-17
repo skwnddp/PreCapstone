@@ -15,7 +15,7 @@ const AnimatedRoutes = () => {
 
   return (
     <TransitionGroup>
-      <CSSTransition key={location.key} timeout={500} classNames="fade">
+      <CSSTransition key={location.key} timeout={500} classNames="fade" unmountOnExit>
         <Routes location={location}>
           <Route path="/" element={<Navigate to="/Home" replace />} />
           <Route path="/Home" element={<Home />} />

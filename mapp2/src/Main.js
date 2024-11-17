@@ -70,188 +70,184 @@ const Main = () => {
   return (
     <div className="main-container">
       <header className="header">
-        <h1>내맘대로드</h1>
+        <div>
+          <h1>내맘대로드</h1>
+          <h4>지피티와 네이버 지도를 활용한 맞춤형 맛집 플랫폼</h4>
+        </div>
         <button className="back-btn" onClick={() => navigate('/Home')}>처음으로</button>
         <button className="login-btn">로그아웃</button>
       </header>
 
-      <div>
-        <nav className="sidebar">
-          <div
-            className={activeTab === "채팅하기" ? "active-tab" : ""}
-            onClick={() => setActiveTab("채팅하기")}
-          >
-            채팅하기
-          </div>
-          <div
-            className={activeTab === "즐겨찾기" ? "active-tab" : ""}
-            onClick={() => setActiveTab("즐겨찾기")}
-          >
-            즐겨찾기
-          </div>
-          <div
-            className={activeTab === "리뷰보기" ? "active-tab" : ""}
-            onClick={() => setActiveTab("리뷰보기")}
-          >
-            리뷰보기
-          </div>
-          <div
-            className={activeTab === "검색내역" ? "active-tab" : ""}
-            onClick={() => setActiveTab("검색내역")}
-          >
-            검색내역
-          </div>
-          <div
-            className={activeTab === "맛집정보" ? "active-tab" : ""}
-            onClick={() => setActiveTab("맛집정보")}
-          >
-            맛집정보
-          </div>
-          <>
-            <br></br>
-          </>
-        </nav>
-        <section className="content-section">
-          {/* {renderTabContent()} */}
-          {/* 각 탭의 내용을 항상 렌더링하되, visible 상태로 표시 */}
-          <div
-            style={{
-              display: activeTab === "채팅하기" ? "block" : "none",
-              whiteSpace: "pre-wrap",
-              fontSize: "14px",
-            }}
-          >
-            <Chat
-              extractedRestaurants={extractedRestaurants}
-              updateText={updateText}
-              setLocations={setLocations}
-            />
-          </div>
-          <div style={{ display: activeTab === "즐겨찾기" ? "block" : "none" }}>
-            <Favorites />
-          </div>
-          <div style={{ display: activeTab === "리뷰보기" ? "block" : "none" }}>
-            <Review />
-          </div>
-          <div style={{ display: activeTab === "검색내역" ? "block" : "none" }}>
-            <History />
-          </div>
-          <div style={{ display: activeTab === "맛집정보" ? "block" : "none" }}>
-            <Info />
-          </div>
+      {/* 탭, 챗봇, 필터링, 지도 */}
+      <body className="chatmap-container">
+        <section className="sidebar-container">
+          <nav className="sidebar">
+            <div
+              className={activeTab === "채팅하기" ? "active-tab" : ""}
+              onClick={() => setActiveTab("채팅하기")}
+            >
+              채팅하기
+            </div>
+            <div
+              className={activeTab === "즐겨찾기" ? "active-tab" : ""}
+              onClick={() => setActiveTab("즐겨찾기")}
+            >
+              즐겨찾기
+            </div>
+            <div
+              className={activeTab === "리뷰보기" ? "active-tab" : ""}
+              onClick={() => setActiveTab("리뷰보기")}
+            >
+              리뷰보기
+            </div>
+            <div
+              className={activeTab === "검색내역" ? "active-tab" : ""}
+              onClick={() => setActiveTab("검색내역")}
+            >
+              검색내역
+            </div>
+            <div
+              className={activeTab === "맛집정보" ? "active-tab" : ""}
+              onClick={() => setActiveTab("맛집정보")}
+            >
+              맛집정보
+            </div>
+            <>
+            </>
+          </nav>
+          <section className="content-section">
+            {/* {renderTabContent()} */}
+            {/* 각 탭의 내용을 항상 렌더링하되, visible 상태로 표시 */}
+            <div
+              style={{
+                display: activeTab === "채팅하기" ? "block" : "none",
+                whiteSpace: "pre-wrap",
+                fontSize: "14px",
+              }}
+            >
+              <Chat
+                extractedRestaurants={extractedRestaurants}
+                updateText={updateText}
+                setLocations={setLocations}
+              />
+            </div>
+            <div style={{ display: activeTab === "즐겨찾기" ? "block" : "none" }}>
+              <Favorites />
+            </div>
+            <div style={{ display: activeTab === "리뷰보기" ? "block" : "none" }}>
+              <Review />
+            </div>
+            <div style={{ display: activeTab === "검색내역" ? "block" : "none" }}>
+              <History />
+            </div>
+            <div style={{ display: activeTab === "맛집정보" ? "block" : "none" }}>
+              <Info />
+            </div>
+          </section>
         </section>
-        ㅡ하단 필터링 박스도 숨길 예정
-        <textarea
-          readOnly
-          placeholder="필터링을 선택해보세요!"
-          className="filtering-input"
-          style={{
-            padding: "10px",            // 패딩 추가
-            border: "1px solid #ccc",    // 테두리 스타일
-            borderRadius: "10px",        // 둥근 모서리
-            resize: "none",              // 크기 조절 불가능
-            width: "80%",                // 가능한 모든 너비 차지
-            height: "16px",
-            maxHeight: "30px",          // 최대 높이 설정
-            marginTop: "10px",           // 상단 여백 추가
-            marginLeft: "7px",          // 좌측 여백 추가
-            color: "black",
-            backgroundColor: "white",  // 배경색 추가
-          }}
-        ></textarea>
-      </div>
 
-      {/* 지도를 아래에 배치해야 오버레이 잘 보임 */}
-      <section className="map-section">
-        <div
-          style={{
-            margin: "5px",
-            padding: "2px 10px",
-            border: "1px solid #ccc", // 구분선 추가
-            width: "500px",
-            borderRadius: "20px", // 모서리 둥글게
-          }}
-        >
-          {/* <button
-            onClick={handleToggle}
+        {/* 지도를 아래에 배치해야 오버레이 잘 보임 */}
+        <section className="map-container">
+          <div
             style={{
-              padding: "1px",
-              backgroundColor: isToggled ? "#4CAF50" : "#f44336",
-              color: "white",
-              border: "none",
-              cursor: "pointer",
+              margin: "5px",
+              padding: "5px 5px",
+              border: "1px solid #ccc", // 구분선 추가
               width: "100%",
-              height: "30px",
-              marginBottom: "20px", // 버튼과 체크박스 사이 간격
+              borderRadius: "20px", // 모서리 둥글게
             }}
           >
-            {isToggled ? "한성대 주변 맛집 | GPT & DB 기반" : "전국 맛집 | GPT 기반"}
-          </button> */}
+            <textarea
+              readOnly
+              placeholder="필터링을 선택해보세요!"
+              className="filtering-input"
+              style={{
+                padding: "10px",            // 패딩 추가
+                border: "1px solid #ccc",    // 테두리 스타일
+                borderRadius: "10px",        // 둥근 모서리
+                resize: "none",              // 크기 조절 불가능
+                width: "80%",                // 가능한 모든 너비 차지
+                height: "12px",
+                margin: "5px",
+                marginTop: "5px",           // 상단 여백 추가
+                marginLeft: "5px",          // 좌측 여백 추가
+                color: "black",
+                backgroundColor: "white",  // 배경색 추가
+                overflow: "hidden"
+              }}
+            ></textarea>
 
-          {/* 필터링 1행 */}
-          <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
-            <label><input
-              // style={{ width: "16px", height: "16px" }}
-              type="checkbox"
-              name="option1"
-              onChange={handleCheckboxChange}
-              disabled={!isToggled} // 토글 상태에 따라 비활성화
-            />{" "}
-              [한식 맛집]</label><label>
-              <input
+            {/* 필터링 1행 */}
+            <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+              <label><input
                 // style={{ width: "16px", height: "16px" }}
                 type="checkbox"
-                name="option2"
+                name="option1"
                 onChange={handleCheckboxChange}
                 disabled={!isToggled} // 토글 상태에 따라 비활성화
               />{" "}
-              [중식 맛집]</label> <label>
-              <input
-                // style={{ width: "16px", height: "16px" }}
-                type="checkbox"
-                name="option3"
-                onChange={handleCheckboxChange}
-                disabled={!isToggled} // 토글 상태에 따라 비활성화
-              />{" "}
-              [일식 맛집]</label><label>
-              <input
-                // style={{ width: "16px", height: "16px" }}
-                type="checkbox"
-                name="option4"
-                onChange={handleCheckboxChange}
-                disabled={!isToggled} // 토글 상태에 따라 비활성화
-              />{" "}
-              [양식 맛집]</label>
-          </div>
+                [한식 맛집]</label><label>
+                <input
+                  // style={{ width: "16px", height: "16px" }}
+                  type="checkbox"
+                  name="option2"
+                  onChange={handleCheckboxChange}
+                  disabled={!isToggled} // 토글 상태에 따라 비활성화
+                />{" "}
+                [중식 맛집]</label> <label>
+                <input
+                  // style={{ width: "16px", height: "16px" }}
+                  type="checkbox"
+                  name="option3"
+                  onChange={handleCheckboxChange}
+                  disabled={!isToggled} // 토글 상태에 따라 비활성화
+                />{" "}
+                [일식 맛집]</label><label>
+                <input
+                  // style={{ width: "16px", height: "16px" }}
+                  type="checkbox"
+                  name="option4"
+                  onChange={handleCheckboxChange}
+                  disabled={!isToggled} // 토글 상태에 따라 비활성화
+                />{" "}
+                [양식 맛집]</label>
+            </div>
 
-          {/* 필터링 2행 */}
-          <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
-            <label>
-              <input
-                type="checkbox"
-                name="option10"
-                onChange={handleCheckboxChange}
-                disabled={!isToggled} // 토글 상태에 따라 비활성화
-              />{" "}
-              [평점 4점 이상]</label><label>
-              <input
-                type="checkbox"
-                name="option11"
-                onChange={handleCheckboxChange}
-                disabled={!isToggled} // 토글 상태에 따라 비활성화
-              />{" "}
-              [데이트 편한]</label><label>
-              <input
-                type="checkbox"
-                name="option11"
-                onChange={handleCheckboxChange}
-                disabled={!isToggled} // 토글 상태에 따라 비활성화
-              />{" "}
-              [가족끼리 갈만한]</label>
-          </div>
+            {/* 필터링 2행 */}
+            <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+              <label>
+                <input
+                  type="checkbox"
+                  name="option10"
+                  onChange={handleCheckboxChange}
+                  disabled={!isToggled} // 토글 상태에 따라 비활성화
+                />{" "}
+                [평점이 높은]</label><label>
+                <input
+                  type="checkbox"
+                  name="option11"
+                  onChange={handleCheckboxChange}
+                  disabled={!isToggled} // 토글 상태에 따라 비활성화
+                />{" "}
+                [데이트 할만한]</label><label>
+                <input
+                  type="checkbox"
+                  name="option11"
+                  onChange={handleCheckboxChange}
+                  disabled={!isToggled} // 토글 상태에 따라 비활성화
+                />{" "}
+                [조용한]</label><label>
+                <input
+                  type="checkbox"
+                  name="option11"
+                  onChange={handleCheckboxChange}
+                  disabled={!isToggled} // 토글 상태에 따라 비활성화
+                />{" "}
+                [가족끼리 갈만한]</label>
+            </div>
 
-          {/* 필터링 3행 */}
-          {/* <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
+            {/* 필터링 3행 */}
+            {/* <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
             <label>
               <input
                 type="checkbox"
@@ -263,11 +259,13 @@ const Main = () => {
             </label>
           </div> */}
 
-        </div>
-        {/* {memoizedChat} */}
-        <Map locatiosn={locations} />
-      </section >
-      {/* <textarea id='hiddenLatLng'>테스트</textarea> */}
+          </div>
+          {/* {memoizedChat} */}
+          {/* <Map locatiosn={locations} /> */}
+          <div className="map"><Map /></div>
+        </section >
+        {/* <textarea id='hiddenLatLng'>테스트</textarea> */}
+      </body>
     </div >
   );
 };

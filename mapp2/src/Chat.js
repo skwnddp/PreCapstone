@@ -23,6 +23,7 @@ const Chat = ({ setLocations }) => {
 
     const handleSendMessage = async () => {
         setIsLocked(true);
+        textareaRef.current.style.height = '36px';  // 채팅창 일단 잠그고 높이 초기화
         if (!userMessage) return;
 
         const newMessage = {
@@ -127,17 +128,19 @@ const Chat = ({ setLocations }) => {
                 const filteringInputValue = document.querySelector('.filtering-input').value;
 
                 // 프롬프트 설정
-                prompt = `추천 맛집 정보는 아래와 같이 제공해줘:
+                prompt = '대한민국에서 ' + userMessage + `, 정확한 위도 경도, 추천 맛집 정보를 아래와 같이 제공해줘:
                 - [NAME]맛집명[/NAME]
                 - [INFO]간단한 설명[/INFO]
                 - [LAT]숫자[/LAT]
                 - [LNG]숫자[/LNG]`;
 
                 // 필터링 입력값과 함께 프롬프트에 추가
-                prompt += `맛집 분위기는 ${filteringInputValue}`;
-                console.log(prompt)
+                if (filteringInputValue && filteringInputValue.trim() !== '') {
+                    prompt = `${filteringInputValue}` + prompt
+                }
 
                 isRestaurantRequest = true;
+                console.log(prompt)
             }
 
             const response = await axios.post(

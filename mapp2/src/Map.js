@@ -34,7 +34,17 @@ class MapManager {
                 position: window.naver.maps.Position.RIGHT_CENTER,
             },
         });
-        this.setMap(map);
+        // EX mapManager.setCenter(lat, lng); 새로운 좌표로 지도 중심 변경
+        this.setMap(map); // map 상태를 업데이트
+
+        // 반환된 map 객체를 통해 setCenter 함수 추가
+        map.setCenter(new window.naver.maps.LatLng(37.5665, 126.9780)); // 기본 중심을 설정
+
+        // 함수 추가: 주어진 a, b 좌표로 지도 중심 변경
+        this.setCenter = (a, b) => {
+            const latLng = new window.naver.maps.LatLng(a, b);
+            map.setCenter(latLng); // 새로운 좌표로 지도 중심을 설정
+        };
 
         // 이하 GPS 버튼 속성들 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
         // 버튼 생성
@@ -199,7 +209,7 @@ class PolylineManager {
 
         // 그라데이션 애니메이션 함수
         const animateGradient = () => {
-            currentTime += 0.02;  // 시간 증가
+            currentTime += 0.01;  // 시간 증가
 
             // 색상 계산 (시간에 따라 두 색상 간 부드럽게 보간)
             const r = Math.floor(startColor.r + (endColor.r - startColor.r) * currentTime);
@@ -248,25 +258,56 @@ class PolylineManager {
 }
 
 // 왜 latitude 위도만 이상한 시네마틱 값으로 전달해서 Nan 처리 되는건지 이해 불가능
-// 마커 생성, 삭제
+// 마커 및 정보 생성, 삭제
 class MarkerManager {
     constructor(map) {
         this.map = map;
         this.markers = [];
+        this.infoWindows = [];
     }
 
-    addMarker(lat, lng) {
+    // 마커 추가와 InfoWindow 생성
+    addMarker(lat, lng, restaurant = '테스트') {
         if (!this.map || !window.naver) return;
+
+        // 마커 생성
         const position = new window.naver.maps.LatLng(lat, lng);
         const marker = new window.naver.maps.Marker({
             position,
             map: this.map,
         });
-        this.markers.push(marker);
+
+        // 맛집 정보를 InfoWindow에 표시
+        const content = `
+            <div style="padding:10px; max-width:250px;">
+                <h4>${restaurant.name}</h4>
+                <p>${restaurant.description}</p>
+            </div>`;
+
+        const infoWindow = new window.naver.maps.InfoWindow({
+            content: content,
+            disableAutoPan: true,
+        });
+
+        // 마커 클릭 시 정보 창 열기
+        // window.naver.maps.Event.addListener(marker, 'click', () => {
+        //     this.closeAllInfoWindows();
+        //     infoWindow.open(this.map, marker);
+        // });
+
+        // 정보 창을 마커와 함께 즉시 열기
+        infoWindow.open(this.map, marker);
+
+        // 마커와 InfoWindow를 배열에 저장 (나중에 제거할 때 사용)
+        this.markers.push({ marker, infoWindow });
     }
 
+    // 모든 마커와 InfoWindow 제거
     removeMarkers() {
-        this.markers.forEach((marker) => marker.setMap(null));
+        this.markers.forEach(({ marker, infoWindow }) => {
+            marker.setMap(null);
+            infoWindow.close();
+        });
         this.markers = [];
     }
 }
@@ -374,6 +415,11 @@ class CoordinateSorter {
         const n = points.length;
         if (n === 0) return [];
 
+        // 포인트들을 오름차순으로 정렬
+        points.sort((a, b) => {
+            return a[0] - b[0] || a[1] - b[1]; // x, y 값에 대해 오름차순 정렬
+        });
+
         const visited = new Array(n).fill(false);
         const path = [0]; // 첫 번째 점을 시작점으로 선택
         visited[0] = true;
@@ -421,36 +467,10 @@ export const MapComponent = ({ locations }) => {
     const [coordinates, setCoordinates] = useState([]);
     const [sortedCoordinates, setSortedCoordinates] = useState([]);
     const [trigger, setTrigger] = useState(false); // 버튼 클릭 트리거 상태
-    const [isListVisible, setIsListVisible] = useState(true);
+    const [isListVisible, setIsListVisible] = useState(false);
 
-    // 버튼 클릭 시 리스트 표시/숨기기 토글
     const toggleListVisibility = () => {
-        setIsListVisible(prevState => {
-            const newState = !prevState;
-    
-            // hiddenDiv의 value 값을 가져오기
-            const hiddenDivContent = document.getElementById('hiddenDiv').value;
-            const floatingList = document.getElementById('floatingList');
-    
-            if (newState) {
-                // hiddenDiv의 내용을 실제 HTML 요소로 변환해서 추가
-                floatingList.innerHTML = ''; // 기존 내용을 초기화
-                //const tempDiv = document.createElement('div');
-                floatingList.innerHTML = hiddenDivContent;
-    
-                // tempDiv의 자식들을 floatingListButton에 추가
-                // Array.from(tempDiv.children).forEach(child => {
-                //     floatingListButton.appendChild(child);
-                //     console.log(tempDiv.children)
-                // });
-                
-            } else {
-                // 상태가 false일 때 기존 내용을 비우기
-                floatingList.innerHTML = '';
-            }
-    
-            return newState;
-        });
+        setIsListVisible(prevState => !prevState);
     };
 
     useEffect(() => {
@@ -463,7 +483,7 @@ export const MapComponent = ({ locations }) => {
     }, []);
 
     useEffect(() => {
-        if (coordinates.length > 0) {
+        if (coordinates.length > 0 && map) {
             // 기존 마커 및 폴리라인 삭제
             if (markerManager) {
                 markerManager.removeMarkers();  // 기존 마커 삭제
@@ -476,8 +496,20 @@ export const MapComponent = ({ locations }) => {
                 polylineManager.removePolyline();  // 기존 폴리라인 삭제
                 polylineManager.addPolyline(coordinates);  // 좌표 배열을 한 번에 전달하여 폴리라인 그리기
             }
+
+            // LatLngBounds 객체 생성
+            const bounds = new window.naver.maps.LatLngBounds();
+
+            // 새로운 좌표들을 모두 LatLngBounds 객체에 포함시킴
+            coordinates.forEach(coord => {
+                bounds.extend(new window.naver.maps.LatLng(coord[0], coord[1]));  // 각 좌표 추가
+            });
+
+            // 지도 범위에 맞게 확대/축소하고, 중심을 조정
+            map.fitBounds(bounds);  // fitBounds 호출하여 좌표 범위에 맞게 지도 확장
         }
-    }, [coordinates]);
+    }, [coordinates, map]);  // coordinates나 map 상태가 변경될 때마다 실행
+
 
     // map이 초기화된 후에만 생성하도록 useMemo 사용
     const polylineManager = useMemo(() => map ? new PolylineManager(map) : null, [map]);
@@ -558,35 +590,33 @@ export const MapComponent = ({ locations }) => {
         const sortedCoords = CoordinateSorter.findShortestPath(newCoordinates);
         setCoordinates(sortedCoords);
 
-        //setCoordinates(newCoordinates);  // 좌표 상태 업데이트
+        console.log(newCoordinates);
         setTrigger(true);  // 트리거 상태 변경
     };
 
     return (
         <div>
-            <div id="map" style={{ width: '100%', height: '500px' }}>
+            <div id="map" className='map'>
                 <br />
-                {isListVisible && (
-                    <div id="floatingList" style={{
-                        position: 'absolute',
-                        top: '240px', // 지도에서 리스트의 상단 위치 조정
-                        left: '42%', // 지도에서 리스트의 좌측 위치 조정
-                        width: '160px',
-                        height: '200px',
-                        border: '2px solid black',
-                        borderRadius: "10%",
-                        padding: '10px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-around',
-                        backgroundColor: 'rgba(255, 255, 255, 0.8)', // 배경 색상 투명하게 설정 (선택사항)
-                        color: 'black', // 글자는 불투명하게 설정
-                        zIndex: 1 // 리스트가 지도 위로 오도록 설정
-                    }}>
-                    </div>)}
+                <div id="floatingList" style={{
+                    visibility: isListVisible ? 'visible' : 'hidden',
+                    position: 'absolute',
+                    top: '240px', // 지도에서 리스트의 상단 위치 조정
+                    left: '42%', // 지도에서 리스트의 좌측 위치 조정
+                    width: '160px',
+                    height: '200px',
+                    border: '2px solid black',
+                    borderRadius: "10%",
+                    padding: '10px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-around',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // 배경 색상 투명하게 설정 (선택사항)
+                    color: 'black', // 글자는 불투명하게 설정
+                    zIndex: 1 // 리스트가 지도 위로 오도록 설정
+                }}></div>
                 <button
-                    id="floatingList"
-                    className="chat-button"  // 'chat-button' 클래스를 추가
+                    className="chat-button"  // 'chat-button' 클래스 재탕
                     style={{
                         position: 'absolute',
                         top: '455px', // 지도에서 리스트의 상단 위치 조정
@@ -597,32 +627,37 @@ export const MapComponent = ({ locations }) => {
                     }} onClick={toggleListVisibility}>
                     {isListVisible ? '플로팅 끄기' : '플로팅 켜기'}
                 </button>
-            </div>< br />
-            ㅡ이하 기능들은 테스트 용도이고, 추후 숨기거나 삭제할 예정입니다ㅡ < br />
-            {/* <button onClick={handleGpsClick}>현재 위치 📍</button> <span /> */}
-            < button onClick={handleAddMarker} > 한성대 마커 추가</button > <span />
-            <button onClick={handleRemoveMarkers}>전채 마커 삭제</button> <span />
-            {/* <button onClick={handleAddPolyline}>폴리라인 추가</button> 에러뜸 */}
-            <button onClick={handleRemovePolyline}>전체 폴리라인 삭제</button> <span />
-            <textarea // 직접 좌표 이동
-                style={{ height: "16px" }}
-                type="text"
-                placeholder="위도,경도로 입력"
-                onChange={handleChange}
-            />
-            <button onClick={handleMove}>위치 이동</button>
-            <br />
-            <textarea // 위도 경도 파싱
-                id="hiddenLatLng"
-                onChange={handleTextareaChange}
-                value={locations}
-                placeholder="챗봇에서 위도,경도 자동 입력
+            </div>
+
+
+            < br />
+            ㅡ이하 기능들은 테스트 용도이고, 추후 숨기거나 삭제할 예정입니다ㅡ
+            < br />
+            <div className='ㅎㅇㄷ'>
+                {/* <button onClick={handleGpsClick}>현재 위치 📍</button> <span /> */}
+                < button onClick={handleAddMarker} > 한성대 마커 추가</button > <span />
+                <button onClick={handleRemoveMarkers}>전채 마커 삭제</button> <span />
+                {/* <button onClick={handleAddPolyline}>폴리라인 추가</button> 에러뜸 */}
+                <button onClick={handleRemovePolyline}>전체 폴리라인 삭제</button> <span />
+                <textarea // 직접 좌표 이동
+                    style={{ height: "16px" }}
+                    type="text"
+                    placeholder="위도,경도로 입력"
+                    onChange={handleChange}
+                />
+                <button onClick={handleMove}>위치 이동</button>
+                <br />
+                <textarea // 위도 경도 파싱
+                    id="hiddenLatLng"
+                    onChange={handleTextareaChange}
+                    value={locations}
+                    placeholder="챗봇에서 위도,경도 자동 입력
                                 (예: 37.5825, 127.0103)"
-                style={{ width: '20%', height: '100px', whiteSpace: 'pre-line' }}
-            ></textarea>
-            <button style={{ width: "200px" }} onClick={handleButtonClick}>마커, 폴리라인 직접 추가</button>
-            <textarea id="hiddenDiv"></textarea>
-            {/* <div>
+                    style={{ width: '20%', height: '50px', whiteSpace: 'pre-line' }}
+                ></textarea>
+                {/* <button id="handleButtonClick" style={{ width: "200px" }} onClick={handleButtonClick}>마커, 폴리라인 직접 추가</button> */}
+                <textarea id="hiddenDiv"></textarea>
+                {/* <div>
                 <h1>맛집 검색</h1>
                 <input
                     type="text"
@@ -634,7 +669,9 @@ export const MapComponent = ({ locations }) => {
                 <textarea id='hiddenLatLng'>
                 </textarea>
             </div> */}
-        </div >
+            </div >
+            <button id="handleButtonClick" style={{ width: "400px" }} onClick={handleButtonClick}>맛집 마커, 폴리라인 추가 및 이동</button>
+        </div>
     );
 };
 
