@@ -1,0 +1,171 @@
+.navbar {
+    position: fixed; /* 화면 상단에 고정 */
+    top: 0; /* 페이지 상단 위치 */
+    left: 0;
+    height: 30px;
+    width: 100%; /* 네비게이션 바 전체 너비 */
+    background-color: #0d0d0d; /* 배경색 */
+    z-index: 1000; /* 다른 요소 위에 표시되도록 */
+    display: flex;
+    justify-content: space-around; /* 버튼 간 간격 균등 */
+    align-items: center;
+    padding: 20px 0;
+    gap: 70px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 살짝 그림자 추가 */
+  }
+  
+
+.main-container {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
+    background:  #181818;
+    color: white;
+}
+
+.header {
+    grid-column: span 2;
+    padding: 20px;
+    text-align: center;
+    font-size: 1.5rem;
+    color: rgb(255, 255, 255);
+}
+
+.login-btn {
+    margin-top:70px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    background-color: rgb(31, 31, 31);
+    color: rgb(235, 59, 0);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.back-btn {
+    margin-top:70px;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    background-color: rgb(31, 31, 31);
+    color: rgb(235, 59, 0);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.sidebar {
+    color:white;
+    margin-top: 100px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 20px;
+    padding: 10px;
+    height: 40px;
+    background-color: #5280ff00;
+}
+
+.map-section {
+    margin-top:70px;
+    position: relative;
+    padding: 20px;
+}
+
+.map {
+    margin-top: 40px;
+    background-color: #a7a7a7;
+    padding: 20px;
+    border-radius: 10px;
+    width: 30%;
+    height: 50%;
+}
+
+.recommendations {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #ffffff;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.view-list-btn {
+    margin-top: 10px;
+    background-color: #6c757d;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+.chat-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chat-messages {
+    flex: 1;
+    /*남은 공간을 차지하도록 */
+    overflow-y: auto;
+    /* 스크롤 가능하도록 */
+    min-height: 400px;
+    /* 원하는 세로 고정 크기 */
+    max-height: 400px;
+    /* 원하는 세로 고정 크기 */
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.chat-input-container {
+    display: flex;
+    justify-content: center;  /* 가로 중앙 정렬 */
+    align-items: center;      /* 세로 중앙 정렬 */
+    height: 100%;             /* 컨테이너가 부모의 전체 높이를 차지하도록 설정 */
+}
+
+.chat-input {
+    color:white;
+    background-color: #2f2f2f;
+    margin-right: 10px;
+    /* 버튼과의 간격 */
+    padding: 10px;
+    /* 패딩 추가 */
+    border: 1px solid #ccc;
+    /* 테두리 스타일 */
+    border-radius: 20px;
+    /* 둥근 모서리 */
+    resize: vertical;
+    /* 수직으로만 크기 조정 가능 */
+    width: 80%;
+    /* 가능한 모든 너비 차지 */
+    max-height: 150px;
+}
+
+.chat-input:focus {
+    outline: none;
+    /* 포커스 시 테두리 제거 */
+    border-color: #000000;
+    /* 포커스 시 테두리 색상 변경 */
+}
+
+.sidebar div:hover {
+    color:#cf4f00
+    /*background-color: #ffffff1f;
+    호버 시 배경색 변화*/
+}
+
+.active-tab {
+    /* background-color: #ffffffa1;
+     활성화된 탭의 배경색 비활성화*/
+    /* color: rgb(255, 0, 0);
+    활성화된 탭의 글자색 비활성화 */
+    font-weight: bold;
+    color: rgb(235, 59, 0);
+    /* 글자 두껍게 */
+}
