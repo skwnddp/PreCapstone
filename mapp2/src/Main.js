@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 // import { initMap } from './Map';
-// import { loadNaverMapScript } from './Map';
+// import { loadNaverMapScript } from './Map'; dd
 import { MapComponent } from "./Map";
 import Map from "./Map";
 import Chat from "./Chat";
@@ -70,12 +70,22 @@ const Main = () => {
   return (
     <div className="main-container">
       <header className="header">
-        <div>
+
+        {/* <div>
           <h1>내맘대로드</h1>
           <h4>지피티와 네이버 지도를 활용한 맞춤형 맛집 플랫폼</h4>
-        </div>
-        <button className="back-btn" onClick={() => navigate('/Home')}>처음으로</button>
-        <button className="login-btn">로그아웃</button>
+        </div> */}
+
+        <nav className="navbar">
+          <button className="menu-button-home" onClick={() => navigate('/Home')}><b>내맘대로드</b></button>
+          <button className="menu-button">메뉴추천</button>
+          <button className="menu-button">즐겨찾기</button>
+          <button className="menu-button">리뷰 보기</button>
+          <button className="menu-button">메인으로 이동</button>
+          <button className="login-btn">로그아웃</button>
+        </nav>
+        {/* <button className="back-btn" onClick={() => navigate('/Home')}>처음으로</button> */}
+        
       </header>
 
       {/* 탭, 챗봇, 필터링, 지도 */}

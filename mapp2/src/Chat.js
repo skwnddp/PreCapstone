@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import axios from 'axios';
 import { getFirestore, collection, setDoc, doc } from "firebase/firestore";
 import { app } from './firebase'; // firebase.js에서 app 객체 가져오기
+import './Chat.css';
 
 const db = getFirestore(app); // Firestore 초기화
 
@@ -75,6 +76,7 @@ const Chat = ({ setLocations }) => {
                 extractedRestaurants.forEach((restaurant) => {
                     const containerDiv = document.createElement('div');
                     containerDiv.innerHTML = '⭐'; // 이름 앞에 별 추가 (★ 기호 사용)
+                    containerDiv.style.color = "white";
                     containerDiv.style.display = 'flex'; // 체크박스와 이름을 한 줄에 정렬
                     containerDiv.style.alignItems = 'center'; // 수직 정렬
                     containerDiv.style.marginBottom = '10px'; // 항목 간 간격 추가
@@ -236,7 +238,7 @@ const Chat = ({ setLocations }) => {
                         <div className="timestamp" style={{ fontSize: '0.8em', color: '#888' }}>
                             {message.timestamp}
                         </div>
-                        <span>{message.sender === 'user' ? `손님: ${message.text}` : `챗봇: ${message.text}`}</span>
+                        <span>{message.sender === 'user' ? `${message.text}` : `챗봇: ${message.text}`}</span>
                     </div>
                 ))}
                 <div ref={messagesEndRef} />

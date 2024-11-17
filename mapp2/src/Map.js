@@ -55,11 +55,14 @@ class MapManager {
         button.style.right = '10px';
         button.style.zIndex = '1000';
         button.style.padding = '12px 18px';
-        button.style.background = 'linear-gradient(45deg, #050042, #00BFFF)';
-        button.style.color = '#ffffff';
-        button.style.border = 'none';
+        // button.style.background = 'linear-gradient(45deg, #050042, #00BFFF)';
+        // button.style.color = '#ffffff';
+
+        button.style.backgroundColor = 'rgb(31, 31, 31)';
+        button.style.color = 'rgb(235, 59, 0)';
         button.style.borderRadius = '30px';
         button.style.fontSize = '14px';
+        button.style.border = 'none';
         button.style.fontWeight = 'bold';
         button.style.cursor = 'pointer';
         button.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.1)';
@@ -67,24 +70,24 @@ class MapManager {
 
         // 호버 및 클릭 효과 추가
         button.addEventListener('mouseover', () => {
-            button.style.background = 'linear-gradient(45deg, #050042, #050000)';
+            button.style.background = 'linear-gradient(45deg, rgb(31, 31, 31), #4a4a4a)';
             button.style.boxShadow = '0 12px 20px rgba(0, 0, 0, 0.2)';
             button.style.transform = 'translateY(-3px)';
         });
 
         button.addEventListener('mouseout', () => {
-            button.style.background = 'linear-gradient(45deg, #050042, #00BFFF)';
+            button.style.background = 'rgb(31, 31, 31)';
             button.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.1)';
             button.style.transform = 'translateY(0)';
         });
 
         button.addEventListener('mousedown', () => {
             button.style.transform = 'translateY(2px)';
-            button.style.boxShadow = '0 5px 10px rgba(0, 0, 0, 0.1)';
+            button.style.boxShadow = '0 5px 10px rgba(0, 0, 0, 0.15)';
         });
 
         button.addEventListener('mouseup', () => {
-            button.style.transform = 'translateY(-2px)';
+            button.style.transform = 'translateY(0)';
             button.style.boxShadow = '0 12px 20px rgba(0, 0, 0, 0.2)';
         });
         // 이상 GPS 버튼 속성들 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -606,15 +609,16 @@ export const MapComponent = ({ locations }) => {
                     width: '160px',
                     height: '200px',
                     border: '2px solid black',
-                    borderRadius: "10%",
+                    borderRadius: "20px",
                     padding: '10px',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-around',
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)', // 배경 색상 투명하게 설정 (선택사항)
+                    backgroundColor: 'rgb(31, 31, 31, 0.8)', // 배경 색상 투명하게 설정 (선택사항)
                     color: 'black', // 글자는 불투명하게 설정
                     zIndex: 1 // 리스트가 지도 위로 오도록 설정
-                }}></div>
+                }}>
+                </div>
                 <button
                     className="chat-button"  // 'chat-button' 클래스 재탕
                     style={{
@@ -623,7 +627,11 @@ export const MapComponent = ({ locations }) => {
                         left: '45%', // 지도에서 리스트의 좌측 위치 조정}
                         width: '120px',
                         height: '40px',
-                        zIndex: 1 // 리스트가 지도 위로 오도록 설정
+                        zIndex: 1, // 리스트가 지도 위로 오도록 설정
+                        borderRadius: '20px',
+                        backgroundColor: 'rgb(31, 31, 31)',
+                        color: 'rgb(235, 59, 0)',
+                        fontWeight: 'bold'
                     }} onClick={toggleListVisibility}>
                     {isListVisible ? '플로팅 끄기' : '플로팅 켜기'}
                 </button>
