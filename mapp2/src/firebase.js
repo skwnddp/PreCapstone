@@ -8,7 +8,7 @@ import { getFirestore } from "firebase/firestore"; // Firestore 기능 추가
 const FierebaseApiKey = process.env.REACT_APP_FIREBASE_KEY
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDKEArk2hxmuKvkqb4DODOtCQ7Ny4341B0",
+  apiKey: FierebaseApiKey,
   authDomain: "precap-db.firebaseapp.com",
   projectId: "precap-db",
   storageBucket: "precap-db.firebasestorage.app",
