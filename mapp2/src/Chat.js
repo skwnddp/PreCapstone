@@ -166,6 +166,10 @@ const Chat = ({ setLocations }) => {
             let extractedNames;
             if (isRestaurantRequest) {
                 const nameInfoMatches = rawText.match(/\[NAME\](.*?)\[\/NAME\].*?\[INFO\](.*?)\[\/INFO\]/gs);
+                const filtering = document.querySelector('.filtering-input').value;
+                const cleanfiltering = filtering.replace(/\[|\]/g, ''); // 대괄호 제거
+                // filtering 값이 있을 경우에만 문구 추가
+                const finalfiltering = cleanfiltering ? `😁 좋아 그러면 취향에 맞춰서 \n${cleanfiltering} 맛집을 추천해볼게 \n\n` : '';
 
                 if (nameInfoMatches) {
                     extractedNames = nameInfoMatches
@@ -175,6 +179,9 @@ const Chat = ({ setLocations }) => {
                         })
                         .join('\n\n') || '추천된 맛집이 없습니다.';
                     console.log(123)
+
+                     // filtering 값이 있을 경우 finalFiltering 포함
+                    extractedNames = finalfiltering + extractedNames;
                 } else {
                     extractedNames = '추천된 맛집이 없습니다.';
                     console.log(456)
