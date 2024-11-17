@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  updatePassword,
-} from 'firebase/auth';
-import { auth } from './firebase'; // firebase.js에서 auth 객체 가져오기
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, updateProfile, updatePassword } from 'firebase/auth';
+import { auth } from './firebase';  // firebase.js에서 auth 객체 가져오기
 import './Home.css';
 
 function Home() {
@@ -15,18 +10,24 @@ function Home() {
   const [isProfileFormVisible, setProfileFormVisible] = useState(false); // 프로필 수정 양식 표시 여부
   const [username, setUsername] = useState(''); // 로그인 후 사용자 이름
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
+  const [currentPassword, setCurrentPassword] = useState(''); // 현재 비밀번호
+  const [newPassword, setNewPassword] = useState(''); // 새 비밀번호
+  const [confirmNewPassword, setConfirmNewPassword] = useState(''); // 새 비밀번호 확인
+  const [isPasswordVerified, setIsPasswordVerified] = useState(false); // 현재 비밀번호 확인 여부
   const navigate = useNavigate();
 
   const toggleLoginForm = () => {
     setLoginFormVisible(!isLoginFormVisible); // 로그인 양식 토글
     setSignUpFormVisible(false); // 회원가입 양식 숨김
     setProfileFormVisible(false); // 프로필 수정 양식 숨김
+    setIsPasswordVerified(false); // 비밀번호 확인 초기화
   };
 
   const toggleSignUpForm = () => {
     setSignUpFormVisible(!isSignUpFormVisible); // 회원가입 양식 토글
     setLoginFormVisible(false); // 로그인 양식 숨김
     setProfileFormVisible(false); // 프로필 수정 양식 숨김
+    setIsPasswordVerified(false); // 비밀번호 확인 초기화
   };
 
   const handleLoginSuccess = (name) => {
@@ -42,6 +43,7 @@ function Home() {
     setLoginFormVisible(false); // 로그인 양식 숨김
     setSignUpFormVisible(false); // 회원가입 양식도 숨김
     setProfileFormVisible(false); // 프로필 수정 양식도 숨김
+    setIsPasswordVerified(false); // 비밀번호 확인 초기화
   };
 
   const handleMenuClick = (menu) => {
@@ -60,20 +62,53 @@ function Home() {
     setSignUpFormVisible(false); // 회원가입 양식 숨김
   };
 
+  // 현재 비밀번호 확인 함수
+  const verifyCurrentPassword = async () => {
+    try {
+      const email = auth.currentUser.email; // 현재 로그인된 사용자의 이메일
+      await signInWithEmailAndPassword(auth, email, currentPassword);  // 로그인 상태 확인
+      alert('비밀번호 인증 성공!');
+      setIsPasswordVerified(true); // 비밀번호 확인 완료
+      setCurrentPassword('');
+    } catch (error) {
+      alert('현재 비밀번호가 일치하지 않습니다.');
+    }
+  };
+
+  // 새 비밀번호 변경 함수
+  const handlePasswordChange = async () => {
+    if (newPassword !== confirmNewPassword) {
+      alert('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+      return;
+    }
+
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error('로그인된 사용자가 없습니다.');
+
+      // 새 비밀번호를 설정하는 함수
+      await updatePassword(user, newPassword);
+      alert('비밀번호가 성공적으로 변경되었습니다.');
+      toggleProfileForm(); // 비밀번호 변경 후 양식 닫기
+    } catch (error) {
+      alert('비밀번호 변경 실패: ' + error.message);
+    }
+  };
+
   return (
     <div className="home-container">
-      {/* Header Section */}
-      <header className="home-header">
-        <button className="profile-button" onClick={toggleProfileForm}>
-          👤 {/* 회원정보 아이콘 */}
+      {/* Navigation Bar Section */}
+      <nav className="navbar">
+        <button className="menu-button-home" onClick={() => navigate('/Home')}><b>내맘대로드</b></button>
+        <button className="menu-button" onClick={() => handleMenuClick('메뉴추천')}>메뉴추천</button>
+        <button className="menu-button" onClick={() => handleMenuClick('즐겨찾기')}>즐겨찾기</button>
+        <button className="menu-button" onClick={() => handleMenuClick('리뷰 보기')}>리뷰 보기</button>
+        <button className="menu-button" onClick={() => navigate('/Main')}>메인으로 이동</button>
+        <button className="profile-button" onClick={toggleProfileForm}>프로필</button>
+        <button className="login-button" onClick={isLoggedIn ? handleLogout : toggleLoginForm}>
+          {isLoggedIn ? "Logout" : (isLoginFormVisible ? "Cancel" : "Login")}
         </button>
-        <button
-          className="login-button"
-          onClick={isLoggedIn ? handleLogout : toggleLoginForm}
-        >
-          {isLoggedIn ? 'Logout' : isLoginFormVisible ? 'Cancel' : 'Login'}
-        </button>
-      </header>
+      </nav>
 
       {/* Main Content Section */}
       <div className="home-content">
@@ -84,64 +119,81 @@ function Home() {
         {isLoggedIn && <h2>환영합니다, {username.split('@')[0]}님!</h2>}
 
         {/* 로그인 양식 또는 회원가입 양식 보이기 */}
-        {isLoginFormVisible || isSignUpFormVisible ? (
+        {(isLoginFormVisible || isSignUpFormVisible) ? (
           <div className="form-container">
             {isLoginFormVisible ? (
-              <LoginForm
-                onLoginSuccess={handleLoginSuccess}
-                onSignUpClick={toggleSignUpForm}
-              />
+              <LoginForm onLoginSuccess={handleLoginSuccess} onSignUpClick={toggleSignUpForm} />
             ) : (
               <SignUpForm onLoginSuccess={handleLoginSuccess} />
             )}
           </div>
         ) : isProfileFormVisible && isLoggedIn ? (
-          // 프로필 수정 양식이 보일 때
-          <ProfileForm onClose={toggleProfileForm} />
+          // 프로필 수정 양식
+          <div className="profile-form-container">
+            <h2>프로필 관리</h2>
+            {/* 현재 비밀번호 확인 */}
+            {!isPasswordVerified ? (
+              <form className="form">
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="현재 비밀번호"
+                  required
+                />
+                <button
+                  type="button"
+                  className="form-submit"
+                  onClick={verifyCurrentPassword}
+                >
+                  확인
+                </button>
+              </form>
+            ) : (
+              // 새 비밀번호 변경
+              <form className="form">
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="새 비밀번호"
+                  required
+                />
+                <input
+                  type="password"
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  placeholder="새 비밀번호 확인"
+                  required
+                />
+                <button
+                  type="button"
+                  className="form-submit"
+                  onClick={handlePasswordChange}
+                >
+                  비밀번호 변경
+                </button>
+                <button
+                  type="button"
+                  className="form-toggle"
+                  onClick={toggleProfileForm}
+                >
+                  취소
+                </button>
+              </form>
+            )}
+          </div>
         ) : (
-          <>
-            {/* 메뉴 Section - 로그인 양식이 보이지 않을 때만 표시 */}
-            <nav className="menu">
-              <button
-                className="menu-button"
-                onClick={() => handleMenuClick('메뉴추천')}
-              >
-                메뉴추천
-              </button>
-              <button
-                className="menu-button"
-                onClick={() => handleMenuClick('즐겨찾기')}
-              >
-                즐겨찾기
-              </button>
-              <button
-                className="menu-button"
-                onClick={() => handleMenuClick('리뷰 보기')}
-              >
-                리뷰 보기
-              </button>
-              <button
-                className="menu-button"
-                onClick={() => navigate('/Main')}
-              >
-                임시 버튼 : 메인으로 이동
-              </button>
-            </nav>
-
-            {/* 검색 Section - 로그인 양식이 보이지 않을 때만 표시 */}
-            <form className="search-container" onSubmit={handleSearch}>
-              <button className="hamburger">☰</button>
-              <input
-                type="text"
-                name="search"
-                className="search-input"
-                placeholder="한성대 입구역 근처 삼겹살집 추천해줘"
-              />
-              <button type="submit" className="search-button">
-                🔍
-              </button>
-            </form>
-          </>
+          <form className="search-container" onSubmit={handleSearch}>
+            <button className="hamburger">☰</button>
+            <input 
+              type="text" 
+              name="search" 
+              className="search-input" 
+              placeholder="검색"
+            />
+            <button type="submit" className="search-button">검색하기</button>
+          </form>
         )}
       </div>
     </div>
@@ -155,38 +207,41 @@ const LoginForm = ({ onLoginSuccess, onSignUpClick }) => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
+    const auth = getAuth(); // Firebase auth 객체 가져오기
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      onLoginSuccess(email); // 로그인 성공 후, 이메일을 사용자 이름으로 설정
+      // 로그인 시도
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // 로그인 성공
+      onLoginSuccess(user.displayName); // 사용자 이름을 설정
+
       setEmail('');
       setPassword('');
     } catch (error) {
-      alert('로그인 실패: ' + error.message);
+      alert("로그인 실패: " + error.message);
     }
   };
 
   return (
     <form onSubmit={handleLogin} className="form">
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
+      <input 
+        type="email" 
+        value={email} 
+        onChange={(e) => setEmail(e.target.value)} 
+        placeholder="Email" 
+        required 
       />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
+      <input 
+        type="password" 
+        value={password} 
+        onChange={(e) => setPassword(e.target.value)} 
+        placeholder="Password" 
+        required 
       />
-      <button type="submit" className="form-submit">
-        Login
-      </button>
-      <button type="button" className="form-toggle" onClick={onSignUpClick}>
-        회원가입
-      </button>
+      <button type="submit" className="form-submit">Login</button>
+      <button type="button" className="form-toggle" onClick={onSignUpClick}>회원가입</button>
     </form>
   );
 };
@@ -199,111 +254,68 @@ const SignUpForm = ({ onLoginSuccess }) => {
 
   const handleSignUp = async (event) => {
     event.preventDefault();
-    if (password === confirmPassword) {
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        onLoginSuccess(email); // 회원가입 성공 후, 이메일을 사용자 이름으로 설정
-        setEmail('');
-        setPassword('');
-        setConfirmPassword('');
-      } catch (error) {
-        alert('회원가입 실패: ' + error.message);
+    if (password !== confirmPassword) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    const auth = getAuth(); // Firebase auth 객체 가져오기
+
+    try {
+      // 이메일 중복 확인
+      const methods = await fetchSignInMethodsForEmail(auth, email); // 이메일로 등록된 방법 확인
+      if (methods.length > 0) {
+        alert("이미 가입된 이메일입니다. 다른 이메일을 사용해주세요.");
+        return;
       }
-    } else {
-      alert('비밀번호가 일치하지 않습니다.');
+
+      // 회원가입 진행
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // 사용자 이름 설정
+      await updateProfile(user, {
+        displayName: email.split('@')[0], // 예: 이메일 앞부분을 이름으로 설정
+      });
+
+      onLoginSuccess(user.displayName); // 설정된 사용자 이름으로 로그인 처리
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+    } catch (error) {
+      alert("회원가입 실패: " + error.message);
     }
   };
 
   return (
     <form onSubmit={handleSignUp} className="form">
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
+      <input 
+        type="email" 
+        value={email} 
+        onChange={(e) => setEmail(e.target.value)} 
+        placeholder="Email" 
+        required 
       />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
+      <input 
+        type="password" 
+        value={password} 
+        onChange={(e) => setPassword(e.target.value)} 
+        placeholder="Password" 
+        required 
       />
-      <input
-        type="password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        placeholder="Confirm Password"
-        required
+      <input 
+        type="password" 
+        value={confirmPassword} 
+        onChange={(e) => setConfirmPassword(e.target.value)} 
+        placeholder="Confirm Password" 
+        required 
       />
-      <button type="submit" className="form-submit">
-        Sign Up
-      </button>
-    </form>
-  );
-};
-
-// 프로필 관리(비밀번호 변경) 컴포넌트
-const ProfileForm = ({ onClose }) => {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
-
-  const handlePasswordChange = async () => {
-    if (newPassword !== confirmNewPassword) {
-      alert('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
-      return;
-    }
-
-    try {
-      const user = auth.currentUser;
-      if (user) {
-        await updatePassword(user, newPassword);
-        alert('비밀번호가 성공적으로 변경되었습니다.');
-        onClose();
-      } else {
-        alert('로그인한 사용자 정보가 없습니다.');
-      }
-    } catch (error) {
-      alert('비밀번호 변경 실패: ' + error.message);
-    }
-  };
-
-  return (
-    <form className="form">
-      <h3>비밀번호 변경</h3>
-      <input
-        type="password"
-        value={currentPassword}
-        onChange={(e) => setCurrentPassword(e.target.value)}
-        placeholder="현재 비밀번호"
-        required
-      />
-      <input
-        type="password"
-        value={newPassword}
-        onChange={(e) => setNewPassword(e.target.value)}
-        placeholder="새 비밀번호"
-        required
-      />
-      <input
-        type="password"
-        value={confirmNewPassword}
-        onChange={(e) => setConfirmNewPassword(e.target.value)}
-        placeholder="새 비밀번호 확인"
-        required
-      />
-      <button type="button" className="form-submit" onClick={handlePasswordChange}>
-        비밀번호 변경
-      </button>
-      <button type="button" className="form-toggle" onClick={onClose}>
-        취소
-      </button>
+      <button type="submit" className="form-submit">Sign Up</button>
     </form>
   );
 };
 
 export default Home;
+
 
 
