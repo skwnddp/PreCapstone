@@ -17,7 +17,30 @@ const Chat = ({ setLocations }) => {
     const textareaRef = useRef(null);
     const [checkedRestaurants, setCheckedRestaurants] = useState([]);
     const [selectedInfo, setSelectedInfo] = useState([]); // 추가: Info 탭에 전달할 상태
+    const [text, setText] = useState("");
+    const [images, setImages] = useState([null]); // 여러 이미지를 저장할 배열
 
+    // 키워드에 대응하는 이미지 맵
+    const imageMap = {
+        "한성": "/Boogi.png",
+        "맛집": "/Spoon.png",
+        // 추가적인 키워드와 이미지 매핑을 할 수 있습니다
+    };
+
+    useEffect(() => {
+        // 텍스트에 키워드가 포함되면 해당 키워드에 맞는 이미지를 배열에 추가
+        const matchedImages = Object.keys(imageMap).filter(keyword => text.includes(keyword)).map(keyword => imageMap[keyword]);
+
+        if (matchedImages.length > 0) {
+            setImages(matchedImages); // 매칭된 이미지 목록 업데이트
+        } else {
+            setImages([]); // 매칭된 이미지가 없으면 배열 초기화
+        }
+    }, [text, imageMap]);
+
+    const handleChange = (e) => {
+        setText(e.target.value); // 텍스트 입력 시 상태 업데이트
+    };
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -374,7 +397,7 @@ const Chat = ({ setLocations }) => {
             setMessages((prevMessages) => [
                 ...prevMessages,
                 { sender: 'gpt', text: '서버와 연결할 수 없습니다. 다시 시도해 주세요.', timestamp: new Date().toLocaleString() },
-            ]);
+            ]); setIsLocked(false)
         } finally {
             setUserMessage('');
         }
@@ -397,7 +420,11 @@ const Chat = ({ setLocations }) => {
                 <textarea
                     ref={textareaRef}
                     value={userMessage}
-                    onChange={(e) => setUserMessage(e.target.value)}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        setUserMessage(value); // setUserMessage 호출 위치 수정
+                        setText(value);
+                    }}
                     placeholder="'맛집' 키워드를 넣어서 입력해보세요!"
                     className="chat-input"
                     disabled={isLocked}
@@ -409,6 +436,7 @@ const Chat = ({ setLocations }) => {
                                 handleSendMessage();
                             }
                         }
+                        handleChange(e);
                     }}
                     style={{ resize: 'none' }}
                     onInput={(e) => {
@@ -417,6 +445,26 @@ const Chat = ({ setLocations }) => {
                         e.target.style.height = `${newHeight}px`;
                     }}
                 />
+                {images.map((imageSrc, index) => (
+                    <div
+                        key={index}
+                        style={{
+                            opacity: 1,
+                            transform: "translateY(0)", // 이미지가 나타날 때의 효과
+                            transition: "opacity 1s ease-in-out, transform 1s ease-in-out", // 전환 효과
+                            position: "absolute",
+                            top: "600px", // 이미지가 겹치지 않도록 위치 조정
+                            left: `${-80 + index * -40}px`, // 가운데 정렬
+                            transform: "translateX(-50%)", // 정확히 가운데 정렬
+                        }}
+                    >
+                        <img
+                            src={imageSrc} // 동적으로 이미지 URL 변경
+                            alt="..."
+                            style={{ width: "150px", height: "150px" }}
+                        />
+                    </div>
+                ))}
                 <button className="chat-button" onClick={handleSendMessage}>전송</button>
             </div>
             <Info infoData={selectedInfo} />

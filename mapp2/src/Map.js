@@ -469,6 +469,7 @@ class MoveLocation {
     };
 }
 
+// 그리드, 선분 교차 판정 알고리즘
 class CoordinateSorter {
     // 두 점 사이의 거리 계산 메서드
     static calculateDistance(point1, point2) {
@@ -587,7 +588,7 @@ export const MapComponent = ({ locations }) => {
             const initializedMap = mapManager.initMap();
             setMap(initializedMap);
             initCustomOverlay();
-            // 맵 로드 이후 커스텀 오버레이 함수 강제 호출 > 클래스 인스턴스 Lazy하게 생성 ㄱㄱ
+            // 맵 로드 이후 커스텀 오버레이 함수 강제 호출 > 클래스 인스턴스 Lazy 하게 생성 ㄱㄱ
         });
         return () => removeScript();
     }, []);
@@ -626,14 +627,19 @@ export const MapComponent = ({ locations }) => {
 
             // LatLngBounds 객체 생성
             const bounds = new window.naver.maps.LatLngBounds();
+            // 현재 줌 레벨 가져오기
+            const currentZoom = map.getZoom();
 
             // 새로운 좌표들을 모두 LatLngBounds 객체에 포함시킴
             coordinates.forEach(coord => {
                 bounds.extend(new window.naver.maps.LatLng(coord[0], coord[1]));  // 각 좌표 추가
             });
 
-            // 지도 범위에 맞게 확대/축소하고, 중심을 조정
-            map.fitBounds(bounds);  // fitBounds 호출하여 좌표 범위에 맞게 지도 확장
+            // fitBounds 호출하여 좌표 범위에 맞게 지도 확장
+            console.log(bounds);
+            map.fitBounds(bounds);
+            // 줌 레벨 보정
+            map.setZoom(currentZoom - 1);
         }
     }, [coordinates, map]);  // coordinates나 map 상태가 변경될 때마다 실행
 
@@ -689,12 +695,12 @@ export const MapComponent = ({ locations }) => {
             return [lat, lng];
         }).filter(([lat, lng]) => !isNaN(lat) && !isNaN(lng));  // 유효한 좌표만 필터링
 
-         // 새로운 배열로 상태 업데이트 해야만 정렬 방지되네...
-         setCoordinates([...newCoordinates]);
+        // 새로운 배열로 상태 업데이트 해야만 정렬 방지되네...
+        setCoordinates([...newCoordinates]);
 
-         // 최단 거리 정렬로 대체
-         const sortedCoords = CoordinateSorter.findShortestPath(newCoordinates);
-         setSortedCoordinates([...sortedCoords]); 
+        // 최단 거리 정렬로 대체
+        const sortedCoords = CoordinateSorter.findShortestPath(newCoordinates);
+        setSortedCoordinates([...sortedCoords]);
     };
 
     // 버튼 클릭 시 마커와 폴리라인 그리기
@@ -709,10 +715,10 @@ export const MapComponent = ({ locations }) => {
             return [lat, lng];
         }).filter(([lat, lng]) => !isNaN(lat) && !isNaN(lng));  // 유효한 좌표만 필터링
 
-        console.log(inputText);
-        console.log(newCoordinates); // 여기에서 자동으로 정렬이 되는 이유가 머임??
+        // console.log(inputText);
+        // console.log(newCoordinates); // 여기에서 자동으로 정렬이 되는 이유가 머임??
 
-         // 새로운 배열로 상태 업데이트 해야만 정렬 방지되네...
+        // 새로운 배열로 상태 업데이트 해야만 정렬 이벤트 호출이 방지되네...
         setCoordinates([...newCoordinates]);
 
         // 최단 거리 정렬로 대체
@@ -765,6 +771,7 @@ export const MapComponent = ({ locations }) => {
             < br />
             ㅡ이하 기능들은 테스트 용도이고, 추후 숨기거나 삭제할 예정입니다ㅡ
             < br />
+
             <div className='hide'>
                 {/* <button onClick={handleGpsClick}>현재 위치 📍</button> <span /> */}
                 < button onClick={handleAddMarker} > 한성대 마커 추가</button > <span />
