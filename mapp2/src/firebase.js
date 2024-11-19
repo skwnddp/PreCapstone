@@ -11,7 +11,7 @@ import { HansungData } from "./HansungData"; // HansungData 가져오기
 const FierebaseApiKey = process.env.REACT_APP_FIREBASE_KEY
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_KEY,
+  apiKey: "FierebaseApiKey",
   authDomain: "precap-db.firebaseapp.com",
   projectId: "precap-db",
   storageBucket: "precap-db.firebasestorage.app",
