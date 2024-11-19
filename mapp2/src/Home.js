@@ -116,7 +116,7 @@ function Home() {
         <h1 className="title">내맘대로드</h1>
 
         {/* 로그인 후 사용자 이름 표시 */}
-        {isLoggedIn && <h2>환영합니다, {username.split('@')[0]}님!</h2>}
+        <h2>환영합니다, {isLoggedIn ? (username ? username.split('@')[0] : 'Unknown') : ''}님!</h2>
 
         {/* 로그인 양식 또는 회원가입 양식 보이기 */}
         {(isLoginFormVisible || isSignUpFormVisible) ? (
@@ -186,10 +186,10 @@ function Home() {
         ) : (
           <form className="search-container" onSubmit={handleSearch}>
             <button className="hamburger">☰</button>
-            <input 
-              type="text" 
-              name="search" 
-              className="search-input" 
+            <input
+              type="text"
+              name="search"
+              className="search-input"
               placeholder="검색"
             />
             <button type="submit" className="search-button">검색하기</button>
@@ -226,19 +226,19 @@ const LoginForm = ({ onLoginSuccess, onSignUpClick }) => {
 
   return (
     <form onSubmit={handleLogin} className="form">
-      <input 
-        type="email" 
-        value={email} 
-        onChange={(e) => setEmail(e.target.value)} 
-        placeholder="Email" 
-        required 
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        required
       />
-      <input 
-        type="password" 
-        value={password} 
-        onChange={(e) => setPassword(e.target.value)} 
-        placeholder="Password" 
-        required 
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+        required
       />
       <button type="submit" className="form-submit">Login</button>
       <button type="button" className="form-toggle" onClick={onSignUpClick}>회원가입</button>
@@ -289,26 +289,26 @@ const SignUpForm = ({ onLoginSuccess }) => {
 
   return (
     <form onSubmit={handleSignUp} className="form">
-      <input 
-        type="email" 
-        value={email} 
-        onChange={(e) => setEmail(e.target.value)} 
-        placeholder="Email" 
-        required 
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        required
       />
-      <input 
-        type="password" 
-        value={password} 
-        onChange={(e) => setPassword(e.target.value)} 
-        placeholder="Password" 
-        required 
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+        required
       />
-      <input 
-        type="password" 
-        value={confirmPassword} 
-        onChange={(e) => setConfirmPassword(e.target.value)} 
-        placeholder="Confirm Password" 
-        required 
+      <input
+        type="password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        placeholder="Confirm Password"
+        required
       />
       <button type="submit" className="form-submit">Sign Up</button>
     </form>
