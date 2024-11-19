@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, forwardRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 // MapKey 주소 안에 넣을 때 따옴표 ㄴㄴ 백틱(물결키)
 // 지도 클릭 이벤트 등록
@@ -142,6 +142,7 @@ class PolylineManager {
         this.polylines = []; // 폴리라인 상태를 클래스 속성으로 관리
     }
 
+    // 사용 보류
     addCustomPolyline = () => {
         // 폴리라인의 경로를 설정
         const path = [
@@ -200,7 +201,7 @@ class PolylineManager {
         const polyline = new window.naver.maps.Polyline({
             path: path, // 전달된 경로 좌표
             strokeColor: 'rgb(188, 188, 188)',  // 초기 색상 (흰색)
-            strokeWeight: 20,                   // 폴리라인 두께
+            strokeWeight: 10,                   // 폴리라인 두께
             strokeOpacity: 0.5,
             map: this.map,
         });
@@ -260,56 +261,157 @@ class PolylineManager {
     };
 }
 
-// 왜 latitude 위도만 이상한 시네마틱 값으로 전달해서 Nan 처리 되는건지 이해 불가능
+// CustomOverlay 변수를 전역에서 선언
+let CustomOverlay = null;
+
+// 네이버 지도 API가 로드된 후 CustomOverlay 클래스 정의 및 그리기
+function initCustomOverlay() {
+    if (window.naver && window.naver.maps) {
+        // console.log("커스텀 오버레이 다중 이니셜라이징")
+        CustomOverlay = class extends window.naver.maps.OverlayView {
+            constructor({ position, content, map }) {
+                super();
+                this.position = position;
+                this.content = content;
+                this.map = map;
+                this.div = null;
+
+                // 오버레이를 지도에 추가
+                this.setMap(map);
+            }
+
+            // 오버레이가 지도에 추가될 때 호출
+            onAdd() {
+                const div = document.createElement('div');
+                div.style.position = 'absolute';
+                div.style.padding = '12px';
+                div.style.background = 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)';
+                // 그라데이션
+                div.style.borderRadius = '20px';
+                div.style.textAlign = 'center';
+                div.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.3)';
+                div.style.fontWeight = 'bold';
+                div.style.fontSize = '16px';
+                div.style.color = 'white !important';
+
+                // 3D 회전 애니메이션
+                div.style.animation = 'rotate3D 4s infinite linear';
+
+                // 파싱 작업
+                console.log(this.content);
+                const ParseResult = this.content.match(/>([^<]*)</g);
+
+                const modifiedResult = ParseResult.map(match => {
+
+                    const text = match.slice(0, match.length);
+                    const modifiedText = text.slice(2, text.length - 1);
+                    const resultWithPrefix = '🍚 ' + modifiedText;  // 임의로 추가할 문자
+
+                    return resultWithPrefix;
+                });
+
+                // 결과를 div에 설정
+                div.textContent = modifiedResult.join(", ");  // 여러 개의 텍스트를 구분해서 표시하려면 join 사용
+
+
+                this.div = div;
+
+                const panes = this.getPanes();
+                panes.overlayLayer.appendChild(div);
+
+                // 애니메이션 정의 추가
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes rotate3D {
+                        0% {
+                            transform: rotateX(0deg) rotateY(0deg);
+                        }
+                        40% {
+                            transform: rotateX(2deg) rotateY(60deg);
+                        }
+                        50% {
+                            transform: rotateX(0deg) rotateY(90deg);
+                        }
+                        60% {
+                            transform: rotateX(-2deg) rotateY(60deg);
+                        }
+                        100% {
+                            transform: rotateX(0deg) rotateY(0deg);
+                        }
+                    }
+                `;
+                style.color = "white";
+                document.head.appendChild(style);
+            }
+
+            // 오버레이가 새로 그려질 때마다 호출
+            draw() {
+                if (!this.div) return;
+                const projection = this.getProjection();
+                const point = projection.fromCoordToOffset(this.position);
+
+                this.div.style.left = `${point.x - this.div.offsetWidth / 2}px`;
+                this.div.style.top = `${point.y - this.div.offsetHeight - 30}px`;
+            }
+
+            // 오버레이가 지도에서 제거될 때 호출
+            onRemove() {
+                if (this.div) {
+                    this.div.parentNode.removeChild(this.div);
+                    this.div = null;
+                }
+            }
+        };
+    } else {
+        console.error("네이버 지도 API가 로드되지 않았습니다.");
+    }
+}
+
+// 왜 latitude 위도만 이상한 시네마틱 값으로 전달해서 Nan 처리 되는건지 이해 불가능 > 이유 모르겟는데 아무튼 해결됨
 // 마커 및 정보 생성, 삭제
 class MarkerManager {
     constructor(map) {
         this.map = map;
         this.markers = [];
-        this.infoWindows = [];
     }
 
-    // 마커 추가와 InfoWindow 생성
-    addMarker(lat, lng, restaurant = '테스트') {
-        if (!this.map || !window.naver) return;
+    // 마커와 오버레이 추가
+    addMarker(lat, lng, content) {
+        if (!this.map || !window.naver || !CustomOverlay) {
+            console.error("CustomOverlay가 로드되지 않았거나, 네이버 지도 API가 로드되지 않았습니다.");
+            return;
+        }
+
+        const position = new window.naver.maps.LatLng(lat, lng);
 
         // 마커 생성
-        const position = new window.naver.maps.LatLng(lat, lng);
         const marker = new window.naver.maps.Marker({
             position,
             map: this.map,
+            icon: {
+                url: './markerImage.png',
+                size: new window.naver.maps.Size(24, 24),
+                origin: new window.naver.maps.Point(0, 0),
+                anchor: new window.naver.maps.Point(0, 24)
+            },
+            animation: window.naver.maps.Animation.DROP
         });
 
-        // 맛집 정보를 InfoWindow에 표시
-        const content = `
-            <div style="padding:10px; max-width:250px;">
-                <h4>${restaurant.name}</h4>
-                <p>${restaurant.description}</p>
-            </div>`;
-
-        const infoWindow = new window.naver.maps.InfoWindow({
-            content: content,
-            disableAutoPan: true,
+        // 사용자 정의 오버레이 생성
+        const overlay = new CustomOverlay({
+            position,
+            content,
+            map: this.map,
         });
 
-        // 마커 클릭 시 정보 창 열기
-        // window.naver.maps.Event.addListener(marker, 'click', () => {
-        //     this.closeAllInfoWindows();
-        //     infoWindow.open(this.map, marker);
-        // });
-
-        // 정보 창을 마커와 함께 즉시 열기
-        infoWindow.open(this.map, marker);
-
-        // 마커와 InfoWindow를 배열에 저장 (나중에 제거할 때 사용)
-        this.markers.push({ marker, infoWindow });
+        this.markers.push({ marker, overlay });
     }
 
-    // 모든 마커와 InfoWindow 제거
+    // 모든 마커와 오버레이 제거
     removeMarkers() {
-        this.markers.forEach(({ marker, infoWindow }) => {
+        this.markers.forEach(({ marker, overlay }) => {
             marker.setMap(null);
-            infoWindow.close();
+            overlay.setMap(null);
         });
         this.markers = [];
     }
@@ -343,7 +445,7 @@ class MarkerManager {
 //     };
 // }
 
-//지도 내 latlng 기반 좌표로 이동
+// 지도 내 latlng 기반 좌표로 이동
 class MoveLocation {
     constructor(map) {
         this.map = map;
@@ -463,6 +565,8 @@ class CoordinateSorter {
 
 // 지도 컴포넌트
 export const MapComponent = ({ locations }) => {
+    console.log("컴포넌트 실행 시점");
+
     const [map, setMap] = useState(null);
     const [location, setLocation] = useState('');  // 위치 상태
     const [searchQuery, setSearchQuery] = useState('');
@@ -477,27 +581,47 @@ export const MapComponent = ({ locations }) => {
     };
 
     useEffect(() => {
+        console.log("지도 객체 초기화 시점");
         const mapManager = new MapManager(process.env.REACT_APP_MAP_KEY, setMap);
         const removeScript = mapManager.loadMapScript(() => {
             const initializedMap = mapManager.initMap();
             setMap(initializedMap);
+            initCustomOverlay();
+            // 맵 로드 이후 커스텀 오버레이 함수 강제 호출 > 클래스 인스턴스 Lazy하게 생성 ㄱㄱ
         });
         return () => removeScript();
     }, []);
 
     useEffect(() => {
         if (coordinates.length > 0 && map) {
-            // 기존 마커 및 폴리라인 삭제
-            if (markerManager) {
-                markerManager.removeMarkers();  // 기존 마커 삭제
-                coordinates.forEach(([lat, lng]) => {
-                    markerManager.addMarker(lat, lng);  // 각 좌표에 마커 추가
-                });
-            }
 
             if (polylineManager) {
                 polylineManager.removePolyline();  // 기존 폴리라인 삭제
-                polylineManager.addPolyline(coordinates);  // 좌표 배열을 한 번에 전달하여 폴리라인 그리기
+                polylineManager.addPolyline(sortedCoordinates);  // 좌표 배열을 한 번에 전달하여 정렬된 폴리라인 그리기
+            }
+
+            if (markerManager) {
+                markerManager.removeMarkers();  // 기존 마커 삭제
+
+                // hiddenDiv 요소 가져오기
+                const hiddenDiv = document.getElementById('hiddenDiv'); // 텍스트박스 요소
+                const htmlContent = hiddenDiv.value;  // 텍스트박스의 값을 가져옴 (HTML 문자열)
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlContent, 'text/html');  // 문자열을 HTML 문서로 파싱
+                const restaurantDivs = doc.querySelectorAll('div');  // 파싱된 문서에서 모든 <div> 요소 가져오기
+
+                coordinates.forEach(([lat, lng], index) => {
+                    // 짝수 인덱스에 해당하는 <div>만 사용
+                    const currentDiv = restaurantDivs[index * 2];  // 짝수 인덱스만 선택 (index * 2)
+                    const name = currentDiv ? currentDiv.textContent.trim() : ' 이름 없음 ';  // 텍스트 추출
+
+                    // 이름에 스타일을 적용하여 출력
+                    const styledName = `<div>${name}</div>`;
+
+                    // 마커 생성
+                    markerManager.addMarker(lat, lng, styledName);
+                });
             }
 
             // LatLngBounds 객체 생성
@@ -512,7 +636,6 @@ export const MapComponent = ({ locations }) => {
             map.fitBounds(bounds);  // fitBounds 호출하여 좌표 범위에 맞게 지도 확장
         }
     }, [coordinates, map]);  // coordinates나 map 상태가 변경될 때마다 실행
-
 
     // map이 초기화된 후에만 생성하도록 useMemo 사용
     const polylineManager = useMemo(() => map ? new PolylineManager(map) : null, [map]);
@@ -548,6 +671,7 @@ export const MapComponent = ({ locations }) => {
             moveLocation.handleLocationChange(location);
         }
     };
+
     const handleChange = (e) => {
         setLocation(e.target.value);  // 입력값 상태 업데이트
     };
@@ -565,16 +689,12 @@ export const MapComponent = ({ locations }) => {
             return [lat, lng];
         }).filter(([lat, lng]) => !isNaN(lat) && !isNaN(lng));  // 유효한 좌표만 필터링
 
-        // 좌표 배열을 위도(lat) 기준으로 오름차순 정렬
-        // newCoordinates.sort((a, b) => a[0] - b[0]);  // a[0]이 lat 값, a[1]이 lng 값
+         // 새로운 배열로 상태 업데이트 해야만 정렬 방지되네...
+         setCoordinates([...newCoordinates]);
 
-        // 최단 거리 정렬로 대체
-        const sortedCoords = CoordinateSorter.findShortestPath(newCoordinates);
-        setCoordinates(sortedCoords);
-        // setSortedCoordinates(sortedCoords);
-
-        // 새로운 좌표 배열을 상태에 저장
-        // setCoordinates(newCoordinates);
+         // 최단 거리 정렬로 대체
+         const sortedCoords = CoordinateSorter.findShortestPath(newCoordinates);
+         setSortedCoordinates([...sortedCoords]); 
     };
 
     // 버튼 클릭 시 마커와 폴리라인 그리기
@@ -589,11 +709,16 @@ export const MapComponent = ({ locations }) => {
             return [lat, lng];
         }).filter(([lat, lng]) => !isNaN(lat) && !isNaN(lng));  // 유효한 좌표만 필터링
 
+        console.log(inputText);
+        console.log(newCoordinates); // 여기에서 자동으로 정렬이 되는 이유가 머임??
+
+         // 새로운 배열로 상태 업데이트 해야만 정렬 방지되네...
+        setCoordinates([...newCoordinates]);
+
         // 최단 거리 정렬로 대체
         const sortedCoords = CoordinateSorter.findShortestPath(newCoordinates);
-        setCoordinates(sortedCoords);
+        setSortedCoordinates([...sortedCoords]);
 
-        console.log(newCoordinates);
         setTrigger(true);  // 트리거 상태 변경
     };
 
@@ -637,7 +762,6 @@ export const MapComponent = ({ locations }) => {
                 </button>
             </div>
 
-
             < br />
             ㅡ이하 기능들은 테스트 용도이고, 추후 숨기거나 삭제할 예정입니다ㅡ
             < br />
@@ -664,6 +788,8 @@ export const MapComponent = ({ locations }) => {
                     style={{ width: '20%', height: '50px', whiteSpace: 'pre-line' }}
                 ></textarea>
                 {/* <button id="handleButtonClick" style={{ width: "200px" }} onClick={handleButtonClick}>마커, 폴리라인 직접 추가</button> */}
+
+                {/* 플로팅 바에 가져올 내용, 지도 내 info 창에 띄울 내용 */}
                 <textarea id="hiddenDiv"></textarea>
                 {/* <div>
                 <h1>맛집 검색</h1>
@@ -677,6 +803,7 @@ export const MapComponent = ({ locations }) => {
                 <textarea id='hiddenLatLng'>
                 </textarea>
             </div> */}
+
             </div >
             <button id="handleButtonClick" style={{ width: "400px" }} onClick={handleButtonClick}>맛집 마커, 폴리라인 추가 및 이동</button>
         </div>

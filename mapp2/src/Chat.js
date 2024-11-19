@@ -3,6 +3,7 @@ import axios from 'axios';
 import { getFirestore, collection, setDoc, doc } from "firebase/firestore";
 import { app } from './firebase'; // firebase.js에서 app 객체 가져오기
 import './Chat.css';
+import { reauthenticateWithCredential } from 'firebase/auth';
 
 const db = getFirestore(app); // Firestore 초기화
 
@@ -25,6 +26,7 @@ const Chat = ({ setLocations }) => {
     const handleSendMessage = async () => {
         setIsLocked(true);
         textareaRef.current.style.height = '36px';  // 채팅창 일단 잠그고 높이 초기화
+
         if (!userMessage) return;
 
         const newMessage = {
@@ -54,6 +56,7 @@ const Chat = ({ setLocations }) => {
             // return { extractedRestaurants, restaurantNames };
 
             if (extractedRestaurants.length > 0) {
+                document.getElementById("hiddenDiv").value = '' // 히든 div 값 초기화
                 let locations = "";
 
                 extractedRestaurants.forEach((restaurant) => {
@@ -108,8 +111,8 @@ const Chat = ({ setLocations }) => {
                     containerDiv.appendChild(checkbox); // 체크박스를 먼저 추가
                     containerDiv.appendChild(nameDiv); // 이름 추가
                     document.getElementById('hiddenDiv').value += containerDiv.outerHTML; // containerDiv의 전체 HTML을 추가
-                    console.log(containerDiv.outerHTML)
-                    console.log(containerDiv)
+                    // console.log(containerDiv.outerHTML)
+                    // console.log(containerDiv)
                     listDiv.appendChild(containerDiv);
                 });
             }
@@ -168,6 +171,7 @@ const Chat = ({ setLocations }) => {
                 const nameInfoMatches = rawText.match(/\[NAME\](.*?)\[\/NAME\].*?\[INFO\](.*?)\[\/INFO\]/gs);
                 const filtering = document.querySelector('.filtering-input').value;
                 const cleanfiltering = filtering.replace(/\[|\]/g, ''); // 대괄호 제거
+                
                 // filtering 값이 있을 경우에만 문구 추가
                 const finalfiltering = cleanfiltering ? `😁 좋아 그러면 취향에 맞춰서 \n${cleanfiltering} 맛집을 추천해볼게 \n\n` : '';
 
@@ -184,10 +188,11 @@ const Chat = ({ setLocations }) => {
                     extractedNames = finalfiltering + extractedNames;
                 } else {
                     extractedNames = '추천된 맛집이 없습니다.';
-                    console.log(456)
+                    console.log("Reach is customElements get by reauthenticateWithCredentia")
                 }
             } else {
                 extractedNames = rawText; // 일반 질문일 경우 GPT 응답 그대로 출력
+                setIsLocked(false);
             }
 
             const gptMessage = {
@@ -201,6 +206,7 @@ const Chat = ({ setLocations }) => {
             // 맛집 관련 요청일 경우에만 parseRestaurants 호출
             if (isRestaurantRequest) {
                 const extractedRestaurants = parseRestaurants(rawText);
+                setIsLocked(false); // 채팅 잠금 해제
 
                 // Firestore에 검색 결과 저장
                 if (extractedRestaurants.length > 0) {
@@ -232,7 +238,6 @@ const Chat = ({ setLocations }) => {
                 { sender: 'gpt', text: '서버와 연결할 수 없습니다. 다시 시도해 주세요.', timestamp: new Date().toLocaleString() },
             ]);
         } finally {
-            setIsLocked(false);
             setUserMessage('');
         }
     };
@@ -274,7 +279,7 @@ const Chat = ({ setLocations }) => {
                         e.target.style.height = `${newHeight}px`;
                     }}
                 />
-                <button class="chat-button" onClick={handleSendMessage}>전송</button>
+                <button className="chat-button" onClick={handleSendMessage}>전송</button>
             </div>
         </section>
     ), [messages, userMessage]);

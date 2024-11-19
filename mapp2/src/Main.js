@@ -47,7 +47,6 @@ const Main = () => {
   const handleLocationUpdate = (newLocation) => {
     setLocations(newLocation);
   };
-  console.log(setLocations);
 
   const memoizedChat = useMemo(
     () => <Chat onLocationChange={handleLocationUpdate} />,
@@ -68,7 +67,7 @@ const Main = () => {
   // 렌더링이 매번 되는 이슈 > 부모 Main에서 관리하던가 따로 손봐줘야 돼서 귀찮아짐 > 썡 div 생성
 
   return (
-    <div className="main-container">
+    <main className="main-container">
       <header className="header">
 
         {/* <div>
@@ -276,7 +275,7 @@ const Main = () => {
         </section >
         {/* <textarea id='hiddenLatLng'>테스트</textarea> */}
       </body>
-    </div >
+    </main >
   );
 };
 
