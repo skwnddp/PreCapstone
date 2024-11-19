@@ -19,6 +19,27 @@ const Chat = ({ setLocations }) => {
     const [selectedInfo, setSelectedInfo] = useState([]); // 추가: Info 탭에 전달할 상태
     const [text, setText] = useState("");
     const [images, setImages] = useState([null]); // 여러 이미지를 저장할 배열
+    const [hello, setHello] = useState(true); // "웰컴" 메시지 상태를 setHello로 변경
+    const chatMessagesRef = useRef(null); // chat-messages div를 참조하는 ref
+
+    // useEffect로 chat-messages 내부 div 요소가 변할 때마다 체크
+    useEffect(() => {
+        const chatMessagesDiv = chatMessagesRef.current;
+
+        // chat-messages 내에 div 요소가 없으면 hello 메시지 표시
+        if (chatMessagesDiv && chatMessagesDiv.getElementsByTagName('div').length === 0) {
+            setHello(true);
+        } else {
+            setHello(false); // div가 있으면 hello 메시지 숨김
+        }
+    }, []); // 첫 렌더링 시 한번만 실행
+
+    // 메시지를 추가하는 함수
+    const addMessage = () => {
+        const newDiv = document.createElement('div');
+        newDiv.textContent = '새로운 메시지';
+        chatMessagesRef.current.appendChild(newDiv); // chat-messages에 새로운 div 추가
+    };
 
     // 키워드에 대응하는 이미지 맵
     const imageMap = {
@@ -36,7 +57,7 @@ const Chat = ({ setLocations }) => {
         } else {
             setImages([]); // 매칭된 이미지가 없으면 배열 초기화
         }
-    }, [text, imageMap]);
+    }, [text]);
 
     const handleChange = (e) => {
         setText(e.target.value); // 텍스트 입력 시 상태 업데이트
@@ -50,8 +71,10 @@ const Chat = ({ setLocations }) => {
     }, [messages]);
 
     const handleSendMessage = async () => {
+        setImages([]); // 이미지 숨기기
         setIsLocked(true);
         textareaRef.current.style.height = '36px';  // 채팅창 일단 잠그고 높이 초기화
+
 
         if (!userMessage) return;
 
@@ -406,6 +429,23 @@ const Chat = ({ setLocations }) => {
     const memoizedChat = useMemo(() => (
         <section className="chat-section">
             <div className="chat-messages">
+                {hello ?
+                    (
+                        <div style={{ color: 'white' }}>
+                            <div style={{ marginBottom: '80px' }}></div> {/* 여백을 추가 */}
+                            <h1 style={{ textAlign: 'center', fontSize: '32px' }}>
+                                <strong>내맘대로드 | 맞춤형 맛집 플랫폼</strong>
+                            </h1>
+                            <div style={{ marginBottom: '20px' }}></div> {/* 여백을 추가 */}
+                            <ul style={{ fontSize: '16px' }}>
+                                <p>"한성" 혹은 "맛집" 키워드를 넣어보세요</p>
+                                <p>'한성'은 DB를 통해서 학교 주변의 정확한 맛집 정보를</p>
+                                <p>'맛집'은 GPT를 통해서 전국의 맛집 정보를 알려드려요</p>
+                                <p>지금 바로 채팅을 시작해보세요</p>
+                            </ul>
+                        </div>
+                    )
+                    : (null)}
                 {messages.map((message, index) => (
                     <div key={index} className={`chat-message ${message.sender}`} style={{ color: message.sender === 'user' ? 'white' : 'pink' }}>
                         <div className="timestamp" style={{ fontSize: '0.8em', color: '#888' }}>
@@ -447,6 +487,7 @@ const Chat = ({ setLocations }) => {
                 />
                 {images.map((imageSrc, index) => (
                     <div
+                        id="imageDiv"
                         key={index}
                         style={{
                             opacity: 1,
@@ -454,21 +495,25 @@ const Chat = ({ setLocations }) => {
                             transition: "opacity 1s ease-in-out, transform 1s ease-in-out", // 전환 효과
                             position: "absolute",
                             top: "600px", // 이미지가 겹치지 않도록 위치 조정
-                            left: `${-80 + index * -40}px`, // 가운데 정렬
+                            left: `${-(80 + index * 40)}px`, // 가운데 정렬
                             transform: "translateX(-50%)", // 정확히 가운데 정렬
                         }}
                     >
                         <img
                             src={imageSrc} // 동적으로 이미지 URL 변경
-                            alt=""
-                            style={{ width: "150px", height: "150px" }}
+                            alt="'맛집' 혹은 '한성' 키워드를 입력해보세요"
+                            style={{
+                                width: "150px",
+                                height: "150px",
+                                display: imageSrc ? 'block' : 'none' // 이미지가 로드되지 않으면 표시하지 않음
+                            }}
                         />
                     </div>
                 ))}
                 <button className="chat-button" onClick={handleSendMessage}>전송</button>
             </div>
             <Info infoData={selectedInfo} />
-        </section>
+        </section >
     ), [messages, userMessage]);
 
     return memoizedChat;
