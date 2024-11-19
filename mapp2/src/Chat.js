@@ -460,7 +460,7 @@ const Chat = ({ setLocations }) => {
                     >
                         <img
                             src={imageSrc} // 동적으로 이미지 URL 변경
-                            alt="..."
+                            alt=""
                             style={{ width: "150px", height: "150px" }}
                         />
                     </div>
