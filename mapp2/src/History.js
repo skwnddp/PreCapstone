@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getFirestore, collection, onSnapshot, doc, deleteDoc, setDoc } from "firebase/firestore";
+import { getFirestore, collection, query, orderBy, limit, onSnapshot, doc, deleteDoc, setDoc } from "firebase/firestore";
 import { app } from './firebase';
 
 const db = getFirestore(app);
@@ -9,25 +9,38 @@ function History() {
 
     // Firestore에서 실시간으로 맛집 데이터 가져오기
     useEffect(() => {
-        const unsubscribe = onSnapshot(collection(db, "searchHistory"), (snapshot) => {
+        const q = query(
+            collection(db, "searchHistory"), 
+            orderBy("timestamp", "desc"), // 최신순으로 정렬
+            limit(8) // 최대 8개만 가져옴
+        );
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
             const fetchedRestaurants = [];
             snapshot.docs.forEach((doc) => {
                 const data = doc.data();
-                data.results.forEach((result) => {
-                    fetchedRestaurants.push({
-                        id: `${doc.id}-${result.name}`, // 고유 ID 생성
-                        docId: doc.id, // 원본 문서 ID
-                        name: result.name,
-                        description: result.description,
-                    });
+                const results = data.results || []; // 결과 배열이 없을 경우 빈 배열 처리
+            results.forEach((result) => {
+                fetchedRestaurants.push({
+                    id: `${doc.id}-${result.name}`,
+                    docId: doc.id,
+                    name: result.name,
+                    description: result.description,
+                    timestamp: result.timestamp || data.timestamp, // 문서나 결과의 timestamp 사용
                 });
             });
-            setRestaurants(fetchedRestaurants);
         });
 
-        // 컴포넌트가 언마운트될 때 실시간 리스너 해제
-        return () => unsubscribe();
-    }, []);
+        // 전체 데이터를 최신순으로 정렬한 후, 최대 8개만 유지
+        const limitedRestaurants = fetchedRestaurants
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+            .slice(0, 8);
+
+        setRestaurants(limitedRestaurants);
+    });
+
+    return () => unsubscribe();
+}, []);
 
     // 맛집 삭제
     const deleteRestaurant = async (id, docId, name) => {
