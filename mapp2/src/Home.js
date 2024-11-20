@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, updateProfile, updatePassword } from 'firebase/auth';
 import { auth } from './firebase';  // firebase.js에서 auth 객체 가져오기
 import './Home.css';
+import { onAuthStateChanged } from 'firebase/auth';
 
 function Home() {
   const [isLoginFormVisible, setLoginFormVisible] = useState(false); // 로그인 양식 표시 여부
@@ -95,6 +96,22 @@ function Home() {
     }
   };
 
+  // Firebase에서 로그인 상태 확인 및 변경
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUsername(user.displayName || user.email); // 로그인한 사용자 이름 또는 이메일을 설정
+        setIsLoggedIn(true); // 로그인 상태 true로 설정
+      } else {
+        setUsername('');
+        setIsLoggedIn(false); // 로그아웃 상태로 설정
+      }
+    });
+
+    // 클린업 함수 (컴포넌트가 언마운트될 때 구독 취소)
+    return () => unsubscribe();
+  }, []); // 빈 배열로 마운트 시 한 번만 실행되도록 설정
+
   return (
     <div className="home-container">
       {/* Navigation Bar Section */}
@@ -116,7 +133,7 @@ function Home() {
         <h1 className="title">내맘대로드</h1>
 
         {/* 로그인 후 사용자 이름 표시 */}
-        <h2>환영합니다, {isLoggedIn ? (username ? username.split('@')[0] : 'Unknown') : ''}님!</h2>
+        {isLoggedIn && <h2>환영합니다, {username.split('@')[0]}님!</h2>}
 
         {/* 로그인 양식 또는 회원가입 양식 보이기 */}
         {(isLoginFormVisible || isSignUpFormVisible) ? (
@@ -186,10 +203,10 @@ function Home() {
         ) : (
           <form className="search-container" onSubmit={handleSearch}>
             <button className="hamburger">☰</button>
-            <input
-              type="text"
-              name="search"
-              className="search-input"
+            <input 
+              type="text" 
+              name="search" 
+              className="search-input" 
               placeholder="검색"
             />
             <button type="submit" className="search-button">검색하기</button>
@@ -226,19 +243,19 @@ const LoginForm = ({ onLoginSuccess, onSignUpClick }) => {
 
   return (
     <form onSubmit={handleLogin} className="form">
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
+      <input 
+        type="email" 
+        value={email} 
+        onChange={(e) => setEmail(e.target.value)} 
+        placeholder="Email" 
+        required 
       />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
+      <input 
+        type="password" 
+        value={password} 
+        onChange={(e) => setPassword(e.target.value)} 
+        placeholder="Password" 
+        required 
       />
       <button type="submit" className="form-submit">Login</button>
       <button type="button" className="form-toggle" onClick={onSignUpClick}>회원가입</button>
@@ -289,26 +306,26 @@ const SignUpForm = ({ onLoginSuccess }) => {
 
   return (
     <form onSubmit={handleSignUp} className="form">
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
+      <input 
+        type="email" 
+        value={email} 
+        onChange={(e) => setEmail(e.target.value)} 
+        placeholder="Email" 
+        required 
       />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
+      <input 
+        type="password" 
+        value={password} 
+        onChange={(e) => setPassword(e.target.value)} 
+        placeholder="Password" 
+        required 
       />
-      <input
-        type="password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        placeholder="Confirm Password"
-        required
+      <input 
+        type="password" 
+        value={confirmPassword} 
+        onChange={(e) => setConfirmPassword(e.target.value)} 
+        placeholder="Confirm Password" 
+        required 
       />
       <button type="submit" className="form-submit">Sign Up</button>
     </form>
@@ -316,6 +333,4 @@ const SignUpForm = ({ onLoginSuccess }) => {
 };
 
 export default Home;
-
-
 
