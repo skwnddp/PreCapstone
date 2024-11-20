@@ -123,7 +123,7 @@ function Home() {
         <button className="menu-button" onClick={() => navigate('/Main')}>메인으로 이동</button>
         <button className="profile-button" onClick={toggleProfileForm}>프로필</button>
         <button className="login-button" onClick={isLoggedIn ? handleLogout : toggleLoginForm}>
-          {isLoggedIn ? "Logout" : (isLoginFormVisible ? "Cancel" : "Login")}
+          {isLoggedIn ? "로그아웃" : (isLoginFormVisible ? "Cancel" : "로그인")}
         </button>
       </nav>
 

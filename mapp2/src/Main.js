@@ -90,14 +90,18 @@ const Main = () => {
   return (
     <main className="main-container">
       <header className="header">
-
         {/* <div>
           <h1>내맘대로드</h1>
           <h4>지피티와 네이버 지도를 활용한 맞춤형 맛집 플랫폼</h4>
         </div> */}
 
         <nav className="navbar">
-          <button className="menu-button-home" onClick={() => navigate('/Home')}><b>내맘대로드</b></button>
+          <button
+            className="menu-button-home"
+            onClick={() => navigate("/Home")}
+          >
+            <b>내맘대로드</b>
+          </button>
           <button className="menu-button">메뉴추천</button>
           <button className="menu-button">즐겨찾기</button>
           <button className="menu-button">리뷰 보기</button>
@@ -105,7 +109,6 @@ const Main = () => {
           <button className="login-btn">로그아웃</button>
         </nav>
         {/* <button className="back-btn" onClick={() => navigate('/Home')}>처음으로</button> */}
-
       </header>
 
       {/* 탭, 챗봇, 필터링, 지도 */}
@@ -142,8 +145,7 @@ const Main = () => {
             >
               맛집정보
             </div>
-            <>
-            </>
+            <></>
           </nav>
           <section className="content-section">
             {/* {renderTabContent()} */}
@@ -161,16 +163,24 @@ const Main = () => {
                 setLocations={setLocations}
               />
             </div>
-            <div style={{ display: activeTab === "즐겨찾기" ? "block" : "none" }}>
+            <div
+              style={{ display: activeTab === "즐겨찾기" ? "block" : "none" }}
+            >
               <Favorites />
             </div>
-            <div style={{ display: activeTab === "리뷰보기" ? "block" : "none" }}>
+            <div
+              style={{ display: activeTab === "리뷰보기" ? "block" : "none" }}
+            >
               <Review />
             </div>
-            <div style={{ display: activeTab === "검색내역" ? "block" : "none" }}>
+            <div
+              style={{ display: activeTab === "검색내역" ? "block" : "none" }}
+            >
               <History />
             </div>
-            <div style={{ display: activeTab === "맛집정보" ? "block" : "none" }}>
+            <div
+              style={{ display: activeTab === "맛집정보" ? "block" : "none" }}
+            >
               <Info />
             </div>
           </section>
@@ -192,23 +202,30 @@ const Main = () => {
               placeholder="필터링을 선택해보세요!"
               className="filtering-input"
               style={{
-                padding: "10px",            // 패딩 추가
-                border: "2px solid rgb(235, 59, 0)",    // 테두리 스타일
-                borderRadius: "15px",        // 둥근 모서리
-                resize: "none",              // 크기 조절 불가능
-                width: "95%",                // 가능한 모든 너비 차지
+                padding: "10px", // 패딩 추가
+                border: "2px solid rgb(235, 59, 0)", // 테두리 스타일
+                borderRadius: "15px", // 둥근 모서리
+                resize: "none", // 크기 조절 불가능
+                width: "95%", // 가능한 모든 너비 차지
                 height: "12px",
                 margin: "5px",
-                marginTop: "5px",           // 상단 여백 추가
-                marginLeft: "5px",          // 좌측 여백 추가
+                marginTop: "5px", // 상단 여백 추가
+                marginLeft: "5px", // 좌측 여백 추가
                 color: "white",
-                backgroundColor: "transparent",  // 배경색 추가
+                backgroundColor: "transparent", // 배경색 추가
                 overflow: "hidden",
                 whiteSpace: "nowrap", // 줄 바꿈 방지 (JS에서는 camelCase로 작성)
               }}
             ></textarea>
 
-            <div style={{ display: "flex", gap: "5px", marginLeft: "5px", marginBottom: "5px",}}>
+            <div
+              style={{
+                display: "flex",
+                gap: "5px",
+                marginLeft: "5px",
+                marginBottom: "5px",
+              }}
+            >
               {[
                 { name: "option1", label: "한식 🍚" },
                 { name: "option2", label: "중식 🥮" },
@@ -250,19 +267,27 @@ const Main = () => {
                   fontWeight: "bold",
                   marginLeft: "240px",
                   padding: "8px 12px",
-                  backgroundColor: "rgb(31, 31, 31)", // DarkGray 색상
-                  color: "rgb(235, 59, 0)", // 텍스트 색상 
+                  backgroundColor: "#2f2f2f", // DarkGray 색상
+                  color: "rgb(235, 59, 0)", // 텍스트 색상
                   border: "none",
                   borderRadius: 20,
                   cursor: "pointer",
                   fontSize: "14px",
+                  // border: "0.1em solid", // 실선 두께 설정
                 }}
               >
                 초기화 ⟳
               </button>
             </div>
 
-            <div style={{ display: "flex", gap: "5px", marginLeft: "5px", marginBottom: "5px" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "5px",
+                marginLeft: "5px",
+                marginBottom: "5px",
+              }}
+            >
               {[
                 { name: "option10", label: "평점이 높은 😍" },
                 { name: "option11", label: "데이트 할만한 💑" },
@@ -311,15 +336,16 @@ const Main = () => {
               [배달 가능]
             </label>
           </div> */}
-
           </div>
           {/* {memoizedChat} */}
           {/* <Map locatiosn={locations} /> */}
-          <div className="map"><Map /></div>
-        </section >
+          <div className="map">
+            <Map />
+          </div>
+        </section>
         {/* <textarea id='hiddenLatLng'>테스트</textarea> */}
       </body>
-    </main >
+    </main>
   );
 };
 

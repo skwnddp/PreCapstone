@@ -5,26 +5,33 @@
 
 /* Navbar Styles */
 .navbar {
-  position: fixed; /* 화면 상단에 고정 */
-  top: 0; /* 페이지 상단 위치 */
+  position: fixed;
+  /* 화면 상단에 고정 */
+  top: 0;
+  /* 페이지 상단 위치 */
   left: 0;
   height: 30px;
-  width: 100%; /* 네비게이션 바 전체 너비 */
-  background-color: #0d0d0d; /* 배경색 */
-  z-index: 1000; /* 다른 요소 위에 표시되도록 */
+  width: 100%;
+  /* 네비게이션 바 전체 너비 */
+  background-color: #0d0d0d;
+  /* 배경색 */
+  z-index: 1000;
+  /* 다른 요소 위에 표시되도록 */
   display: flex;
-  justify-content: space-around; /* 버튼 간 간격 균등 */
+  justify-content: space-around;
+  /* 버튼 간 간격 균등 */
   align-items: center;
   padding: 20px 0;
   gap: 70px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 살짝 그림자 추가 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  /* 살짝 그림자 추가 */
 }
 
 .home-container {
   margin-top: 50px;
   background: #181818;
   color: #000000;
-  min-height: 100vh;
+  min-height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -106,6 +113,7 @@
   color: #ffffff;
   cursor: pointer;
 }
+
 .menu-button-home {
   /*font-family: "Chewy", system-ui;*/
   font-family: "Gugi", sans-serif;
@@ -139,7 +147,7 @@
 
 .search-input {
   font-size: 18px;
-  color:white;
+  color: white;
   flex: 1;
   background-color: transparent;
   border: none;
@@ -162,43 +170,54 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px; /* 중앙 정렬을 위해 마진 추가 */
+  margin-top: 20px;
+  /* 중앙 정렬을 위해 마진 추가 */
 }
 
 .form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #252525; /* 양식 배경 색상 */
+  background-color: #252525;
+  /* 양식 배경 색상 */
   padding: 30px;
   border-radius: 25px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .form input {
-  color:white;
-  background-color:#181818;
+  color: white;
+  background-color: #181818;
   margin: 5px 0;
   padding: 10px;
   border-radius: 10px;
   border: #181818;
-  width: 100%; /* 양식 너비 */
+  width: 100%;
+  /* 양식 너비 */
 }
 
-.form-submit, .form-toggle {
+.form-submit,
+.form-toggle {
   margin-top: 20px;
-  background-color: #181818; /* 버튼 배경 색상 */
-  color: #fff; /* 버튼 글자 색상 */
+  background-color: #181818;
+  /* 버튼 배경 색상 */
+  color: #fff;
+  /* 버튼 글자 색상 */
   border: none;
   padding: 10px 15px;
-  border-radius: 15px; /* 버튼 경계선 둥글게 */
+  border-radius: 15px;
+  /* 버튼 경계선 둥글게 */
   cursor: pointer;
-  width: 80%; /* 버튼 너비 */
+  width: 80%;
+  /* 버튼 너비 */
 }
 
 .form-toggle {
-  margin-top: 10px; /* 버튼 사이 간격 */
-  background-color: rgb(235, 59, 0); /* 회원가입 버튼 배경색 투명 */
-  color: #fff; /* 회원가입 버튼 글자 색상 */
+  margin-top: 10px;
+  /* 버튼 사이 간격 */
+  background-color: rgb(235, 59, 0);
+  /* 회원가입 버튼 배경색 투명 */
+  color: #fff;
+  /* 회원가입 버튼 글자 색상 */
   width: 80%;
 }

@@ -638,8 +638,8 @@ export const MapComponent = ({ locations }) => {
             // fitBounds 호출하여 좌표 범위에 맞게 지도 확장
             console.log(bounds);
             map.fitBounds(bounds);
-            // 줌 레벨 보정
-            map.setZoom(currentZoom - 1);
+            // 줌 레벨 보정 누적 돼서 일단 빼기
+            // map.setZoom(currentZoom - 1);
         }
     }, [coordinates, map]);  // coordinates나 map 상태가 변경될 때마다 실행
 
@@ -774,7 +774,7 @@ export const MapComponent = ({ locations }) => {
             ㅡ이하 기능들은 테스트 용도이고, 추후 숨기거나 삭제할 예정입니다ㅡ
             < br />
 
-            <div className='hide'>
+            <div className='hi123de'>
                 {/* <button onClick={handleGpsClick}>현재 위치 📍</button> <span /> */}
                 < button onClick={handleAddMarker} > 한성대 마커 추가</button > <span />
                 <button onClick={handleRemoveMarkers}>전채 마커 삭제</button> <span />
