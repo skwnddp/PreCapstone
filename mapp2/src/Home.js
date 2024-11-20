@@ -133,7 +133,7 @@ function Home() {
         <h1 className="title">내맘대로드</h1>
 
         {/* 로그인 후 사용자 이름 표시 */}
-        {isLoggedIn && <h2>환영합니다, {username.split('@')[0]}님!</h2>}
+        <h2 style={{ color: 'white' }}>환영합니다, {isLoggedIn ? (username ? username.split('@')[0] : 'Unknown') : ''}님!</h2>
 
         {/* 로그인 양식 또는 회원가입 양식 보이기 */}
         {(isLoginFormVisible || isSignUpFormVisible) ? (
@@ -333,4 +333,3 @@ const SignUpForm = ({ onLoginSuccess }) => {
 };
 
 export default Home;
-

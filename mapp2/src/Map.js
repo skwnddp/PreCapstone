@@ -734,8 +734,10 @@ export const MapComponent = ({ locations }) => {
                 <br />
                 <div id="floatingList" style={{
                     visibility: isListVisible ? 'visible' : 'hidden',
+                    opacity: isListVisible ? 1 : 0, // opacity로 부드럽게 사라지거나 나타나도록 설정
+                    transition: 'visibility 0s, opacity 0.5s ease', // visibility와 opacity에 전환 효과 추가
                     position: 'absolute',
-                    top: '240px', // 지도에서 리스트의 상단 위치 조정
+                    top: '280px', // 지도에서 리스트의 상단 위치 조정
                     left: '42%', // 지도에서 리스트의 좌측 위치 조정
                     width: '160px',
                     height: '200px',
@@ -754,7 +756,7 @@ export const MapComponent = ({ locations }) => {
                     className="chat-button"  // 'chat-button' 클래스 재탕
                     style={{
                         position: 'absolute',
-                        top: '455px', // 지도에서 리스트의 상단 위치 조정
+                        top: '495px', // 지도에서 리스트의 상단 위치 조정
                         left: '45%', // 지도에서 리스트의 좌측 위치 조정}
                         width: '120px',
                         height: '40px',

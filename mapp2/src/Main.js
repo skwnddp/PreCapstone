@@ -16,14 +16,30 @@ const Main = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("채팅하기");
   const [locations, setLocations] = useState("");
-  const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션들
   const [isToggled, setIsToggled] = useState(true);
+  const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션들
 
-  const handleToggle = () => {
-    setIsToggled((prev) => !prev);
+  const options = Array.from({ length: 20 }, (_, i) => ({
+    name: `option${i + 1}`,
+  }));
+
+  const [checkboxes, setCheckboxes] = useState(
+    options.reduce((acc, option) => ({ ...acc, [option.name]: false }), {})
+  );
+
+  const resetCheckboxes = () => {
+    // option1부터 option20까지 해제
+    const resetState = options.reduce(
+      (acc, option) => ({ ...acc, [option.name]: false }),
+      {}
+    );
+    setSelectedOptions([]); // 빈 배열로 초기화
+    setCheckboxes(resetState);
+    document.getElementById("filtering-input").textContent = "";
   };
 
   const handleCheckboxChange = (event) => {
+    const { name, checked } = event.target;
     const chatInput = document.querySelector(".filtering-input");
     if (!chatInput) return;
 
@@ -39,8 +55,13 @@ const Main = () => {
       updatedOptions = selectedOptions.filter((option) => option !== keyword);
     }
 
+    setCheckboxes((prev) => ({ ...prev, [name]: checked }));
     setSelectedOptions(updatedOptions); // 선택된 옵션들 업데이트
     chatInput.textContent = updatedOptions.join(" "); // 업데이트된 텍스트를 chat-input에 적용
+  };
+
+  const handleToggle = () => {
+    setIsToggled((prev) => !prev);
   };
 
   // `Chat`에서 받은 `location`을 업데이트하는 함수
@@ -84,7 +105,7 @@ const Main = () => {
           <button className="login-btn">로그아웃</button>
         </nav>
         {/* <button className="back-btn" onClick={() => navigate('/Home')}>처음으로</button> */}
-        
+
       </header>
 
       {/* 탭, 챗봇, 필터링, 지도 */}
@@ -167,6 +188,7 @@ const Main = () => {
             }}
           >
             <textarea
+              id="filtering-input"
               readOnly
               placeholder="필터링을 선택해보세요!"
               className="filtering-input"
@@ -175,84 +197,106 @@ const Main = () => {
                 border: "1px solid #ccc",    // 테두리 스타일
                 borderRadius: "10px",        // 둥근 모서리
                 resize: "none",              // 크기 조절 불가능
-                width: "80%",                // 가능한 모든 너비 차지
+                width: "95%",                // 가능한 모든 너비 차지
                 height: "12px",
                 margin: "5px",
                 marginTop: "5px",           // 상단 여백 추가
                 marginLeft: "5px",          // 좌측 여백 추가
                 color: "black",
                 backgroundColor: "white",  // 배경색 추가
-                overflow: "hidden"
+                overflow: "hidden",
+                whiteSpace: "nowrap", // 줄 바꿈 방지 (JS에서는 camelCase로 작성)
               }}
             ></textarea>
 
-            {/* 필터링 1행 */}
-            <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
-              <label><input
-                // style={{ width: "16px", height: "16px" }}
-                type="checkbox"
-                name="option1"
-                onChange={handleCheckboxChange}
-                disabled={!isToggled} // 토글 상태에 따라 비활성화
-              />{" "}
-                [한식 맛집]</label><label>
-                <input
-                  // style={{ width: "16px", height: "16px" }}
-                  type="checkbox"
-                  name="option2"
-                  onChange={handleCheckboxChange}
-                  disabled={!isToggled} // 토글 상태에 따라 비활성화
-                />{" "}
-                [중식 맛집]</label> <label>
-                <input
-                  // style={{ width: "16px", height: "16px" }}
-                  type="checkbox"
-                  name="option3"
-                  onChange={handleCheckboxChange}
-                  disabled={!isToggled} // 토글 상태에 따라 비활성화
-                />{" "}
-                [일식 맛집]</label><label>
-                <input
-                  // style={{ width: "16px", height: "16px" }}
-                  type="checkbox"
-                  name="option4"
-                  onChange={handleCheckboxChange}
-                  disabled={!isToggled} // 토글 상태에 따라 비활성화
-                />{" "}
-                [양식 맛집]</label>
+            <div style={{ display: "flex", gap: "5px", marginLeft: "5px", marginBottom: "5px" }}>
+              {[
+                { name: "option1", label: "한식 🍚" },
+                { name: "option2", label: "중식 🥮" },
+                { name: "option3", label: "일식 🍣" },
+                { name: "option4", label: "양식 🍕" },
+                { name: "option5", label: "배달 가능 🏍️" },
+                { name: "option6", label: "포장 가능 🥡" },
+              ].map((item) => (
+                <label
+                  key={item.name}
+                  className={`filter-label ${!isToggled ? "disabled" : ""}`}
+                >
+                  <input
+                    type="checkbox"
+                    name={item.name}
+                    checked={checkboxes[item.name]}
+                    onChange={handleCheckboxChange}
+                    disabled={!isToggled}
+                    style={{
+                      width: "18px", // 크기 살짝 줄임
+                      height: "18px",
+                      accentColor: "#4CAF50",
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: "14px", // 글자 크기 줄임
+                      fontWeight: "bold",
+                      color: "#000", // 검은색 글자
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                </label>
+              ))}
+              <button
+                onClick={resetCheckboxes}
+                style={{
+                  marginLeft: "240px",
+                  padding: "8px 12px",
+                  backgroundColor: "#0c0090", // 블루 색상
+                  color: "#fff", // 텍스트 색상은 여전히 화이트
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                }}
+              >
+                초기화 ⟳
+              </button>
             </div>
 
-            {/* 필터링 2행 */}
-            <div style={{ display: "flex", gap: "20px", marginBottom: "10px" }}>
-              <label>
-                <input
-                  type="checkbox"
-                  name="option10"
-                  onChange={handleCheckboxChange}
-                  disabled={!isToggled} // 토글 상태에 따라 비활성화
-                />{" "}
-                [평점이 높은]</label><label>
-                <input
-                  type="checkbox"
-                  name="option11"
-                  onChange={handleCheckboxChange}
-                  disabled={!isToggled} // 토글 상태에 따라 비활성화
-                />{" "}
-                [데이트 할만한]</label><label>
-                <input
-                  type="checkbox"
-                  name="option11"
-                  onChange={handleCheckboxChange}
-                  disabled={!isToggled} // 토글 상태에 따라 비활성화
-                />{" "}
-                [조용한]</label><label>
-                <input
-                  type="checkbox"
-                  name="option11"
-                  onChange={handleCheckboxChange}
-                  disabled={!isToggled} // 토글 상태에 따라 비활성화
-                />{" "}
-                [가족끼리 갈만한]</label>
+            <div style={{ display: "flex", gap: "5px", marginLeft: "5px", marginBottom: "5px" }}>
+              {[
+                { name: "option10", label: "평점이 높은 😍" },
+                { name: "option11", label: "데이트 할만한 💑" },
+                { name: "option12", label: "조용한 🤫" },
+                { name: "option13", label: "가족끼리 갈만한 👩‍👩‍👧" },
+                { name: "option14", label: "낭만적인 🎑" },
+              ].map((item) => (
+                <label
+                  key={item.name}
+                  className={`filter-label ${!isToggled ? "disabled" : ""}`}
+                >
+                  <input
+                    type="checkbox"
+                    name={item.name}
+                    checked={checkboxes[item.name]}
+                    onChange={handleCheckboxChange}
+                    disabled={!isToggled}
+                    style={{
+                      width: "18px", // 크기 살짝 줄임
+                      height: "18px",
+                      accentColor: "#4CAF50", // 체크박스 색상
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: "14px", // 글자 크기 줄임
+                      fontWeight: "bold",
+                      color: "#000", // 검은색 글자
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                </label>
+              ))}
             </div>
 
             {/* 필터링 3행 */}

@@ -261,6 +261,7 @@ const Chat = ({ setLocations }) => {
                             const nameDiv = document.createElement('div');
                             nameDiv.textContent = `⭐ ${restaurant.name}`;
 
+                            // 수정 필요!!!!!!!!!!!!!!!!!!!!!!
                             // 이름 클릭 이벤트 추가
                             nameDiv.addEventListener('click', async () => {
                                 try {
@@ -433,15 +434,18 @@ const Chat = ({ setLocations }) => {
                     (
                         <div style={{ color: 'white' }}>
                             <div style={{ marginBottom: '80px' }}></div> {/* 여백을 추가 */}
-                            <h1 style={{ textAlign: 'center', fontSize: '32px' }}>
-                                <strong>내맘대로드 | 맞춤형 맛집 플랫폼</strong>
-                            </h1>
-                            <div style={{ marginBottom: '20px' }}></div> {/* 여백을 추가 */}
+                            <div style={{ textAlign: 'left', fontSize: '32px' }}>
+                                <strong>🍴 맞춤형 맛집 플랫폼</strong><br/>
+                            </div>
+                            <div style={{ textAlign: 'right', fontSize: '32px' }}>
+                                <strong>"내맘대로드" 🍴</strong>
+                            </div>
+                            <div style={{ marginBottom: '30px' }}></div> {/* 여백을 추가 */}
                             <ul style={{ fontSize: '16px' }}>
-                                <p>"한성" 혹은 "맛집" 키워드를 넣어보세요</p>
-                                <p>'한성'은 DB를 통해서 학교 주변의 정확한 맛집 정보를</p>
-                                <p>'맛집'은 GPT를 통해서 전국의 맛집 정보를 알려드려요</p>
-                                <p>지금 바로 채팅을 시작해보세요</p>
+                                <p>🚩 "한성" 혹은 "맛집" 키워드를 넣어보세요</p>
+                                <p>🚩 "한성" 은 DB를 통해서 학교 주변의 정확한 맛집 정보를</p>
+                                <p>🚩 "맛집" 은 GPT를 통해서 전국의 맛집 정보를 알려드려요</p>
+                                <p>⌨️ 지금 바로 채팅을 시작해보세요</p>
                             </ul>
                         </div>
                     )
