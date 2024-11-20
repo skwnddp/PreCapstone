@@ -195,7 +195,7 @@ body {
 .active-tab {
     border-radius: 20px;
     background-color: rgba(255, 255, 255, 0.1);
-    color: rgb(180, 0, 0);
+    color: rgb(235, 59, 0);
     /* 활성화된 탭의 글자색 비활성화 */
     font-weight: bold;
     /* 글자 두껍게 */

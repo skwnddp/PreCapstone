@@ -147,7 +147,7 @@ function Home() {
         ) : isProfileFormVisible && isLoggedIn ? (
           // 프로필 수정 양식
           <div className="profile-form-container">
-            <h2>프로필 관리</h2>
+            <h2 style={{color:"rgb(235,59,0"}}>프로필 관리</h2>
             {/* 현재 비밀번호 확인 */}
             {!isPasswordVerified ? (
               <form className="form">
@@ -163,7 +163,7 @@ function Home() {
                   className="form-submit"
                   onClick={verifyCurrentPassword}
                 >
-                  확인
+                  <span style={{color:"rgb(235,59,0)", fontWeight:"bold"}}>확인</span>
                 </button>
               </form>
             ) : (
@@ -188,14 +188,14 @@ function Home() {
                   className="form-submit"
                   onClick={handlePasswordChange}
                 >
-                  비밀번호 변경
+                  <span style={{fontWeight: "bold", color: "rgb(235,59,0"}}>비밀번호 변경</span>
                 </button>
                 <button
                   type="button"
                   className="form-toggle"
                   onClick={toggleProfileForm}
                 >
-                  취소
+                  <span style={{fontWeight:"bold"}}>취소</span>
                 </button>
               </form>
             )}
@@ -212,6 +212,7 @@ function Home() {
             <button type="submit" className="search-button">검색하기</button>
           </form>
         )}
+        
       </div>
     </div>
   );
@@ -254,11 +255,11 @@ const LoginForm = ({ onLoginSuccess, onSignUpClick }) => {
         type="password" 
         value={password} 
         onChange={(e) => setPassword(e.target.value)} 
-        placeholder="Password" 
+        placeholder="비밀번호" 
         required 
       />
-      <button type="submit" className="form-submit">Login</button>
-      <button type="button" className="form-toggle" onClick={onSignUpClick}>회원가입</button>
+      <button type="submit" className="form-submit"><span style={{color: "rgb(235,59,0", fontWeight: "bold"}}>로그인</span></button>
+      <button type="button" className="form-toggle" onClick={onSignUpClick}><span style={{fontWeight: "bold"}}>회원가입</span></button>
     </form>
   );
 };
@@ -317,17 +318,17 @@ const SignUpForm = ({ onLoginSuccess }) => {
         type="password" 
         value={password} 
         onChange={(e) => setPassword(e.target.value)} 
-        placeholder="Password" 
+        placeholder="비밀번호" 
         required 
       />
       <input 
         type="password" 
         value={confirmPassword} 
         onChange={(e) => setConfirmPassword(e.target.value)} 
-        placeholder="Confirm Password" 
+        placeholder="비밀번호 재입력" 
         required 
       />
-      <button type="submit" className="form-submit">Sign Up</button>
+      <button type="submit" className="form-submit"><span style={{fontWeight: "bold", color: "rgb(235,59,0"}}>회원가입 완료</span></button>
     </form>
   );
 };

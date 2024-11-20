@@ -182,7 +182,6 @@ const Main = () => {
             style={{
               margin: "5px",
               padding: "5px 5px",
-              border: "1px solid #ccc", // 구분선 추가
               width: "100%",
               borderRadius: "20px", // 모서리 둥글게
             }}
@@ -194,22 +193,22 @@ const Main = () => {
               className="filtering-input"
               style={{
                 padding: "10px",            // 패딩 추가
-                border: "1px solid #ccc",    // 테두리 스타일
-                borderRadius: "10px",        // 둥근 모서리
+                border: "2px solid rgb(235, 59, 0)",    // 테두리 스타일
+                borderRadius: "15px",        // 둥근 모서리
                 resize: "none",              // 크기 조절 불가능
                 width: "95%",                // 가능한 모든 너비 차지
                 height: "12px",
                 margin: "5px",
                 marginTop: "5px",           // 상단 여백 추가
                 marginLeft: "5px",          // 좌측 여백 추가
-                color: "black",
-                backgroundColor: "white",  // 배경색 추가
+                color: "white",
+                backgroundColor: "transparent",  // 배경색 추가
                 overflow: "hidden",
                 whiteSpace: "nowrap", // 줄 바꿈 방지 (JS에서는 camelCase로 작성)
               }}
             ></textarea>
 
-            <div style={{ display: "flex", gap: "5px", marginLeft: "5px", marginBottom: "5px" }}>
+            <div style={{ display: "flex", gap: "5px", marginLeft: "5px", marginBottom: "5px",}}>
               {[
                 { name: "option1", label: "한식 🍚" },
                 { name: "option2", label: "중식 🥮" },
@@ -248,12 +247,13 @@ const Main = () => {
               <button
                 onClick={resetCheckboxes}
                 style={{
+                  fontWeight: "bold",
                   marginLeft: "240px",
                   padding: "8px 12px",
-                  backgroundColor: "#0c0090", // 블루 색상
-                  color: "#fff", // 텍스트 색상은 여전히 화이트
+                  backgroundColor: "rgb(31, 31, 31)", // DarkGray 색상
+                  color: "rgb(235, 59, 0)", // 텍스트 색상 
                   border: "none",
-                  borderRadius: "4px",
+                  borderRadius: 20,
                   cursor: "pointer",
                   fontSize: "14px",
                 }}

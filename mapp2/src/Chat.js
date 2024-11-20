@@ -434,14 +434,14 @@ const Chat = ({ setLocations }) => {
                     (
                         <div style={{ color: 'white' }}>
                             <div style={{ marginBottom: '80px' }}></div> {/* 여백을 추가 */}
-                            <div style={{ textAlign: 'left', fontSize: '32px' }}>
+                            <div style={{ textAlign: 'left', fontSize: '28px', color:"rgb(235,59,0)", fontFamily: "'Gugi', sans-serif" }}>
                                 <strong>🍴 맞춤형 맛집 플랫폼</strong><br/>
                             </div>
-                            <div style={{ textAlign: 'right', fontSize: '32px' }}>
+                            <div style={{ textAlign: 'right', fontSize: '32px', color: "rgb(235, 59, 0)", fontFamily: "'Gugi', sans-serif" }}>
                                 <strong>"내맘대로드" 🍴</strong>
                             </div>
                             <div style={{ marginBottom: '30px' }}></div> {/* 여백을 추가 */}
-                            <ul style={{ fontSize: '16px' }}>
+                            <ul style={{ fontSize: '16px'}}>
                                 <p>🚩 "한성" 혹은 "맛집" 키워드를 넣어보세요</p>
                                 <p>🚩 "한성" 은 DB를 통해서 학교 주변의 정확한 맛집 정보를</p>
                                 <p>🚩 "맛집" 은 GPT를 통해서 전국의 맛집 정보를 알려드려요</p>
