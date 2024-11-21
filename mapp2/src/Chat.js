@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import {
   getFirestore,
@@ -30,6 +31,26 @@ const Chat = ({ setLocations }) => {
   const [images, setImages] = useState([null]); // 여러 이미지를 저장할 배열
   const [hello, setHello] = useState(true); // "웰컴" 메시지 상태를 setHello로 변경
   const chatMessagesRef = useRef(null); // chat-messages div를 참조하는 ref
+  const location = useLocation();
+  const { searchInput } = location.state || {}; // Main에서 전달된 searchInput 값 받기
+  const [inputValue, setInputValue] = useState(searchInput || ""); // 상태로 관리
+
+  // `searchInput`이 존재하면 textarea에 값을 설정
+  useEffect(() => {
+    if (textareaRef.current && searchInput) {
+      textareaRef.current.value = searchInput;
+      setUserMessage(searchInput)
+    }
+    setInputValue('');
+    console.log(userMessage)
+    console.log(searchInput)
+  }, [searchInput]);
+
+  useEffect(() => {
+    // inputValue 변경된 후에 실행되는 useEffect, 챗봇 호출을 위해서
+    handleSendMessage();
+    textareaRef.current.focus();
+  }, [inputValue]);
 
   // useEffect로 chat-messages 내부 div 요소가 변할 때마다 체크
   useEffect(() => {
@@ -85,11 +106,12 @@ const Chat = ({ setLocations }) => {
   }, [messages]);
 
   const handleSendMessage = async () => {
+    if (!userMessage) return;
+
     setImages([]); // 이미지 숨기기
     setIsLocked(true);
+    setUserMessage("응답 중...");
     textareaRef.current.style.height = "36px"; // 채팅창 일단 잠그고 높이 초기화
-
-    if (!userMessage) return;
 
     const newMessage = {
       sender: "user",
@@ -221,8 +243,8 @@ const Chat = ({ setLocations }) => {
           sender: "gpt",
           text: randomFive.length
             ? randomFive
-                .map((item) => `🍽️ ${item.name}\n📋 ${item.description}`)
-                .join("\n\n")
+              .map((item) => `🍽️ ${item.name}\n📋 ${item.description}`)
+              .join("\n\n")
             : "한성대와 관련된 맛집 정보를 찾을 수 없습니다.",
           timestamp: new Date().toLocaleString(),
         };
@@ -551,6 +573,7 @@ const Chat = ({ setLocations }) => {
             ref={textareaRef}
             value={userMessage}
             onChange={(e) => {
+              //setInputValue(e.target.value); // textarea 값 변경 시 상태 업데이트
               const value = e.target.value;
               setUserMessage(value); // setUserMessage 호출 위치 수정
               setText(value);

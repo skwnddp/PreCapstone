@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, updateProfile, updatePassword } from 'firebase/auth';
 import { auth } from './firebase';  // firebase.js에서 auth 객체 가져오기
 import './Home.css';
 import { onAuthStateChanged } from 'firebase/auth';
+import { serverTimestamp } from 'firebase/firestore';
 
 function Home() {
   const [isLoginFormVisible, setLoginFormVisible] = useState(false); // 로그인 양식 표시 여부
@@ -15,6 +16,7 @@ function Home() {
   const [newPassword, setNewPassword] = useState(''); // 새 비밀번호
   const [confirmNewPassword, setConfirmNewPassword] = useState(''); // 새 비밀번호 확인
   const [isPasswordVerified, setIsPasswordVerified] = useState(false); // 현재 비밀번호 확인 여부
+  const textareaRef = useRef(null);
   const navigate = useNavigate();
 
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -60,9 +62,22 @@ function Home() {
   };
 
   const handleSearch = (event) => {
-    event.preventDefault(); // 기본 폼 제출 방지
-    const searchInput = event.target.search.value; // 검색 입력값 가져오기
-    alert(`Searching for: ${searchInput}`); // 검색어 표시
+    event.preventDefault();
+    const searchInput = document.querySelector(".search-input").value;
+
+    if (!searchInput) {
+      alert("검색어를 입력하세요!");
+      return;
+    }
+
+    // 자식 컴포넌트에서 전달된 ref를 사용
+    if (textareaRef.current) {
+      textareaRef.current.value = searchInput;
+    }
+
+    console.log(searchInput)
+
+    navigate("/Main", { state: { searchInput } });
   };
 
   const toggleProfileForm = () => {
@@ -129,7 +144,7 @@ function Home() {
         <button className="menu-button" onClick={() => handleMenuClick('즐겨찾기')}>즐겨찾기</button>
         <button className="menu-button" onClick={() => handleMenuClick('리뷰 보기')}>리뷰 보기</button>
         <button className="menu-button" onClick={() => navigate('/Main')}>메인으로 이동</button>
-        
+
         {/* 라이트, 다크 모드 토글 버튼 */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <span>🌞</span>
@@ -161,7 +176,7 @@ function Home() {
           </div>
           <span>🌙</span>
         </div>
-        
+
         <button className="profile-button" onClick={toggleProfileForm}>프로필</button>
         <button className="login-button" onClick={isLoggedIn ? handleLogout : toggleLoginForm}>
           {isLoggedIn ? "로그아웃" : (isLoginFormVisible ? "Cancel" : "로그인")}
@@ -250,7 +265,7 @@ function Home() {
               className="search-input"
               placeholder="검색"
             />
-            <button type="submit" className="search-button">검색하기</button>
+            <button type="submit" className="search-button">챗봇으로 이동</button>
           </form>
         )}
 
