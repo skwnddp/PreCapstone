@@ -18,6 +18,13 @@ const Main = () => {
   const [locations, setLocations] = useState("");
   const [isToggled, setIsToggled] = useState(true);
   const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션들
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const handleLiteDarkToggle = () => {
+    setIsDarkMode((prevMode) => !prevMode);
+    document.body.style.backgroundColor = isDarkMode ? "#fff" : "#333";
+    document.body.style.color = isDarkMode ? "#000" : "#fff";
+  };
 
   const options = Array.from({ length: 20 }, (_, i) => ({
     name: `option${i + 1}`,
@@ -106,6 +113,39 @@ const Main = () => {
           <button className="menu-button">즐겨찾기</button>
           <button className="menu-button">리뷰 보기</button>
           <button className="menu-button">메인으로 이동</button>
+
+          {/* 라이트, 다크 모드 토글 버튼 */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <span>🌞</span>
+            <div
+              onClick={handleLiteDarkToggle}
+              style={{
+                width: "50px",
+                height: "25px",
+                background: isDarkMode ? "#333" : "#ccc",
+                borderRadius: "15px",
+                position: "relative",
+                cursor: "pointer",
+                transition: "background 0.3s",
+              }}
+            >
+              <div
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  background: "white",
+                  borderRadius: "50%",
+                  position: "absolute",
+                  top: "50%",
+                  left: isDarkMode ? "26px" : "4px",
+                  transform: "translateY(-50%)",
+                  transition: "left 0.3s",
+                }}
+              ></div>
+            </div>
+            <span>🌙</span>
+          </div>
+
           <button className="login-btn">로그아웃</button>
         </nav>
         {/* <button className="back-btn" onClick={() => navigate('/Home')}>처음으로</button> */}

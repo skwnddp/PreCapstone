@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, updateProfile, updatePassword } from 'firebase/auth';
 import { auth } from './firebase';  // firebase.js에서 auth 객체 가져오기
@@ -16,6 +16,14 @@ function Home() {
   const [confirmNewPassword, setConfirmNewPassword] = useState(''); // 새 비밀번호 확인
   const [isPasswordVerified, setIsPasswordVerified] = useState(false); // 현재 비밀번호 확인 여부
   const navigate = useNavigate();
+
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const handleLiteDarkToggle = () => {
+    setIsDarkMode((prevMode) => !prevMode);
+    document.body.style.backgroundColor = isDarkMode ? "#fff" : "#333";
+    document.body.style.color = isDarkMode ? "#000" : "#fff";
+  };
 
   const toggleLoginForm = () => {
     setLoginFormVisible(!isLoginFormVisible); // 로그인 양식 토글
@@ -121,6 +129,39 @@ function Home() {
         <button className="menu-button" onClick={() => handleMenuClick('즐겨찾기')}>즐겨찾기</button>
         <button className="menu-button" onClick={() => handleMenuClick('리뷰 보기')}>리뷰 보기</button>
         <button className="menu-button" onClick={() => navigate('/Main')}>메인으로 이동</button>
+        
+        {/* 라이트, 다크 모드 토글 버튼 */}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <span>🌞</span>
+          <div
+            onClick={handleLiteDarkToggle}
+            style={{
+              width: "50px",
+              height: "25px",
+              background: isDarkMode ? "#333" : "#ccc",
+              borderRadius: "15px",
+              position: "relative",
+              cursor: "pointer",
+              transition: "background 0.3s",
+            }}
+          >
+            <div
+              style={{
+                width: "20px",
+                height: "20px",
+                background: "white",
+                borderRadius: "50%",
+                position: "absolute",
+                top: "50%",
+                left: isDarkMode ? "26px" : "4px",
+                transform: "translateY(-50%)",
+                transition: "left 0.3s",
+              }}
+            ></div>
+          </div>
+          <span>🌙</span>
+        </div>
+        
         <button className="profile-button" onClick={toggleProfileForm}>프로필</button>
         <button className="login-button" onClick={isLoggedIn ? handleLogout : toggleLoginForm}>
           {isLoggedIn ? "로그아웃" : (isLoginFormVisible ? "Cancel" : "로그인")}
@@ -147,7 +188,7 @@ function Home() {
         ) : isProfileFormVisible && isLoggedIn ? (
           // 프로필 수정 양식
           <div className="profile-form-container">
-            <h2 style={{color:"rgb(235,59,0"}}>프로필 관리</h2>
+            <h2 style={{ color: "rgb(235,59,0" }}>프로필 관리</h2>
             {/* 현재 비밀번호 확인 */}
             {!isPasswordVerified ? (
               <form className="form">
@@ -163,7 +204,7 @@ function Home() {
                   className="form-submit"
                   onClick={verifyCurrentPassword}
                 >
-                  <span style={{color:"rgb(235,59,0)", fontWeight:"bold"}}>확인</span>
+                  <span style={{ color: "rgb(235,59,0)", fontWeight: "bold" }}>확인</span>
                 </button>
               </form>
             ) : (
@@ -188,14 +229,14 @@ function Home() {
                   className="form-submit"
                   onClick={handlePasswordChange}
                 >
-                  <span style={{fontWeight: "bold", color: "rgb(235,59,0"}}>비밀번호 변경</span>
+                  <span style={{ fontWeight: "bold", color: "rgb(235,59,0" }}>비밀번호 변경</span>
                 </button>
                 <button
                   type="button"
                   className="form-toggle"
                   onClick={toggleProfileForm}
                 >
-                  <span style={{fontWeight:"bold"}}>취소</span>
+                  <span style={{ fontWeight: "bold" }}>취소</span>
                 </button>
               </form>
             )}
@@ -203,16 +244,16 @@ function Home() {
         ) : (
           <form className="search-container" onSubmit={handleSearch}>
             <button className="hamburger">☰</button>
-            <input 
-              type="text" 
-              name="search" 
-              className="search-input" 
+            <input
+              type="text"
+              name="search"
+              className="search-input"
               placeholder="검색"
             />
             <button type="submit" className="search-button">검색하기</button>
           </form>
         )}
-        
+
       </div>
     </div>
   );
@@ -244,22 +285,22 @@ const LoginForm = ({ onLoginSuccess, onSignUpClick }) => {
 
   return (
     <form onSubmit={handleLogin} className="form">
-      <input 
-        type="email" 
-        value={email} 
-        onChange={(e) => setEmail(e.target.value)} 
-        placeholder="Email" 
-        required 
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        required
       />
-      <input 
-        type="password" 
-        value={password} 
-        onChange={(e) => setPassword(e.target.value)} 
-        placeholder="비밀번호" 
-        required 
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="비밀번호"
+        required
       />
-      <button type="submit" className="form-submit"><span style={{color: "rgb(235,59,0", fontWeight: "bold"}}>로그인</span></button>
-      <button type="button" className="form-toggle" onClick={onSignUpClick}><span style={{fontWeight: "bold"}}>회원가입</span></button>
+      <button type="submit" className="form-submit"><span style={{ color: "rgb(235,59,0", fontWeight: "bold" }}>로그인</span></button>
+      <button type="button" className="form-toggle" onClick={onSignUpClick}><span style={{ fontWeight: "bold" }}>회원가입</span></button>
     </form>
   );
 };
@@ -307,28 +348,28 @@ const SignUpForm = ({ onLoginSuccess }) => {
 
   return (
     <form onSubmit={handleSignUp} className="form">
-      <input 
-        type="email" 
-        value={email} 
-        onChange={(e) => setEmail(e.target.value)} 
-        placeholder="Email" 
-        required 
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        required
       />
-      <input 
-        type="password" 
-        value={password} 
-        onChange={(e) => setPassword(e.target.value)} 
-        placeholder="비밀번호" 
-        required 
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="비밀번호"
+        required
       />
-      <input 
-        type="password" 
-        value={confirmPassword} 
-        onChange={(e) => setConfirmPassword(e.target.value)} 
-        placeholder="비밀번호 재입력" 
-        required 
+      <input
+        type="password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        placeholder="비밀번호 재입력"
+        required
       />
-      <button type="submit" className="form-submit"><span style={{fontWeight: "bold", color: "rgb(235,59,0"}}>회원가입 완료</span></button>
+      <button type="submit" className="form-submit"><span style={{ fontWeight: "bold", color: "rgb(235,59,0" }}>회원가입 완료</span></button>
     </form>
   );
 };
