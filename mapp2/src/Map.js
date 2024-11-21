@@ -774,7 +774,7 @@ export const MapComponent = ({ locations }) => {
             ㅡ이하 기능들은 테스트 용도이고, 추후 숨기거나 삭제할 예정입니다ㅡ
             < br />
 
-            <div className='hide'>
+            <div className='hide111111111111111111111'>
                 {/* <button onClick={handleGpsClick}>현재 위치 📍</button> <span /> */}
                 < button onClick={handleAddMarker} > 한성대 마커 추가</button > <span />
                 <button onClick={handleRemoveMarkers}>전채 마커 삭제</button> <span />
