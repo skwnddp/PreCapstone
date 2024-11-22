@@ -12,6 +12,7 @@ import { auth } from "./firebase"; // firebase.js에서 auth 객체 가져오기
 import "./Home.css";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { serverTimestamp } from "firebase/firestore";
+import Neon from "./Neon";
 
 function Home() {
   const [isLoginFormVisible, setLoginFormVisible] = useState(false); // 로그인 양식 표시 여부
@@ -36,8 +37,8 @@ function Home() {
     const [cursorVisible, setCursorVisible] = useState(true); // 커서 가시성 상태
 
     const texts = [
-      "😍 한성대 근처 맛집 알려줘",
-      "🌆서울에서 괜찮은 맛집 알려줘",
+      "😍 한성대 근처 맛집 알려줄래",
+      "🌆 서울에서 괜찮은 일식 맛집 알려줄래",
       "🍝 건대역 근처에서 데이트하기 좋은 맛집 알려줄래",
       "❄ 국내에서 겨울에 놀러갈만한 분위기 좋은 맛집을 찾아줘",
     ]; // 여러 텍스트 배열
@@ -297,7 +298,7 @@ function Home() {
       {/* Main Content Section */}
       <div className="home-content">
         <div className="subtitle">맛집 추천 플랫폼</div>
-        <h1 className="title">내맘대로드</h1>
+        <Neon><h1 className="title">내맘대로드</h1></Neon>
 
         {/* 로그인 후 사용자 이름 표시 */}
         <h2 style={{ color: "white" }}>
