@@ -257,7 +257,6 @@ const Main = () => {
               placeholder="필터링을 선택해보세요!"
               className="filtering-input"
               style={{
-                fontSize: "14px",
                 padding: "10px", // 패딩 추가
                 border: "2px solid rgb(235, 60, 0)", // 테두리 스타일
                 borderRadius: "15px", // 둥근 모서리
