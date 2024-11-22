@@ -25,8 +25,78 @@ function Home() {
   const [isPasswordVerified, setIsPasswordVerified] = useState(false); // 현재 비밀번호 확인 여부
   const textareaRef = useRef(null);
   const navigate = useNavigate();
-
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isTyping, setIsTyping] = useState(false); // 타이핑 중 여부 상태
+
+  const TextEffect = () => {
+    const [currentTextIndex, setCurrentTextIndex] = useState(0);
+    const [index, setIndex] = useState(0); // 텍스트 인덱스 상태
+    const [isDeleting, setIsDeleting] = useState(false); // 삭제 상태
+    const [isPaused, setIsPaused] = useState(false); // 일시정지 상태
+    const [cursorVisible, setCursorVisible] = useState(true); // 커서 가시성 상태
+
+    const texts = [
+      "😍 한성대 근처 맛집 알려줘",
+      "🌆서울에서 괜찮은 맛집 알려줘",
+      "🍝 건대역 근처에서 데이트하기 좋은 맛집 알려줄래",
+      "❄ 국내에서 겨울에 놀러갈만한 분위기 좋은 맛집을 찾아줘",
+    ]; // 여러 텍스트 배열
+
+    useEffect(() => {
+      const currentText = texts[currentTextIndex];
+      let timer;
+
+      // 타이핑 효과 로직
+      if (!isDeleting && index < currentText.length) {
+        timer = setInterval(() => {
+          setIndex((prevIndex) => prevIndex + 1);
+        }, 120); // 텍스트 타이핑 속도 간격
+      } else if (isDeleting && index > 0) {
+        timer = setInterval(() => {
+          setIndex((prevIndex) => prevIndex - 1);
+        }, 60); // 삭제 속도 간격
+      } else if (index === currentText.length && !isPaused) {
+        setIsPaused(true); // 텍스트 다 쓰고 대기 시작
+        setTimeout(() => {
+          setIsDeleting(true); // 일정 시간 후 삭제 시작
+        }, 1500); // 1.5초 동안 대기
+      } else if (index === 0 && isDeleting) {
+        setIsDeleting(false);
+        setIsPaused(false); // 삭제 후 일시정지 상태 초기화
+        setCurrentTextIndex((prevIndex) => (prevIndex + 1) % texts.length); // 다음 텍스트로 이동
+      }
+
+      // 커서 깜빡임 효과
+      const cursorTimer = setInterval(() => {
+        if (index === currentText.length) {
+          setCursorVisible((prev) => !prev); // 텍스트가 끝난 후에만 커서 깜빡이게 설정
+        }
+      }, 200); // 간격마다 깜빡임 토글
+
+      return () => {
+        clearInterval(timer);
+        clearInterval(cursorTimer); // 컴포넌트 언마운트 시 타이머 정리
+      };
+    }, [currentTextIndex, index, isDeleting, isPaused]); // 의존성 배열 추가
+
+    // 텍스트를 문자 단위로 잘라서 커서 표시 처리
+    return (
+      <div>
+        <div style={{ display: "inline" }}>
+          {Array.from(texts[currentTextIndex]).slice(0, index).join("")}{" "}
+          {/* 텍스트 문자 단위로 출력 */}
+        </div>
+        <div
+          style={{
+            display: "inline",
+            visibility: cursorVisible ? "visible" : "hidden",
+          }}
+        >
+          {" |"} {/* 커서만 따로 표시 */}
+        </div>
+      </div>
+    );
+  };
 
   const handleLiteDarkToggle = () => {
     setIsDarkMode((prevMode) => !prevMode);
@@ -315,7 +385,22 @@ function Home() {
               name="search"
               className="search-input"
               placeholder="검색"
+              onFocus={() => setIsTyping(true)} // 포커스 시 타이핑 상태 설정
+              // onBlur={() => setIsTyping(false)}  // 포커스 벗어날 시 타이핑 상태 해제
             />
+            {!isTyping && ( // 타이핑 중일 때는 TextEffect 숨기기
+              <div
+                style={{
+                  color: "white",
+                  fontSize: "20px",
+                  position: "absolute",
+                  left: "50%", // 수평 가운데
+                  transform: "translateX(-50%)", // 요소의 가운데를 기준으로 이동
+                }}
+              >
+                <TextEffect />
+              </div>
+            )}
             <button type="submit" className="search-button">
               챗봇으로 이동
             </button>
