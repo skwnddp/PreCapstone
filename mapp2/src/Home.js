@@ -301,8 +301,11 @@ function Home() {
 
         {/* 로그인 후 사용자 이름 표시 */}
         <h2 style={{ color: "white" }}>
-          환영합니다,{" "}
-          {isLoggedIn ? (username ? username.split("@")[0] : "Unknown") : ""}님!
+          {isLoggedIn
+            ? username && username.split("@")[0] // username이 있을 경우 처리
+              ? `어서오세요, ${username.split("@")[0]}님!`
+              : "유저 이름을 불러오는데 실패했어요... 새로고침을 해보세요 😂" // username이 없을 경우 로직
+            : "환영합니다! 지금 바로 로그인을 해보세요"}
         </h2>
 
         {/* 로그인 양식 또는 회원가입 양식 보이기 */}
