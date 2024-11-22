@@ -1,20 +1,27 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, updateProfile, updatePassword } from 'firebase/auth';
-import { auth } from './firebase';  // firebase.js에서 auth 객체 가져오기
-import './Home.css';
-import { onAuthStateChanged } from 'firebase/auth';
-import { serverTimestamp } from 'firebase/firestore';
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
+  updateProfile,
+  updatePassword,
+} from "firebase/auth";
+import { auth } from "./firebase"; // firebase.js에서 auth 객체 가져오기
+import "./Home.css";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { serverTimestamp } from "firebase/firestore";
 
 function Home() {
   const [isLoginFormVisible, setLoginFormVisible] = useState(false); // 로그인 양식 표시 여부
   const [isSignUpFormVisible, setSignUpFormVisible] = useState(false); // 회원가입 양식 표시 여부
   const [isProfileFormVisible, setProfileFormVisible] = useState(false); // 프로필 수정 양식 표시 여부
-  const [username, setUsername] = useState(''); // 로그인 후 사용자 이름
+  const [username, setUsername] = useState(""); // 로그인 후 사용자 이름
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
-  const [currentPassword, setCurrentPassword] = useState(''); // 현재 비밀번호
-  const [newPassword, setNewPassword] = useState(''); // 새 비밀번호
-  const [confirmNewPassword, setConfirmNewPassword] = useState(''); // 새 비밀번호 확인
+  const [currentPassword, setCurrentPassword] = useState(""); // 현재 비밀번호
+  const [newPassword, setNewPassword] = useState(""); // 새 비밀번호
+  const [confirmNewPassword, setConfirmNewPassword] = useState(""); // 새 비밀번호 확인
   const [isPasswordVerified, setIsPasswordVerified] = useState(false); // 현재 비밀번호 확인 여부
   const textareaRef = useRef(null);
   const navigate = useNavigate();
@@ -49,12 +56,22 @@ function Home() {
   };
 
   const handleLogout = () => {
-    setUsername('');
-    setIsLoggedIn(false);
-    setLoginFormVisible(false); // 로그인 양식 숨김
-    setSignUpFormVisible(false); // 회원가입 양식도 숨김
-    setProfileFormVisible(false); // 프로필 수정 양식도 숨김
-    setIsPasswordVerified(false); // 비밀번호 확인 초기화
+    signOut(auth)
+      .then(() => {
+        // 성공적으로 로그아웃됨
+        console.log("로그아웃 성공");
+        // 상태 초기화
+        setUsername("");
+        setIsLoggedIn(false);
+        setLoginFormVisible(false);
+        setSignUpFormVisible(false);
+        setProfileFormVisible(false);
+        setIsPasswordVerified(false);
+      })
+      .catch((error) => {
+        // 로그아웃 중 오류 처리
+        console.error("로그아웃 실패:", error);
+      });
   };
 
   const handleMenuClick = (menu) => {
@@ -75,7 +92,7 @@ function Home() {
       textareaRef.current.value = searchInput;
     }
 
-    console.log(searchInput)
+    console.log(searchInput);
 
     navigate("/Main", { state: { searchInput } });
   };
@@ -90,32 +107,32 @@ function Home() {
   const verifyCurrentPassword = async () => {
     try {
       const email = auth.currentUser.email; // 현재 로그인된 사용자의 이메일
-      await signInWithEmailAndPassword(auth, email, currentPassword);  // 로그인 상태 확인
-      alert('비밀번호 인증 성공!');
+      await signInWithEmailAndPassword(auth, email, currentPassword); // 로그인 상태 확인
+      alert("비밀번호 인증 성공!");
       setIsPasswordVerified(true); // 비밀번호 확인 완료
-      setCurrentPassword('');
+      setCurrentPassword("");
     } catch (error) {
-      alert('현재 비밀번호가 일치하지 않습니다.');
+      alert("현재 비밀번호가 일치하지 않습니다.");
     }
   };
 
   // 새 비밀번호 변경 함수
   const handlePasswordChange = async () => {
     if (newPassword !== confirmNewPassword) {
-      alert('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+      alert("새 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
       return;
     }
 
     try {
       const user = auth.currentUser;
-      if (!user) throw new Error('로그인된 사용자가 없습니다.');
+      if (!user) throw new Error("로그인된 사용자가 없습니다.");
 
       // 새 비밀번호를 설정하는 함수
       await updatePassword(user, newPassword);
-      alert('비밀번호가 성공적으로 변경되었습니다.');
+      alert("비밀번호가 성공적으로 변경되었습니다.");
       toggleProfileForm(); // 비밀번호 변경 후 양식 닫기
     } catch (error) {
-      alert('비밀번호 변경 실패: ' + error.message);
+      alert("비밀번호 변경 실패: " + error.message);
     }
   };
 
@@ -126,7 +143,7 @@ function Home() {
         setUsername(user.displayName || user.email); // 로그인한 사용자 이름 또는 이메일을 설정
         setIsLoggedIn(true); // 로그인 상태 true로 설정
       } else {
-        setUsername('');
+        setUsername("");
         setIsLoggedIn(false); // 로그아웃 상태로 설정
       }
     });
@@ -139,11 +156,30 @@ function Home() {
     <div className="home-container">
       {/* Navigation Bar Section */}
       <nav className="navbar">
-        <button className="menu-button-home" onClick={() => navigate('/Home')}><b>내맘대로드</b></button>
-        <button className="menu-button" onClick={() => handleMenuClick('메뉴추천')}>메뉴추천</button>
-        <button className="menu-button" onClick={() => handleMenuClick('즐겨찾기')}>즐겨찾기</button>
-        <button className="menu-button" onClick={() => handleMenuClick('리뷰 보기')}>리뷰 보기</button>
-        <button className="menu-button" onClick={() => navigate('/Main')}>메인으로 이동</button>
+        <button className="menu-button-home" onClick={() => navigate("/Home")}>
+          <b>내맘대로드</b>
+        </button>
+        <button
+          className="menu-button"
+          onClick={() => handleMenuClick("메뉴추천")}
+        >
+          메뉴추천
+        </button>
+        <button
+          className="menu-button"
+          onClick={() => handleMenuClick("즐겨찾기")}
+        >
+          즐겨찾기
+        </button>
+        <button
+          className="menu-button"
+          onClick={() => handleMenuClick("리뷰 보기")}
+        >
+          리뷰 보기
+        </button>
+        <button className="menu-button" onClick={() => navigate("/Main")}>
+          메인으로 이동
+        </button>
 
         {/* 라이트, 다크 모드 토글 버튼 */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -177,9 +213,14 @@ function Home() {
           <span>🌙</span>
         </div>
 
-        <button className="profile-button" onClick={toggleProfileForm}>프로필</button>
-        <button className="login-button" onClick={isLoggedIn ? handleLogout : toggleLoginForm}>
-          {isLoggedIn ? "로그아웃" : (isLoginFormVisible ? "Cancel" : "로그인")}
+        <button className="profile-button" onClick={toggleProfileForm}>
+          프로필
+        </button>
+        <button
+          className="login-button"
+          onClick={isLoggedIn ? handleLogout : toggleLoginForm}
+        >
+          {isLoggedIn ? "로그아웃" : isLoginFormVisible ? "Cancel" : "로그인"}
         </button>
       </nav>
 
@@ -189,13 +230,19 @@ function Home() {
         <h1 className="title">내맘대로드</h1>
 
         {/* 로그인 후 사용자 이름 표시 */}
-        <h2 style={{ color: 'white' }}>환영합니다, {isLoggedIn ? (username ? username.split('@')[0] : 'Unknown') : ''}님!</h2>
+        <h2 style={{ color: "white" }}>
+          환영합니다,{" "}
+          {isLoggedIn ? (username ? username.split("@")[0] : "Unknown") : ""}님!
+        </h2>
 
         {/* 로그인 양식 또는 회원가입 양식 보이기 */}
-        {(isLoginFormVisible || isSignUpFormVisible) ? (
+        {isLoginFormVisible || isSignUpFormVisible ? (
           <div className="form-container">
             {isLoginFormVisible ? (
-              <LoginForm onLoginSuccess={handleLoginSuccess} onSignUpClick={toggleSignUpForm} />
+              <LoginForm
+                onLoginSuccess={handleLoginSuccess}
+                onSignUpClick={toggleSignUpForm}
+              />
             ) : (
               <SignUpForm onLoginSuccess={handleLoginSuccess} />
             )}
@@ -219,7 +266,9 @@ function Home() {
                   className="form-submit"
                   onClick={verifyCurrentPassword}
                 >
-                  <span style={{ color: "rgb(235,59,0)", fontWeight: "bold" }}>확인</span>
+                  <span style={{ color: "rgb(235,59,0)", fontWeight: "bold" }}>
+                    확인
+                  </span>
                 </button>
               </form>
             ) : (
@@ -244,7 +293,9 @@ function Home() {
                   className="form-submit"
                   onClick={handlePasswordChange}
                 >
-                  <span style={{ fontWeight: "bold", color: "rgb(235,59,0" }}>비밀번호 변경</span>
+                  <span style={{ fontWeight: "bold", color: "rgb(235,59,0" }}>
+                    비밀번호 변경
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -265,10 +316,11 @@ function Home() {
               className="search-input"
               placeholder="검색"
             />
-            <button type="submit" className="search-button">챗봇으로 이동</button>
+            <button type="submit" className="search-button">
+              챗봇으로 이동
+            </button>
           </form>
         )}
-
       </div>
     </div>
   );
@@ -276,8 +328,8 @@ function Home() {
 
 // 로그인 양식 컴포넌트
 const LoginForm = ({ onLoginSuccess, onSignUpClick }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -285,14 +337,18 @@ const LoginForm = ({ onLoginSuccess, onSignUpClick }) => {
 
     try {
       // 로그인 시도
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
       // 로그인 성공
       onLoginSuccess(user.displayName); // 사용자 이름을 설정
 
-      setEmail('');
-      setPassword('');
+      setEmail("");
+      setPassword("");
     } catch (error) {
       alert("로그인 실패: " + error.message);
     }
@@ -314,17 +370,23 @@ const LoginForm = ({ onLoginSuccess, onSignUpClick }) => {
         placeholder="비밀번호"
         required
       />
-      <button type="submit" className="form-submit"><span style={{ color: "rgb(235,59,0", fontWeight: "bold" }}>로그인</span></button>
-      <button type="button" className="form-toggle" onClick={onSignUpClick}><span style={{ fontWeight: "bold" }}>회원가입</span></button>
+      <button type="submit" className="form-submit">
+        <span style={{ color: "rgb(235,59,0", fontWeight: "bold" }}>
+          로그인
+        </span>
+      </button>
+      <button type="button" className="form-toggle" onClick={onSignUpClick}>
+        <span style={{ fontWeight: "bold" }}>회원가입</span>
+      </button>
     </form>
   );
 };
 
 // 회원가입 양식 컴포넌트
 const SignUpForm = ({ onLoginSuccess }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSignUp = async (event) => {
     event.preventDefault();
@@ -344,18 +406,22 @@ const SignUpForm = ({ onLoginSuccess }) => {
       }
 
       // 회원가입 진행
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
       // 사용자 이름 설정
       await updateProfile(user, {
-        displayName: email.split('@')[0], // 예: 이메일 앞부분을 이름으로 설정
+        displayName: email.split("@")[0], // 예: 이메일 앞부분을 이름으로 설정
       });
 
       onLoginSuccess(user.displayName); // 설정된 사용자 이름으로 로그인 처리
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
     } catch (error) {
       alert("회원가입 실패: " + error.message);
     }
@@ -384,7 +450,11 @@ const SignUpForm = ({ onLoginSuccess }) => {
         placeholder="비밀번호 재입력"
         required
       />
-      <button type="submit" className="form-submit"><span style={{ fontWeight: "bold", color: "rgb(235,59,0" }}>회원가입 완료</span></button>
+      <button type="submit" className="form-submit">
+        <span style={{ fontWeight: "bold", color: "rgb(235,59,0" }}>
+          회원가입 완료
+        </span>
+      </button>
     </form>
   );
 };

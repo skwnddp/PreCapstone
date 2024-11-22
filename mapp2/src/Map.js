@@ -313,7 +313,6 @@ function initCustomOverlay() {
                 // 결과를 div에 설정
                 div.textContent = modifiedResult.join(", ");  // 여러 개의 텍스트를 구분해서 표시하려면 join 사용
 
-
                 this.div = div;
 
                 const panes = this.getPanes();

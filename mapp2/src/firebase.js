@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth"; // Firebase 인증 기능 추가
+import { getAuth, signOut } from "firebase/auth"; // Firebase 인증 기능 추가
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, collection, doc, setDoc } from "firebase/firestore"; // Firestore 기능 추가
 import { HansungData } from "./HansungData"; // HansungData 가져오기

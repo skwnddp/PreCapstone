@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo, useLocation } from "react";
+import { getAuth, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 // import { initMap } from './Map';
 // import { loadNaverMapScript } from './Map'; dd
@@ -13,12 +14,24 @@ import "./Main.css";
 
 const Main = () => {
   // let map; // 지도를 전역으로 선언
+  const auth = getAuth(); // Firebase Auth 객체 가져오기
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("채팅하기");
   const [locations, setLocations] = useState("");
   const [isToggled, setIsToggled] = useState(true);
   const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션들
   const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        console.log("Logout successful!");
+        navigate("/home"); // 로그아웃 후 Home 화면으로 이동
+      })
+      .catch((error) => {
+        console.error("Error during logout:", error);
+      });
+  };
 
   const handleLiteDarkToggle = () => {
     setIsDarkMode((prevMode) => !prevMode);
@@ -146,7 +159,9 @@ const Main = () => {
             <span>🌙</span>
           </div>
 
-          <button className="login-btn">로그아웃</button>
+          <button className="login-button" onClick={handleLogout}>
+            로그아웃
+          </button>
         </nav>
         {/* <button className="back-btn" onClick={() => navigate('/Home')}>처음으로</button> */}
       </header>
@@ -242,8 +257,9 @@ const Main = () => {
               placeholder="필터링을 선택해보세요!"
               className="filtering-input"
               style={{
+                fontSize: "14px",
                 padding: "10px", // 패딩 추가
-                border: "2px solid rgb(235, 59, 0)", // 테두리 스타일
+                border: "2px solid rgb(235, 60, 0)", // 테두리 스타일
                 borderRadius: "15px", // 둥근 모서리
                 resize: "none", // 크기 조절 불가능
                 width: "95%", // 가능한 모든 너비 차지
@@ -255,6 +271,10 @@ const Main = () => {
                 backgroundColor: "transparent", // 배경색 추가
                 overflow: "hidden",
                 whiteSpace: "nowrap", // 줄 바꿈 방지 (JS에서는 camelCase로 작성)
+
+                boxSizing: "content-box" /* 패딩 포함 크기 계산 */,
+                lineHeight:
+                  "100%" /* 높이와 동일하게 설정해서 글자 수직 정렬 */,
               }}
             ></textarea>
 

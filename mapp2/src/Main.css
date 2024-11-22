@@ -62,7 +62,8 @@ body {
     color: rgb(255, 255, 255);
 }
 
-.login-btn {
+/* Main도 Home에 있는 디자인 재활용 */
+/* .login-btn {
     margin-top:70px;
     position: absolute;
     right: 20px;
@@ -73,7 +74,8 @@ body {
     border: none;
     border-radius: 20px;
     font-weight: bold;
-}
+    cursor: pointer;
+} */
 
 .back-btn {
     margin-top:70px;
