@@ -324,37 +324,68 @@ const Chat = ({ setLocations }) => {
               // 수정 필요!!!!!!!!!!!!!!!!!!!!!!
               // 이름 클릭 이벤트 추가
               nameDiv.addEventListener("click", async () => {
+                const clickedName = nameDiv.textContent.replace("⭐", "").trim();
+                console.log(`클릭한 맛집 이름: ${clickedName}`);
+              
                 try {
-                  console.log(`클릭한 맛집 이름: ${restaurant.name}`); // 클릭된 맛집 이름 출력
-
-                  // Firestore에서 해당 맛집 정보 가져오기
-                  const infoQuery = query(
-                    collection(db, "restaurants"),
-                    where("name", "==", restaurant.name)
-                  );
-
-                  const infoSnapshot = await getDocs(infoQuery);
-
-                  const infoData = [];
-                  infoSnapshot.forEach((doc) => {
-                    infoData.push(doc.data());
+                  // Firestore에서 'info' 컬렉션의 모든 데이터 삭제
+                  const infoCollectionRef = collection(db, "info");
+                  const snapshot = await getDocs(infoCollectionRef);
+                  
+                  snapshot.forEach(async (doc) => {
+                    await deleteDoc(doc.ref);  // 모든 문서 삭제
+                    console.log(`${doc.id} 삭제 완료!`);
                   });
-
-                  // Info 탭에 전달
-                  if (infoData.length > 0) {
-                    setSelectedInfo([infoData[0]]); // 첫 번째 데이터 전달
-                    console.log(`Info 탭에 전달된 데이터:`, infoData[0]); // 전달된 데이터 출력
+                
+                  // Firestore에서 해당 맛집 데이터를 참조할 문서 객체 생성
+                  const docRef = doc(db, "info", clickedName);
+                
+                  // 'info' 컬렉션에서 클릭된 맛집 정보 가져오기
+                  const docSnapshot = await getDocs(
+                    query(collection(db, "info"), where("name", "==", clickedName))
+                  );
+                
+                  if (!docSnapshot.empty) {
+                    // 해당 이름의 문서가 존재하면 삭제
+                    await deleteDoc(docRef);
+                    console.log(`${clickedName} 삭제 완료!`);
+                    
+                    // 여기서 수동으로 화면에 표시된 데이터를 제거하거나 초기화
+                    const infoContainer = document.querySelector('.info-container'); // 'info-container'를 선택
+                    if (infoContainer) {
+                      // 해당 요소 내부를 모두 삭제
+                      infoContainer.innerHTML = '';
+                      console.log("화면에서 데이터 삭제 완료!");
+                    }
                   } else {
-                    setSelectedInfo([]); // 상태 초기화
-                    console.warn(
-                      `Firestore에 ${restaurant.name}에 대한 데이터가 없습니다.`
-                    ); // 경고 출력
+                    console.log(`${clickedName} 정보가 존재하지 않음.`);
                   }
+                
+                  // 새로운 데이터 추가
+                  const HansungData = {
+                    name: restaurant.name, // 맛집 이름
+                    description: restaurant.description, // 맛집 설명
+                    latitude: restaurant.latitude, // 맛집 위도
+                    longitude: restaurant.longitude, // 맛집 경도
+                    information: restaurant.information, // 맛집 상세 정보
+                    review1: restaurant.review1, // 맛집 리뷰1
+                    review2: restaurant.review2, // 맛집 리뷰2
+                  };
+                
+                  // 새로 추가할 데이터를 Firestore에 저장
+                  await setDoc(docRef, HansungData);
+                  console.log(`${clickedName} 저장 완료!`);
+                
+                  // 상태 업데이트: 새로 추가된 맛집 정보를 화면에 표시
+                  setSelectedInfo(HansungData);
+                
                 } catch (error) {
-                  console.error("Info 데이터 가져오기 실패:", error); // 에러 출력
+                  console.error("Firestore 처리 중 오류 발생:", error);
                 }
+                
               });
-
+              
+              
               containerDiv.appendChild(checkbox);
               containerDiv.appendChild(nameDiv);
               listDiv.appendChild(containerDiv);
@@ -630,7 +661,6 @@ const Chat = ({ setLocations }) => {
             전송
           </button>
         </div>
-        <Info infoData={selectedInfo} />
       </section>
     ),
     [messages, userMessage]

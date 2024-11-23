@@ -1,50 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { collection, onSnapshot, deleteDoc, doc, getDocs,setDoc } from "firebase/firestore";
+import { db } from "./firebase";  // Firestore 초기화된 객체 가져오기
+import './Review.css';  // info.css 파일 불러오기
 
 function Review() {
-  const [reviews, setReviews] = useState([]);
-  const [input, setInput] = useState("");
-  const [rating, setRating] = useState(5);
+  const [infoData, setInfoData] = useState([]);
 
-  // 리뷰 추가
-  const addReview = () => {
-    if (input.trim() === "") return; // 빈 값은 추가하지 않음
-    const newReview = { text: input, rating: rating };
-    setReviews([...reviews, newReview]);
-    setInput("");
-    setRating(5);
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "info"), (snapshot) => {
+      const fetchedData = [];
+      snapshot.forEach((doc) => {
+        fetchedData.push({ id: doc.id, ...doc.data() });
+      });
+      setInfoData(fetchedData);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // 기존 데이터를 모두 삭제하는 함수
+  const deleteAllData = async () => {
+    const querySnapshot = await getDocs(collection(db, "info"));
+    querySnapshot.forEach(async (doc) => {
+      await deleteDoc(doc.ref);
+    });
   };
 
-  return (
-    <div className="chat-messages">
-      <h2>리뷰 목록</h2>
-      <textarea
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="리뷰 작성"
-      />
-      <div>
-        <label>평점: </label>
-        <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>
-          {[1, 2, 3, 4, 5].map((num) => (
-            <option key={num} value={num}>
-              {num}
-            </option>
-          ))}
-        </select>
-      </div>
-      <button onClick={addReview}>추가</button>
+  // 클릭 시 기존 데이터 삭제 및 새 데이터 추가
+  const handleClick = async (restaurant) => {
+    await deleteAllData(); // 기존 데이터 삭제
+    // 새 데이터를 추가하는 로직
+    const docRef = doc(db, "info", restaurant.name);
+    const HansungData = {
+      name: restaurant.name,
+      description: restaurant.description,
+      latitude: restaurant.latitude,
+      longitude: restaurant.longitude,
+      information: restaurant.information,
+    };
 
+    // Firestore에 새 데이터 추가
+    await setDoc(docRef, HansungData);
+    console.log(`${restaurant.name} 저장 완료!`);
+  };
+
+  // 데이터가 없을 경우 "선택한 맛집 리뷰가 없습니다." 메시지 표시
+  if (!infoData || infoData.length === 0) {
+    return (
+      <div className="info-container">
+        <h2>선택한 맛집 리뷰</h2>
+      </div>
+    );
+  }
+
+  return (
+    <div className="info-container">
+      <h2>선택한 맛집 리뷰</h2>
       <ul>
-        {reviews.length === 0 ? (
-          <li>리뷰가 없습니다.</li>
-        ) : (
-          reviews.map((review, index) => (
-            <li key={index}>
-              <strong>평점: {review.rating} / 5</strong>
-              <p>{review.text}</p>
-            </li>
-          ))
-        )}
+        {infoData.map((info) => (
+          <li key={info.id} onClick={() => handleClick(info)}> {/* 클릭 시 데이터 삭제 및 추가 */}
+            <h3>{info.name}</h3>
+            <p>{info.review1}</p> {/* 맛집 리뷰1 */}
+            <p>{info.review2}</p> {/* 맛집 리뷰2 */}
+          </li>
+        ))}
       </ul>
     </div>
   );
