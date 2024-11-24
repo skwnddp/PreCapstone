@@ -28,16 +28,16 @@ body {
     position: fixed; /* 화면 상단에 고정 */
     top: 0; /* 페이지 상단 위치 */
     left: 0;
-    height: 20px;
+    height: 30px;
     width: 100%; /* 네비게이션 바 전체 너비 */
-    background-color: #0d0d0d; /* 배경색 */
+    background-color: #1b1b1b;
     z-index: 1001; /* 다른 요소 위에 표시되도록 */
     display: flex;
     justify-content: space-around; /* 버튼 간 간격 균등 */
     align-items: center;
     padding: 20px 0;
     gap: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 살짝 그림자 추가 */
+    box-shadow: 0 2px 3px rgba(235, 59, 0, 0.537);
     white-space: nowrap;
   }
 
