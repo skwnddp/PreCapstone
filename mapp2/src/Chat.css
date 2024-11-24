@@ -161,8 +161,8 @@
 -------------------------------------------*/
 
 .loader {
-  width: 50px;
-  height: 50px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   margin: 3em auto;
   /* 가운데 정렬을 위한 margin */
@@ -201,7 +201,7 @@
   content: '';
   width: 80%;
   height: 80%;
-  background-color: #9f3800;
+  background-color: #1500ffba;
   top: 5%;
 }
 
