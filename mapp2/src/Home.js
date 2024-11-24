@@ -31,6 +31,18 @@ function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isTyping, setIsTyping] = useState(false); // 타이핑 중 여부 상태
 
+  const handleAuthNavigation = (navigate, path) => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate(path); // 로그인 상태면 경로로 이동
+      } else {
+        alert("로그인 후 이용 가능합니다."); // 비로그인 상태 경고
+      }
+    });
+  };
+
+
   const TextEffect = () => {
     const [currentTextIndex, setCurrentTextIndex] = useState(0);
     const [index, setIndex] = useState(0); // 텍스트 인덱스 상태
@@ -234,21 +246,18 @@ function Home() {
         </button>
         <button
           className="menu-button"
-          onClick={() => handleMenuClick("메뉴추천")}
-        >
-          메뉴추천
+          onClick={() => handleAuthNavigation(navigate, "/Main")}
+        >메뉴추천
         </button>
         <button
           className="menu-button"
-          onClick={() => handleMenuClick("즐겨찾기")}
-        >
-          즐겨찾기
+          onClick={() => handleAuthNavigation(navigate, "/Main")}
+        >즐겨찾기
         </button>
         <button
           className="menu-button"
-          onClick={() => handleMenuClick("리뷰 보기")}
-        >
-          리뷰 보기
+          onClick={() => handleAuthNavigation(navigate, "/Main")}
+        > 리뷰 보기
         </button>
         <button className="menu-button" onClick={() => navigate("/Main")}>
           메인으로 이동
@@ -394,7 +403,7 @@ function Home() {
               className="search-input"
               placeholder="검색"
               onFocus={() => setIsTyping(true)} // 포커스 시 타이핑 상태 설정
-              // onBlur={() => setIsTyping(false)}  // 포커스 벗어날 시 타이핑 상태 해제
+            // onBlur={() => setIsTyping(false)}  // 포커스 벗어날 시 타이핑 상태 해제
             />
             {!isTyping && ( // 타이핑 중일 때는 TextEffect 숨기기
               <div
