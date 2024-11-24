@@ -34,16 +34,17 @@ const Chat = ({ setLocations }) => {
   const location = useLocation();
   const { searchInput } = location.state || {}; // Main에서 전달된 searchInput 값 받기
   const [inputValue, setInputValue] = useState(searchInput || ""); // 상태로 관리
+  const [isLoading, setIsLoading] = useState(false);
 
   // `searchInput`이 존재하면 textarea에 값을 설정
   useEffect(() => {
     if (textareaRef.current && searchInput) {
       textareaRef.current.value = searchInput;
-      setUserMessage(searchInput)
+      setUserMessage(searchInput);
     }
-    setInputValue('');
-    console.log(userMessage)
-    console.log(searchInput)
+    setInputValue("");
+    console.log(userMessage);
+    console.log(searchInput);
   }, [searchInput]);
 
   useEffect(() => {
@@ -109,6 +110,7 @@ const Chat = ({ setLocations }) => {
     if (!userMessage) return;
 
     setImages([]); // 이미지 숨기기
+    setIsLoading(true); // 로딩 바 토글
     setIsLocked(true);
     setUserMessage("응답 중...");
     textareaRef.current.style.height = "36px"; // 채팅창 일단 잠그고 높이 초기화
@@ -243,8 +245,8 @@ const Chat = ({ setLocations }) => {
           sender: "gpt",
           text: randomFive.length
             ? randomFive
-              .map((item) => `🍽️ ${item.name}\n📋 ${item.description}`)
-              .join("\n\n")
+                .map((item) => `🍽️ ${item.name}\n📋 ${item.description}`)
+                .join("\n\n")
             : "한성대와 관련된 맛집 정보를 찾을 수 없습니다.",
           timestamp: new Date().toLocaleString(),
         };
@@ -324,43 +326,49 @@ const Chat = ({ setLocations }) => {
               // 수정 필요!!!!!!!!!!!!!!!!!!!!!!
               // 이름 클릭 이벤트 추가
               nameDiv.addEventListener("click", async () => {
-                const clickedName = nameDiv.textContent.replace("⭐", "").trim();
+                const clickedName = nameDiv.textContent
+                  .replace("⭐", "")
+                  .trim();
                 console.log(`클릭한 맛집 이름: ${clickedName}`);
-              
+
                 try {
                   // Firestore에서 'info' 컬렉션의 모든 데이터 삭제
                   const infoCollectionRef = collection(db, "info");
                   const snapshot = await getDocs(infoCollectionRef);
-                  
+
                   snapshot.forEach(async (doc) => {
-                    await deleteDoc(doc.ref);  // 모든 문서 삭제
+                    await deleteDoc(doc.ref); // 모든 문서 삭제
                     console.log(`${doc.id} 삭제 완료!`);
                   });
-                
+
                   // Firestore에서 해당 맛집 데이터를 참조할 문서 객체 생성
                   const docRef = doc(db, "info", clickedName);
-                
+
                   // 'info' 컬렉션에서 클릭된 맛집 정보 가져오기
                   const docSnapshot = await getDocs(
-                    query(collection(db, "info"), where("name", "==", clickedName))
+                    query(
+                      collection(db, "info"),
+                      where("name", "==", clickedName)
+                    )
                   );
-                
+
                   if (!docSnapshot.empty) {
                     // 해당 이름의 문서가 존재하면 삭제
                     await deleteDoc(docRef);
                     console.log(`${clickedName} 삭제 완료!`);
-                    
+
                     // 여기서 수동으로 화면에 표시된 데이터를 제거하거나 초기화
-                    const infoContainer = document.querySelector('.info-container'); // 'info-container'를 선택
+                    const infoContainer =
+                      document.querySelector(".info-container"); // 'info-container'를 선택
                     if (infoContainer) {
                       // 해당 요소 내부를 모두 삭제
-                      infoContainer.innerHTML = '';
+                      infoContainer.innerHTML = "";
                       console.log("화면에서 데이터 삭제 완료!");
                     }
                   } else {
                     console.log(`${clickedName} 정보가 존재하지 않음.`);
                   }
-                
+
                   // 새로운 데이터 추가
                   const HansungData = {
                     name: restaurant.name, // 맛집 이름
@@ -371,21 +379,18 @@ const Chat = ({ setLocations }) => {
                     review1: restaurant.review1, // 맛집 리뷰1
                     review2: restaurant.review2, // 맛집 리뷰2
                   };
-                
+
                   // 새로 추가할 데이터를 Firestore에 저장
                   await setDoc(docRef, HansungData);
                   console.log(`${clickedName} 저장 완료!`);
-                
+
                   // 상태 업데이트: 새로 추가된 맛집 정보를 화면에 표시
                   setSelectedInfo(HansungData);
-                
                 } catch (error) {
                   console.error("Firestore 처리 중 오류 발생:", error);
                 }
-                
               });
-              
-              
+
               containerDiv.appendChild(checkbox);
               containerDiv.appendChild(nameDiv);
               listDiv.appendChild(containerDiv);
@@ -394,7 +399,9 @@ const Chat = ({ setLocations }) => {
             console.error("검색 기록 저장 중 오류 발생:", error);
           }
         }
+        // 종류 이후 상태값 복구 및 할당 로직
         setIsLocked(false);
+        setIsLoading(false); // 로딩 바 토글
         return; // '한성대' 키워드 처리 완료 후 반환
       }
 
@@ -535,7 +542,9 @@ const Chat = ({ setLocations }) => {
           timestamp: new Date().toLocaleString(),
         },
       ]);
+      // 종류 이후 상태값 복구 및 할당 로직
       setIsLocked(false);
+      setIsLoading(false); // 로딩 바 토글
     } finally {
       setUserMessage("");
     }
@@ -545,6 +554,7 @@ const Chat = ({ setLocations }) => {
     () => (
       <section className="chat-section">
         <div className="chat-messages">
+          {isLoading && <div class="loader loader-7" />}
           {hello ? (
             <div style={{ color: "white" }}>
               <div style={{ marginBottom: "80px" }}></div> {/* 여백을 추가 */}

@@ -153,3 +153,88 @@
   transform: translateY(1px);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 }
+
+/* 로딩 애니메이션 loader-7 */
+
+/*-------------------------------------------
+    $ Loaders
+-------------------------------------------*/
+
+.loader {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin: 3em auto;
+  /* 가운데 정렬을 위한 margin */
+  display: inline-block;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-30%, -50%);
+  /* 가운데 정렬 보정 */
+}
+
+.loader,
+.loader:before,
+.loader:after {
+  animation: 1s infinite ease-in-out;
+}
+
+.loader:before,
+.loader:after {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.loader-black {
+  background-color: #ffffff;
+}
+
+.loader-7 {
+  animation: loader7-1 0.2s infinite linear;
+}
+
+.loader-7:before,
+.loader-7:after {
+  content: '';
+  width: 80%;
+  height: 80%;
+  background-color: #9f3800;
+  top: 5%;
+}
+
+.loader-7:before {
+  left: -5%;
+  animation: loader7-2 0.5s infinite alternate ease-in-out;
+  transform-origin: 10% 50%;
+}
+
+.loader-7:after {
+  left: auto;
+  right: -5%;
+  animation: loader7-2 1s 1s infinite alternate ease-in-out;
+  transform: scale(0);
+  transform-origin: 90% 50%;
+}
+
+@keyframes loader7-1 {
+  0% {
+    transform: rotate(20deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loader7-2 {
+  0% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
