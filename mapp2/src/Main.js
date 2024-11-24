@@ -122,14 +122,10 @@ const Main = () => {
           >
             <b>내맘대로드</b>
           </button>
-          <button className="menu-button">메뉴추천</button>
-          <button className="menu-button">즐겨찾기</button>
-          <button className="menu-button">리뷰 보기</button>
-          <button className="menu-button">메인으로 이동</button>
 
           {/* 라이트, 다크 모드 토글 버튼 */}
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span>🌞</span>
+          <div style={{ marginLeft: "800pt", display: "flex", alignItems: "center", gap: "10px" }}>
+          <span style={{color:"white", fontSize:"18pt"}}>☀︎</span>
             <div
               onClick={handleLiteDarkToggle}
               style={{
@@ -156,7 +152,7 @@ const Main = () => {
                 }}
               ></div>
             </div>
-            <span>🌙</span>
+            <span style={{color:"white", fontSize: "18pt"}}>☾</span>
           </div>
 
           <button className="login-button" onClick={handleLogout}>
@@ -257,6 +253,8 @@ const Main = () => {
               placeholder="필터링을 선택해보세요!"
               className="filtering-input"
               style={{
+                fontWeight: "bold",
+                fontSize: "13pt",
                 padding: "10px", // 패딩 추가
                 border: "2px solid rgb(235, 60, 0)", // 테두리 스타일
                 borderRadius: "15px", // 둥근 모서리
@@ -296,6 +294,9 @@ const Main = () => {
                 <label
                   key={item.name}
                   className={`filter-label ${!isToggled ? "disabled" : ""}`}
+                  style={{backgroundColor:"#2f2f2f",
+                    border: "none",
+                  }}
                 >
                   <input
                     type="checkbox"
@@ -306,14 +307,14 @@ const Main = () => {
                     style={{
                       width: "18px", // 크기 살짝 줄임
                       height: "18px",
-                      accentColor: "#4CAF50",
+                      accentColor: "rgb(235,59,0)",
                     }}
                   />
                   <span
                     style={{
                       fontSize: "14px", // 글자 크기 줄임
                       fontWeight: "bold",
-                      color: "#000", // 검은색 글자
+                      color: "white", // 검은색 글자
                     }}
                   >
                     {item.label}
@@ -357,6 +358,9 @@ const Main = () => {
                 <label
                   key={item.name}
                   className={`filter-label ${!isToggled ? "disabled" : ""}`}
+                  style={{backgroundColor:"#2f2f2f",
+                    border: "none",
+                  }}
                 >
                   <input
                     type="checkbox"
@@ -367,14 +371,14 @@ const Main = () => {
                     style={{
                       width: "18px", // 크기 살짝 줄임
                       height: "18px",
-                      accentColor: "#4CAF50", // 체크박스 색상
+                      accentColor: "rgb(235,59,0)", // 체크박스 색상
                     }}
                   />
                   <span
                     style={{
                       fontSize: "14px", // 글자 크기 줄임
                       fontWeight: "bold",
-                      color: "#000", // 검은색 글자
+                      color: "white", // 검은색 글자
                     }}
                   >
                     {item.label}
@@ -398,7 +402,7 @@ const Main = () => {
           </div>
           {/* {memoizedChat} */}
           {/* <Map locatiosn={locations} /> */}
-          <div className="map">
+          <div className="map2">
             <Map />
           </div>
         </section>

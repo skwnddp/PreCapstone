@@ -18,7 +18,7 @@ body {
     grid-template-columns: 2fr 2fr;
     grid-template-rows: 2fr 2fr;
     height: 100vh;
-    background:  #181818;
+    background:  #1e1e1e;
     color: #ffffff;
     /* place-items: center; 내부 요소를 수직 및 수평으로 중앙 정렬 */
     box-sizing: border-box;
@@ -28,16 +28,17 @@ body {
     position: fixed; /* 화면 상단에 고정 */
     top: 0; /* 페이지 상단 위치 */
     left: 0;
-    height: 30px;
+    height: 20px;
     width: 100%; /* 네비게이션 바 전체 너비 */
     background-color: #0d0d0d; /* 배경색 */
-    z-index: 1000; /* 다른 요소 위에 표시되도록 */
+    z-index: 1001; /* 다른 요소 위에 표시되도록 */
     display: flex;
     justify-content: space-around; /* 버튼 간 간격 균등 */
     align-items: center;
     padding: 20px 0;
-    gap: 70px;
+    gap: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 살짝 그림자 추가 */
+    white-space: nowrap;
   }
 
 .header {
@@ -98,6 +99,7 @@ body {
     /* 가로 중앙 정렬 */
     gap: 10px;
     /* 챗과 지도 사이 간격 */
+
 }
 
 .map-container {
@@ -105,14 +107,17 @@ body {
     padding: 20px;
     width: 1000px;
     height: 500px;
+    
 }
 
 .map {
     padding: 5px;
-    border-radius: 5px;
+    border-radius: 30px;
     width: 100%;
-    height: 540px;
-    background-color: #050042;
+    height: 550px;
+    background-color: transparent;  /* 배경을 투명으로 설정 */
+    border: 4px solid rgb(235, 59, 0); /* 테두리 설정 */
+    box-sizing: border-box;  /* padding과 border를 전체 크기에 포함시킴 */
 }
 
 .recommendations {
@@ -144,9 +149,12 @@ body {
     width: 500px;
     /* 컨테이너가 부모의 전체 높이를 차지하도록 설정 */
     box-sizing: border-box;
+    
 }
 
 .sidebar {
+    font-size: large;
+    font-family: "Gugi", sans-serif;
     display: flex;
     /* grid-template-columns: repeat(5, 1fr); */
     grid-gap: 20px;
@@ -159,6 +167,7 @@ body {
     /* 가로 가운데 정렬 */
     align-items: center;
     /* 세로 가운데 정렬 */
+    
 }
 
 .sidebar div {
@@ -173,6 +182,7 @@ body {
     /* 부드러운 전환 효과 */
     white-space: nowrap;
     /* 글자가 줄바꿈 없이 한 줄로 표시 */
+    
 }
 
 .sidebar div:hover {
@@ -192,16 +202,18 @@ body {
     /* 글자가 줄바꿈 없이 한 줄로 표시 */
     border-radius: 20px;
     /* 둥글게 만들기 */
+    
 }
 
 .active-tab {
     border-radius: 20px;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(123, 123, 123, 0.1);
+    font-size: larger;
     color: rgb(235, 59, 0);
     /* 활성화된 탭의 글자색 비활성화 */
     font-weight: bold;
     /* 글자 두껍게 */
-    transition: background-color 0.4s ease, padding 0.4s ease;
+    transition: font-size 0.4s ease, background-color 0.4s ease, padding 0.4s ease;
     /* 부드러운 전환 효과 */
 }
 

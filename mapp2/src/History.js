@@ -68,20 +68,30 @@ function History() {
 
     return (
         <div className="history-container">
-            <h2>맛집 내역</h2>
             {restaurants.length === 0 ? (
                 <p>저장된 맛집 내역이 없습니다.</p>
             ) : (
                 <ul>
                     {restaurants.map((restaurant) => (
                         <li key={restaurant.id} style={{ marginBottom: "10px" }}>
-                            <strong>{restaurant.name}</strong>: {restaurant.description}
-                            <button
+                            <span style={{fontWeight:"bold", fontSize:"15pt", color: "#f8a800"}}>{restaurant.name}</span>  <button
                                 onClick={() => deleteRestaurant(restaurant.id, restaurant.docId, restaurant.name)}
-                                style={{ color: "red", marginLeft: "10px" }}
+                                style={{
+                                    marginTop: "20px",
+                                    marginLeft: "5px",
+                                    backgroundColor: "rgb(235,59,0)",
+                                    color: "white",
+                                    border: "none",
+                                    padding: "5px 10px",
+                                    cursor: "pointer",
+                                    borderRadius: "20px",
+                                    fontWeight:"bold",
+                                }}
+                                
                             >
                                 삭제
-                            </button>
+                            </button><br></br> {restaurant.description}
+                          
                         </li>
                     ))}
                 </ul>

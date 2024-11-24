@@ -2,9 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Chewy&family=Noto+Sans+KR:wght@100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Chewy&family=Noto+Sans+KR:wght@100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Chewy&family=Gugi&family=Noto+Sans+KR:wght@100..900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Chewy&family=Gugi&family=Noto+Sans+KR:wght@100..900&display=swap');
 /* Navbar Styles */
-.navbar {
+.navbar{
   position: fixed;
   /* 화면 상단에 고정 */
   top: 0;
@@ -13,29 +13,31 @@
   height: 30px;
   width: 100%;
   /* 네비게이션 바 전체 너비 */
-  background-color: #0d0d0d;
+  background-color: #1b1b1b;
   /* 배경색 */
-  z-index: 1000;
+  z-index: 1001;
   /* 다른 요소 위에 표시되도록 */
   display: flex;
   justify-content: space-around;
   /* 버튼 간 간격 균등 */
   align-items: center;
   padding: 20px 0;
-  gap: 70px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  gap: 10px;
+  box-shadow: 0 2px 3px rgba(235, 59, 0, 0.537)
   /* 살짝 그림자 추가 */
 }
 
 .home-container {
   margin-top: 50px;
-  background: #181818;
+  background: #1e1e1e;
   color: #000000;
   min-height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 5vh;
+  font-family: "Noto Sans KR";
+  font-weight: 100;
 }
 
 .home-header {
@@ -59,7 +61,7 @@
   padding: 8px 20px;
   border-radius: 20px;
   cursor: pointer;
-  margin-left: 400pt;
+  margin-left: 0;
 }
 
 .login-button {
@@ -221,3 +223,4 @@
   /* 회원가입 버튼 글자 색상 */
   width: 80%;
 }
+

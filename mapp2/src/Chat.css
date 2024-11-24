@@ -43,11 +43,11 @@
   font-size: 15px;
   font-weight: 500;
   align-self: flex-start;
-  background-color: #9f3800;
+  background-color: rgb(215, 54, 0);
   color: #333;
   padding: 10px 15px;
   border-radius: 15px 15px 15px 0;
-  max-width: 70%;
+  max-width: 80%;
   word-wrap: break-word;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
@@ -64,7 +64,7 @@
 .chat-input-container {
   display: flex;
   padding: 10px;
-  border-top: 1px solid #ddd;
+
   background-color: transparent;
   align-items: center;
   gap: 10px;
@@ -77,7 +77,8 @@
   flex: 1;
   font-size: 1em;
   padding: 10px;
-  border: 1px solid #ccc;
+  color: white;
+  background-color: #333;
   border-radius: 20px;
   outline: none;
   box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);
@@ -85,15 +86,15 @@
 }
 
 .chat-input:focus {
-  border-color: #87ceeb;
+  border-color: rgb(235, 59, 0);
 }
 
 /* 전송 버튼 스타일 */
 .chat-input-container button {
   height: 70px;
   font-weight: bold;
-  background-color: #333;
-  color: rgb(235, 59, 0);
+  background-color: rgb(235,59,0);
+  color: white;
   border: none;
   border-radius: 20px;
   padding: 8px 15px;
@@ -109,7 +110,7 @@
 .chat-button {
   width: 80px;
   height: 60px;
-  background: linear-gradient(45deg, #050042, #0c0090);
+  background: rgb(235, 59, 0);
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -161,8 +162,8 @@
 -------------------------------------------*/
 
 .loader {
-  width: 80px;
-  height: 80px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   margin: 3em auto;
   /* 가운데 정렬을 위한 margin */
@@ -201,7 +202,7 @@
   content: '';
   width: 80%;
   height: 80%;
-  background-color: #1500ffba;
+  background-color: rgb(235, 59, 0);
   top: 5%;
 }
 

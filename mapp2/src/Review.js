@@ -48,14 +48,12 @@ function Review() {
   if (!infoData || infoData.length === 0) {
     return (
       <div className="info-container">
-        <h2>선택한 맛집 리뷰</h2>
       </div>
     );
   }
 
   return (
     <div className="info-container">
-      <h2>선택한 맛집 리뷰</h2>
       <ul>
         {infoData.map((info) => (
           <li key={info.id} onClick={() => handleClick(info)}> {/* 클릭 시 데이터 삭제 및 추가 */}

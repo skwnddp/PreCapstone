@@ -32,23 +32,27 @@ function Favorites() {
 
     return (
         <div className="chat-messages">
-            <h2>즐겨찾기 목록</h2>
+
             <ul >{favorites.map((item) => (
                 <li key={item.id} style={{ marginBottom: "10px" }}>
-                    <span>{item.name} - {item.description}</span>
-                    <button
+                    
+                    <span><span style={{fontWeight:"bold", fontSize:"15pt", color: "#f8a800"}}>{item.name}</span><button
                         onClick={() => handleRemoveFavorite(item.id)}
                         style={{
+                            marginTop: "20px",
                             marginLeft: "10px",
-                            backgroundColor: "red",
+                            backgroundColor: "rgb(235,59,0)",
                             color: "white",
                             border: "none",
                             padding: "5px 10px",
-                            cursor: "pointer"
+                            cursor: "pointer",
+                            borderRadius: "20px",
+                            fontWeight:"bold",
                         }}
                     >
                         삭제
-                    </button>
+                    </button><br></br> {item.description}</span>
+                    
                 </li>
             ))}
             </ul>

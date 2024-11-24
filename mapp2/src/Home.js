@@ -13,6 +13,8 @@ import "./Home.css";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { serverTimestamp } from "firebase/firestore";
 import Neon from "./Neon";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 function Home() {
   const [isLoginFormVisible, setLoginFormVisible] = useState(false); // 로그인 양식 표시 여부
@@ -253,36 +255,38 @@ function Home() {
         </button>
 
         {/* 라이트, 다크 모드 토글 버튼 */}
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <span>🌞</span>
+      <div className={isDarkMode ? "" : "light-mode"}> {/* 다크모드/라이트모드 상태에 따라 클래스를 변경 */}
+        <div style={{ marginLeft: "500pt", display: "flex", alignItems: "center", gap: "10px" }}>
+        <span style={{ color: "white", fontSize: "18pt" }}>☀︎</span>
+        <div
+          onClick={handleLiteDarkToggle}
+          style={{
+            width: "50px",
+            height: "25px",
+            background: isDarkMode ? "#333" : "#ccc",
+            borderRadius: "15px",
+            position: "relative",
+            cursor: "pointer",
+            transition: "background 0.3s",
+          }}
+        >
           <div
-            onClick={handleLiteDarkToggle}
             style={{
-              width: "50px",
-              height: "25px",
-              background: isDarkMode ? "#333" : "#ccc",
-              borderRadius: "15px",
-              position: "relative",
-              cursor: "pointer",
-              transition: "background 0.3s",
+              width: "20px",
+              height: "20px",
+              background: "white",
+              borderRadius: "50%",
+              position: "absolute",
+              top: "50%",
+              left: isDarkMode ? "26px" : "4px",
+              transform: "translateY(-50%)",
+              transition: "left 0.3s",
             }}
-          >
-            <div
-              style={{
-                width: "20px",
-                height: "20px",
-                background: "white",
-                borderRadius: "50%",
-                position: "absolute",
-                top: "50%",
-                left: isDarkMode ? "26px" : "4px",
-                transform: "translateY(-50%)",
-                transition: "left 0.3s",
-              }}
-            ></div>
-          </div>
-          <span>🌙</span>
+          ></div>
         </div>
+        <span style={{ color: "white", fontSize: "18pt" }}>☾</span>
+      </div>
+      </div>
 
         <button className="profile-button" onClick={toggleProfileForm}>
           프로필
@@ -301,7 +305,7 @@ function Home() {
         <Neon><h1 className="title">내맘대로드</h1></Neon>
 
         {/* 로그인 후 사용자 이름 표시 */}
-        <h2 style={{ color: "white" }}>
+        <h2 style={{ color: "white", fontFamily: "Noto Sans KR", fontWeight: 400, fontSize: "20px" }}>
           {isLoggedIn
             ? username && username.split("@")[0] // username이 있을 경우 처리
               ? `어서오세요, ${username.split("@")[0]}님!`
@@ -383,7 +387,7 @@ function Home() {
           </div>
         ) : (
           <form className="search-container" onSubmit={handleSearch}>
-            <button className="hamburger">☰</button>
+             <FontAwesomeIcon icon={faSearch} style={{ fontSize: "24px", color: "rgb(235,59,0)", marginLeft: 10, marginRight: 20 }} />
             <input
               type="text"
               name="search"
