@@ -134,7 +134,6 @@ function Home() {
     });
   };
 
-
   const TextEffect = () => {
     const [currentTextIndex, setCurrentTextIndex] = useState(0);
     const [index, setIndex] = useState(0); // 텍스트 인덱스 상태
@@ -257,6 +256,12 @@ function Home() {
   // };
 
   const handleRndSearch = (event) => {
+    if (!isLoggedIn) {
+      alert('로그인을 먼저 해주세요!');
+      return;
+    }
+
+    event.preventDefault();
     const searchInput = "오늘 괜찮은 메뉴 뭐 있을까? \n맛집으로 추천해주라";
 
     // 자식 컴포넌트에서 전달된 ref를 사용
@@ -270,6 +275,12 @@ function Home() {
   };
 
   const handleSearch = (event) => {
+    if (!isLoggedIn) {
+      alert('로그인을 먼저 해주세요!');
+      event.preventDefault();
+      return;
+    }
+
     event.preventDefault();
     const searchInput = document.querySelector(".search-input").value;
 
