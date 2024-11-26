@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useMemo, useLocation } from "react";
+import React, { useEffect, useState, useMemo, useRef, useContext } from "react";
 import { getAuth, signOut } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 // import { initMap } from './Map';
-// import { loadNaverMapScript } from './Map'; dd
-import { MapComponent } from "./Map";
+// import { loadNaverMapScript } from './Map';
+// import { MapComponent } from "./Map";
 import Map from "./Map";
 import Chat from "./Chat";
 import Favorites from "./Favorites";
@@ -12,15 +12,26 @@ import History from "./History";
 import Info from "./Info";
 import "./Main.css";
 
-const Main = () => {
+function Main() {
   // let map; // 지도를 전역으로 선언
   const auth = getAuth(); // Firebase Auth 객체 가져오기
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("채팅하기");
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.state?.activeTab || "채팅하기");
   const [locations, setLocations] = useState("");
   const [isToggled, setIsToggled] = useState(true);
   const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션들
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const mapButtonRef = useRef(null); // Map 버튼 참조 생성
+  
+  // const currentTab = location.state?.activeTab || "채탕하기"; // 기본값 설정
+
+  // Chat에서 엔터 이벤트를 처리할 핸들러
+  const handleEnterPress = () => {
+    if (mapButtonRef.current) {
+      mapButtonRef.current.click(); // 버튼 클릭 효과
+    }
+  };
 
   const handleLogout = () => {
     signOut(auth)
@@ -110,11 +121,6 @@ const Main = () => {
   return (
     <main className="main-container">
       <header className="header">
-        {/* <div>
-          <h1>내맘대로드</h1>
-          <h4>지피티와 네이버 지도를 활용한 맞춤형 맛집 플랫폼</h4>
-        </div> */}
-
         <nav className="navbar">
           <button
             className="menu-button-home"
@@ -125,7 +131,7 @@ const Main = () => {
 
           {/* 라이트, 다크 모드 토글 버튼 */}
           <div style={{ marginLeft: "800pt", display: "flex", alignItems: "center", gap: "10px" }}>
-          <span style={{color:"white", fontSize:"18pt"}}>☀︎</span>
+            {/* <span style={{ color: "white", fontSize: "18pt" }}>☀︎</span>
             <div
               onClick={handleLiteDarkToggle}
               style={{
@@ -152,14 +158,13 @@ const Main = () => {
                 }}
               ></div>
             </div>
-            <span style={{color:"white", fontSize: "18pt"}}>☾</span>
+            <span style={{ color: "white", fontSize: "18pt" }}>☾</span> */}
           </div>
 
           <button className="login-button" onClick={handleLogout}>
             로그아웃
           </button>
         </nav>
-        {/* <button className="back-btn" onClick={() => navigate('/Home')}>처음으로</button> */}
       </header>
 
       {/* 탭, 챗봇, 필터링, 지도 */}
@@ -212,6 +217,7 @@ const Main = () => {
                 extractedRestaurants={extractedRestaurants}
                 updateText={updateText}
                 setLocations={setLocations}
+                onEnterPress={handleEnterPress}
               />
             </div>
             <div
@@ -253,9 +259,10 @@ const Main = () => {
               placeholder="필터링을 선택해보세요!"
               className="filtering-input"
               style={{
-                fontWeight: "bold",
-                fontSize: "13pt",
-                padding: "10px", // 패딩 추가
+                // fontWeight: "bold",
+                fontSize: "16px",
+                fontFamily: "Noto Sans KR", /* 폰트 변경 */
+                padding: "12px", // 패딩 추가
                 border: "2px solid rgb(235, 60, 0)", // 테두리 스타일
                 borderRadius: "15px", // 둥근 모서리
                 resize: "none", // 크기 조절 불가능
@@ -271,7 +278,7 @@ const Main = () => {
 
                 boxSizing: "content-box" /* 패딩 포함 크기 계산 */,
                 lineHeight:
-                  "100%" /* 높이와 동일하게 설정해서 글자 수직 정렬 */,
+                  "50%" /* 높이와 동일하게 설정해서 글자 수직 정렬 */,
               }}
             ></textarea>
 
@@ -294,9 +301,10 @@ const Main = () => {
                 <label
                   key={item.name}
                   className={`filter-label ${!isToggled ? "disabled" : ""}`}
-                  style={{backgroundColor:"#2f2f2f",
-                    border: "none",
-                  }}
+                // style={{
+                //   backgroundColor: "#2f2f2f",
+                //   border: "none",
+                // }}
                 >
                   <input
                     type="checkbox"
@@ -307,7 +315,7 @@ const Main = () => {
                     style={{
                       width: "18px", // 크기 살짝 줄임
                       height: "18px",
-                      accentColor: "rgb(235,59,0)",
+                      accentColor: "rgb(235,60,0)",
                     }}
                   />
                   <span
@@ -325,10 +333,10 @@ const Main = () => {
                 onClick={resetCheckboxes}
                 style={{
                   fontWeight: "bold",
-                  marginLeft: "240px",
+                  marginLeft: "270px",
                   padding: "8px 12px",
                   backgroundColor: "#2f2f2f", // DarkGray 색상
-                  color: "rgb(235, 59, 0)", // 텍스트 색상
+                  color: "rgb(235, 60, 0)", // 텍스트 색상
                   border: "none",
                   borderRadius: 20,
                   cursor: "pointer",
@@ -358,9 +366,10 @@ const Main = () => {
                 <label
                   key={item.name}
                   className={`filter-label ${!isToggled ? "disabled" : ""}`}
-                  style={{backgroundColor:"#2f2f2f",
-                    border: "none",
-                  }}
+                // style={{
+                //   backgroundColor: "#2f2f2f",
+                //   border: "none",
+                // }}
                 >
                   <input
                     type="checkbox"
@@ -371,7 +380,7 @@ const Main = () => {
                     style={{
                       width: "18px", // 크기 살짝 줄임
                       height: "18px",
-                      accentColor: "rgb(235,59,0)", // 체크박스 색상
+                      accentColor: "rgb(235,60,0)", // 체크박스 색상
                     }}
                   />
                   <span
@@ -399,11 +408,12 @@ const Main = () => {
               [배달 가능]
             </label>
           </div> */}
+
           </div>
           {/* {memoizedChat} */}
           {/* <Map locatiosn={locations} /> */}
           <div className="map2">
-            <Map />
+            <Map buttonRef={mapButtonRef} />
           </div>
         </section>
         {/* <textarea id='hiddenLatLng'>테스트</textarea> */}

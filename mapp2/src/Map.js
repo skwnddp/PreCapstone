@@ -49,46 +49,41 @@ class MapManager {
         // 이하 GPS 버튼 속성들 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
         // 버튼 생성
         const button = document.createElement('button');
-        button.innerHTML = '⚙ 현재 위치';
+        button.innerHTML = '⚙ 내 위치';
         button.style.position = 'absolute';
         button.style.top = '10px';
         button.style.right = '10px';
         button.style.zIndex = '1000';
-        button.style.padding = '12px 18px';
+        button.style.padding = '12px 12px';
         // button.style.background = 'linear-gradient(45deg, #050042, #00BFFF)';
         // button.style.color = '#ffffff';
 
-        button.style.backgroundColor = 'rgb(31, 31, 31)';
-        button.style.color = 'rgb(235, 59, 0)';
+        button.style.backgroundColor = 'rgb(32, 32, 32, 0.8)';
+        button.style.color = 'rgb(235, 60, 0)';
         button.style.borderRadius = '30px';
         button.style.fontSize = '14px';
         button.style.border = 'none';
         button.style.fontWeight = 'bold';
         button.style.cursor = 'pointer';
-        button.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.1)';
-        button.style.transition = 'all 0.3s ease';
+        button.style.transition = 'all 0.2s ease';
 
         // 호버 및 클릭 효과 추가
         button.addEventListener('mouseover', () => {
-            button.style.background = 'linear-gradient(45deg, rgb(31, 31, 31), #4a4a4a)';
-            button.style.boxShadow = '0 12px 20px rgba(0, 0, 0, 0.2)';
-            button.style.transform = 'translateY(-3px)';
+            button.style.background = 'linear-gradient(45deg, rgb(32, 32, 32), #4a4a4a)';
+            button.style.transform = 'translateY(-1px)';
         });
 
         button.addEventListener('mouseout', () => {
-            button.style.background = 'rgb(31, 31, 31)';
-            button.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.1)';
+            button.style.background = 'rgb(32, 32, 32)';
             button.style.transform = 'translateY(0)';
         });
 
         button.addEventListener('mousedown', () => {
-            button.style.transform = 'translateY(2px)';
-            button.style.boxShadow = '0 5px 10px rgba(0, 0, 0, 0.15)';
+            button.style.transform = 'translateY(1px)';
         });
 
         button.addEventListener('mouseup', () => {
             button.style.transform = 'translateY(0)';
-            button.style.boxShadow = '0 12px 20px rgba(0, 0, 0, 0.2)';
         });
         // 이상 GPS 버튼 속성들 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
@@ -130,7 +125,7 @@ class GpsManager {
                 }
             );
         } else {
-            alert("GPS를 지원하지 않는 브라우저입니다.");
+            alert("GPS를 지원하지 않는 브라우저에요");
         }
     }
 }
@@ -148,7 +143,7 @@ class PolylineManager {
         const path = [
             new window.naver.maps.LatLng(37.5825, 127.0103), // 한성대학교
             new window.naver.maps.LatLng(37.5850, 127.0150), // 임의의 다른 위치
-            new window.naver.maps.LatLng(37.5900, 127.0200)  // 또 다른 위치
+            new window.naver.maps.LatLng(37.6000, 127.0200)  // 또 다른 위치
         ];
 
         const polyline = new window.naver.maps.Polyline({
@@ -269,12 +264,13 @@ function initCustomOverlay() {
     if (window.naver && window.naver.maps) {
         // console.log("커스텀 오버레이 다중 이니셜라이징")
         CustomOverlay = class extends window.naver.maps.OverlayView {
-            constructor({ position, content, map }) {
+            constructor({ position, content, map, onClick }) {
                 super();
                 this.position = position;
                 this.content = content;
                 this.map = map;
                 this.div = null;
+                this.onClick = onClick;
 
                 // 오버레이를 지도에 추가
                 this.setMap(map);
@@ -285,14 +281,17 @@ function initCustomOverlay() {
                 const div = document.createElement('div');
                 div.style.position = 'absolute';
                 div.style.padding = '12px';
-                div.style.background = 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)';
+                div.style.border = "1px solid white"
+                div.style.background = 'linear-gradient(45deg, rgb(32, 32, 32, 0.8) 100%, rgb(32, 32, 32, 0.4) 100%)';
                 // 그라데이션
                 div.style.borderRadius = '20px';
                 div.style.textAlign = 'center';
-                div.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.3)';
+                div.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.2)';
                 div.style.fontWeight = 'bold';
                 div.style.fontSize = '16px';
                 div.style.color = 'white !important';
+                div.style.fontFamily = "Noto Sans KR";
+                div.style.cursor = 'pointer'; // 클릭 가능한 커서 모양
 
                 // 3D 회전 애니메이션
                 div.style.animation = 'rotate3D 4s infinite linear';
@@ -315,6 +314,13 @@ function initCustomOverlay() {
 
                 this.div = div;
 
+                // 클릭 이벤트 추가
+                div.addEventListener('click', () => {
+                    if (this.onClick) {
+                        this.onClick(this.position, this.content); // 클릭 시 핸들러 호출
+                    }
+                });
+
                 const panes = this.getPanes();
                 panes.overlayLayer.appendChild(div);
 
@@ -326,7 +332,7 @@ function initCustomOverlay() {
                             transform: rotateX(0deg) rotateY(0deg);
                         }
                         40% {
-                            transform: rotateX(2deg) rotateY(60deg);
+                            transform: rotateX(2deg) rotateY(30deg);
                         }
                         50% {
                             transform: rotateX(0deg) rotateY(90deg);
@@ -401,6 +407,9 @@ class MarkerManager {
             position,
             content,
             map: this.map,
+            onClick: (position, content) => {
+                alert(`플로팅 바에서 맛집을 클릭해 정보와 리뷰를 확인하세요!`);
+            }
         });
 
         this.markers.push({ marker, overlay });
@@ -564,9 +573,8 @@ class CoordinateSorter {
 }
 
 // 지도 컴포넌트
-export const MapComponent = ({ locations }) => {
-    console.log("컴포넌트 실행 시점");
-
+export const MapComponent = ({ locations, buttonRef }) => {
+    // console.log("컴포넌트 실행 시점");
     const [map, setMap] = useState(null);
     const [location, setLocation] = useState('');  // 위치 상태
     const [searchQuery, setSearchQuery] = useState('');
@@ -737,7 +745,7 @@ export const MapComponent = ({ locations }) => {
                     transition: 'visibility 0s, opacity 0.5s ease', // visibility와 opacity에 전환 효과 추가
                     position: 'absolute',
                     top: '280px', // 지도에서 리스트의 상단 위치 조정
-                    left: '42%', // 지도에서 리스트의 좌측 위치 조정
+                    left: '410px', // 지도에서 리스트의 좌측 위치 조정
                     width: '160px',
                     height: '200px',
                     border: '2px solid black',
@@ -746,23 +754,23 @@ export const MapComponent = ({ locations }) => {
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-around',
-                    backgroundColor: 'rgb(31, 31, 31, 0.8)', // 배경 색상 투명하게 설정 (선택사항)
+                    backgroundColor: 'rgb(32, 32, 32, 0.8)', // 배경 색상 투명하게 설정 (선택사항)
                     color: 'black', // 글자는 불투명하게 설정
                     zIndex: 1 // 리스트가 지도 위로 오도록 설정
                 }}>
                 </div>
                 <button
-                    className="chat-button"  // 'chat-button' 클래스 재탕
+                    className="floating-button"
                     style={{
                         position: 'absolute',
                         top: '495px', // 지도에서 리스트의 상단 위치 조정
-                        left: '45%', // 지도에서 리스트의 좌측 위치 조정}
+                        left: '440px', // 지도에서 리스트의 좌측 위치 조정}
                         width: '120px',
                         height: '40px',
                         zIndex: 1, // 리스트가 지도 위로 오도록 설정
-                        borderRadius: '20px',
-                        backgroundColor: 'rgb(31, 31, 31)',
-                        color: 'rgb(235, 59, 0)',
+                        // borderRadius: '20px',
+                        // backgroundColor: 'rgb(32, 32, 32)',
+                        // color: 'rgb(235, 60, 0)',
                         fontWeight: 'bold'
                     }} onClick={toggleListVisibility}>
                     {isListVisible ? '플로팅 끄기' : '플로팅 켜기'}
@@ -770,10 +778,10 @@ export const MapComponent = ({ locations }) => {
             </div>
 
             < br />
-            ㅡ이하 기능들은 테스트 용도이고, 추후 숨기거나 삭제할 예정입니다ㅡ
+            {/* ㅡ이하 기능들은 테스트 용도이고, 추후 숨기거나 삭제할 예정입니다ㅡ */}
             < br />
 
-            <div className='hide111111111111111111111'>
+            <div className='hide'>
                 {/* <button onClick={handleGpsClick}>현재 위치 📍</button> <span /> */}
                 < button onClick={handleAddMarker} > 한성대 마커 추가</button > <span />
                 <button onClick={handleRemoveMarkers}>전채 마커 삭제</button> <span />
@@ -813,7 +821,16 @@ export const MapComponent = ({ locations }) => {
             </div> */}
 
             </div >
-            <button id="handleButtonClick" style={{ width: "400px" }} onClick={handleButtonClick}>맛집 마커, 폴리라인 추가 및 이동</button>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                <button id="handleButtonClick" ref={buttonRef} className='floating-button' style={{ width: "200px", height: "40px" }} onClick={handleButtonClick}>
+                    맛집 새로고침 ⟳
+                </button>
+            </div>
         </div>
     );
 };

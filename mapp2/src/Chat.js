@@ -15,10 +15,11 @@ import { app } from "./firebase"; // firebase.js에서 app 객체 가져오기
 import "./Chat.css";
 import Info from "./Info";
 import { reauthenticateWithCredential } from "firebase/auth";
+import { isExpressionWithTypeArguments, ScriptElementKind } from "typescript";
 
 const db = getFirestore(app); // Firestore 초기화
 
-const Chat = ({ setLocations }) => {
+const Chat = ({ setLocations, onEnterPress }) => {
   const mapTextareaRef = useRef(null);
   const [userMessage, setUserMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -36,15 +37,19 @@ const Chat = ({ setLocations }) => {
   const [inputValue, setInputValue] = useState(searchInput || ""); // 상태로 관리
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleKeyPress = (e) => {
+    onEnterPress(); // 부모로부터 받은 엔터 핸들러 호출
+  };
+
   // `searchInput`이 존재하면 textarea에 값을 설정
   useEffect(() => {
     if (textareaRef.current && searchInput) {
       textareaRef.current.value = searchInput;
       setUserMessage(searchInput);
+      setInputValue("");
+      console.log(userMessage);
+      console.log(searchInput);
     }
-    setInputValue("");
-    console.log(userMessage);
-    console.log(searchInput);
   }, [searchInput]);
 
   useEffect(() => {
@@ -223,7 +228,7 @@ const Chat = ({ setLocations }) => {
         userMessage.includes("한성대학교")
       ) {
         const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-        await sleep(1000); // 1초 대기
+        await sleep(2000); // 딜레이 대기
 
         const q = query(
           collection(db, "restaurants"), // Firestore의 'restaurants' 컬렉션
@@ -237,19 +242,67 @@ const Chat = ({ setLocations }) => {
           fetchedData.push(doc.data());
         });
 
-        // 랜덤으로 5개의 데이터 선택
+        // // 랜덤으로 5개의 데이터 선택
+        // const shuffledData = fetchedData.sort(() => 0.5 - Math.random()); // 배열을 섞음
+        // const randomFive = shuffledData.slice(0, 5); // 앞에서 5개 선택
+
+        // 위에 이 부분을 교묘하게 바꿀거임 userMessage 안에서 숫자만 파싱해서 그 개수만 뽑기
+
+        // 사용자 메시지에서 숫자만 파싱하는 함수
+        function extractNumberFromMessage(userMessage) {
+          const number = userMessage.match(/\d+/); // 메시지에서 숫자 추출
+          return number ? parseInt(number[0], 10) : 5; // 숫자가 있으면 그 숫자, 없으면 기본값 5
+        }
+
+        const numberOfItems = extractNumberFromMessage(userMessage); // 메시지에서 숫자 추출
+
+        // 랜덤으로 숫자만큼 데이터 선택
         const shuffledData = fetchedData.sort(() => 0.5 - Math.random()); // 배열을 섞음
-        const randomFive = shuffledData.slice(0, 5); // 앞에서 5개 선택
+        const randomFive = shuffledData.slice(0, numberOfItems); // 앞에서 숫자 개수만큼 선택
 
         const resultMessage = {
           sender: "gpt",
           text: randomFive.length
-            ? randomFive
-                .map((item) => `🍽️ ${item.name}\n📋 ${item.description}`)
+            ? `🥰좋아 학교 주변에서 맛집을 찾아볼게\n\n` + // 앞에 추가할 텍스트
+              randomFive
+                .map((item) => `${item.name}\n📋 ${item.description}`)
                 .join("\n\n")
             : "한성대와 관련된 맛집 정보를 찾을 수 없습니다.",
           timestamp: new Date().toLocaleString(),
-        };
+        };        
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        document.getElementById("hiddenDiv").value = ""; // 히든 div 값 초기화
+        document.getElementById("hiddenLatLng").value = ""; // 히든 latlng 값 초기화
+        // 한성대 키워드 맛집 검색 이후
+        // item.name만 hiddenDiv에 <div>div>item.name</div></div> 넣어주면 됨
+
+        // randomFive에서 latlng 배열 고르고 배열의 1, 2번째 값을
+        // document.getElementById("hiddenLatLng").value 여기에 그대로 추가하면 됨
+
+        // 'hiddenDiv'에 item.name만 넣기
+        const hiddenDiv = document.getElementById("hiddenDiv");
+        hiddenDiv.innerHTML = ""; // 기존 내용 초기화
+
+        // randomFive에서 각 item의 name을 div로 감싸서 hiddenDiv에 추가
+        randomFive.forEach(item => {
+          const div = document.createElement("div");
+          div.innerHTML = `<div><div>R${item.name}</div></div>`; // item.name을 div로 감쌈
+          hiddenDiv.value += div.innerHTML;
+        });
+
+        // 'randomFive'에서 latlng 배열 고르고 lat, lng 값을 hiddenLatLng에 추가
+        const latLngValues = randomFive.map(item => item.latlng); // latlng 배열 추출
+        console.log(latLngValues);
+
+        // lat, lng 값을 각각 hiddenLatLng에 설정
+        if (latLngValues.length > 0) {
+          const latLngString = latLngValues.map(coord => `${coord[0]}, ${coord[1]}`).join('\n');
+          document.getElementById("hiddenLatLng").value = latLngString;
+        } else {
+          document.getElementById("hiddenLatLng").value = "위치 정보 없음";
+        }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         setMessages((prevMessages) => [...prevMessages, resultMessage]);
         // Firestore에 검색 기록 저장
@@ -402,6 +455,8 @@ const Chat = ({ setLocations }) => {
         // 종류 이후 상태값 복구 및 할당 로직
         setIsLocked(false);
         setIsLoading(false); // 로딩 바 토글
+        handleKeyPress();
+        // addMessage DOMTokenList ScriptElementKind ScriptElementKind parseRestaurantsScriptElementKind ScriptElementKind isExpressionWithTypeArguments
         return; // '한성대' 키워드 처리 완료 후 반환
       }
 
@@ -492,6 +547,9 @@ const Chat = ({ setLocations }) => {
       } else {
         extractedNames = rawText; // 일반 질문일 경우 GPT 응답 그대로 출력
         setIsLocked(false);
+        setIsLoading(false); // 로딩 바 토글
+        // 일반 답변 로직이므로 필요없음 handleKeyPress();
+        // addMessage DOMTokenList ScriptElementKind ScriptElementKind parseRestaurantsScriptElementKind ScriptElementKind isExpressionWithTypeArguments
       }
 
       const gptMessage = {
@@ -506,6 +564,7 @@ const Chat = ({ setLocations }) => {
       if (isRestaurantRequest) {
         const extractedRestaurants = parseRestaurants(rawText);
         setIsLocked(false); // 채팅 잠금 해제
+        setIsLoading(false); // 로딩바 끄기
 
         // Firestore에 검색 결과 저장
         if (extractedRestaurants.length > 0) {
@@ -545,8 +604,11 @@ const Chat = ({ setLocations }) => {
       // 종류 이후 상태값 복구 및 할당 로직
       setIsLocked(false);
       setIsLoading(false); // 로딩 바 토글
+      handleKeyPress();
+      // addMessage DOMTokenList ScriptElementKind ScriptElementKind parseRestaurantsScriptElementKind ScriptElementKind isExpressionWithTypeArguments
     } finally {
       setUserMessage("");
+      handleKeyPress();
     }
   };
 
@@ -554,7 +616,7 @@ const Chat = ({ setLocations }) => {
     () => (
       <section className="chat-section">
         <div className="chat-messages">
-          {isLoading && <div class="loader loader-7" />}
+          {isLoading && <div className="loader loader-7" />}
           {hello ? (
             <div style={{ color: "white" }}>
               <div style={{ marginBottom: "80px" }}></div> {/* 여백을 추가 */}
@@ -562,7 +624,7 @@ const Chat = ({ setLocations }) => {
                 style={{
                   textAlign: "left",
                   fontSize: "28px",
-                  color: "rgb(235,59,0)",
+                  color: "rgb(235,60,0)",
                   fontFamily: "'Gugi', sans-serif",
                 }}
               >
@@ -573,7 +635,7 @@ const Chat = ({ setLocations }) => {
                 style={{
                   textAlign: "right",
                   fontSize: "32px",
-                  color: "rgb(235, 59, 0)",
+                  color: "rgb(235, 60, 0)",
                   fontFamily: "'Gugi', sans-serif",
                 }}
               >
@@ -627,7 +689,7 @@ const Chat = ({ setLocations }) => {
                 e.preventDefault();
                 if (userMessage.trim()) {
                   setUserMessage("응답 중...");
-                  handleSendMessage();
+                  handleSendMessage(e);
                 }
               }
               handleChange(e);

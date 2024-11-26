@@ -35,24 +35,29 @@ function Favorites() {
 
             <ul >{favorites.map((item) => (
                 <li key={item.id} style={{ marginBottom: "10px" }}>
-                    
-                    <span><span style={{fontWeight:"bold", fontSize:"15pt", color: "#f8a800"}}>{item.name}</span><button
-                        onClick={() => handleRemoveFavorite(item.id)}
-                        style={{
-                            marginTop: "20px",
-                            marginLeft: "10px",
-                            backgroundColor: "rgb(235,59,0)",
-                            color: "white",
-                            border: "none",
-                            padding: "5px 10px",
-                            cursor: "pointer",
-                            borderRadius: "20px",
-                            fontWeight:"bold",
-                        }}
-                    >
-                        삭제
-                    </button><br></br> {item.description}</span>
-                    
+
+                    <div>
+                        <span style={{ fontWeight: "bold", fontSize: "15pt", color: "#f8a800" }}>{item.name}</span>
+                        <button
+                            onClick={() => handleRemoveFavorite(item.id)}
+                            style={{
+                                // position: "absolute",
+                                left: "80%",
+                                marginTop: "20px",
+                                marginLeft: "10px",
+                                backgroundColor: "rgb(235,60,0)",
+                                color: "white",
+                                border: "none",
+                                padding: "5px 10px",
+                                cursor: "pointer",
+                                borderRadius: "20px",
+                                fontWeight: "bold",
+                            }}
+                        >삭제
+                        </button><br /> {item.description}
+
+                    </div>
+
                 </li>
             ))}
             </ul>

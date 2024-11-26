@@ -1,12 +1,12 @@
 :root {
     /* 네온 텍스트 기본 설정 */
-    --neon-color: #ffffff20;
+    --neon-color: #ff00008f;
     --neon-shadow-intensity: 0.4;
     --font-size: 2rem;
 
     /* 그림자 크기 범위 (최소, 최대) */
     --shadow-min: 50; /* 최소 그림자 크기 (px) */
-    --shadow-max: 10; /* 최대 그림자 크기 (px) */
+    --shadow-max: 100; /* 최대 그림자 크기 (px) */
     --shadow-step: 10; /* 그림자 간격 (px) */
 
     /* 깜빡임 지속 시간 */

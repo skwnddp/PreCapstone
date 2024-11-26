@@ -10,7 +10,7 @@ function History() {
     // Firestore에서 실시간으로 맛집 데이터 가져오기
     useEffect(() => {
         const q = query(
-            collection(db, "searchHistory"), 
+            collection(db, "searchHistory"),
             orderBy("timestamp", "desc"), // 최신순으로 정렬
             limit(8) // 최대 8개만 가져옴
         );
@@ -20,27 +20,27 @@ function History() {
             snapshot.docs.forEach((doc) => {
                 const data = doc.data();
                 const results = data.results || []; // 결과 배열이 없을 경우 빈 배열 처리
-            results.forEach((result) => {
-                fetchedRestaurants.push({
-                    id: `${doc.id}-${result.name}`,
-                    docId: doc.id,
-                    name: result.name,
-                    description: result.description,
-                    timestamp: result.timestamp || data.timestamp, // 문서나 결과의 timestamp 사용
+                results.forEach((result) => {
+                    fetchedRestaurants.push({
+                        id: `${doc.id}-${result.name}`,
+                        docId: doc.id,
+                        name: result.name,
+                        description: result.description,
+                        timestamp: result.timestamp || data.timestamp, // 문서나 결과의 timestamp 사용
+                    });
                 });
             });
+
+            // 전체 데이터를 최신순으로 정렬한 후, 최대 8개만 유지
+            const limitedRestaurants = fetchedRestaurants
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .slice(0, 8);
+
+            setRestaurants(limitedRestaurants);
         });
 
-        // 전체 데이터를 최신순으로 정렬한 후, 최대 8개만 유지
-        const limitedRestaurants = fetchedRestaurants
-            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-            .slice(0, 8);
-
-        setRestaurants(limitedRestaurants);
-    });
-
-    return () => unsubscribe();
-}, []);
+        return () => unsubscribe();
+    }, []);
 
     // 맛집 삭제
     const deleteRestaurant = async (id, docId, name) => {
@@ -71,29 +71,31 @@ function History() {
             {restaurants.length === 0 ? (
                 <p>저장된 맛집 내역이 없습니다.</p>
             ) : (
-                <ul>
-                    {restaurants.map((restaurant) => (
-                        <li key={restaurant.id} style={{ marginBottom: "10px" }}>
-                            <span style={{fontWeight:"bold", fontSize:"15pt", color: "#f8a800"}}>{restaurant.name}</span>  <button
+                <ul>{restaurants.map((restaurant) => (
+                    <li key={restaurant.id} style={{ marginBottom: "10px" }}>
+                        <div>
+                            <span style={{ fontWeight: "bold", fontSize: "15pt", color: "#f8a800" }}>{restaurant.name}</span>
+                            <button
                                 onClick={() => deleteRestaurant(restaurant.id, restaurant.docId, restaurant.name)}
                                 style={{
+                                    // position: "absolute",
+                                    left: "80%",
                                     marginTop: "20px",
-                                    marginLeft: "5px",
-                                    backgroundColor: "rgb(235,59,0)",
+                                    marginLeft: "10px",
+                                    backgroundColor: "rgb(235,60,0)",
                                     color: "white",
                                     border: "none",
                                     padding: "5px 10px",
                                     cursor: "pointer",
                                     borderRadius: "20px",
-                                    fontWeight:"bold",
+                                    fontWeight: "bold",
                                 }}
-                                
-                            >
-                                삭제
-                            </button><br></br> {restaurant.description}
-                          
-                        </li>
-                    ))}
+                            > 삭제
+                            </button><br />
+                            {/* {restaurant.description} */}
+                        </div>
+                    </li>
+                ))}
                 </ul>
             )}
         </div>

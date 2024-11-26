@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   getAuth,
@@ -15,6 +15,8 @@ import { serverTimestamp } from "firebase/firestore";
 import Neon from "./Neon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import "./AlertToastify"
+import useDarkMode from "use-dark-mode"; // 다크 모드
 
 function Home() {
   const [isLoginFormVisible, setLoginFormVisible] = useState(false); // 로그인 양식 표시 여부
@@ -28,16 +30,106 @@ function Home() {
   const [isPasswordVerified, setIsPasswordVerified] = useState(false); // 현재 비밀번호 확인 여부
   const textareaRef = useRef(null);
   const navigate = useNavigate();
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isTyping, setIsTyping] = useState(false); // 타이핑 중 여부 상태
+  const [isDarkMode, setIsDarkMode] = useState(true); // 다크모드 기본값
+  const darkMode = useDarkMode(true); // 기본값: 다크모드 활성화(true)
 
-  const handleAuthNavigation = (navigate, path) => {
+  // // 색상 밝기를 계산하는 함수 (Luminance 계산)
+  // const calculateLuminance = (r, g, b) => {
+  //   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  // };
+
+  // // HEX 색상에서 RGB로 변환
+  // const hexToRgb = (hex) => {
+  //   let r, g, b;
+  //   if (hex[0] === "#") {
+  //     hex = hex.slice(1);
+  //   }
+  //   if (hex.length === 3) {
+  //     hex = hex.split("").map((x) => x + x).join("");
+  //   }
+  //   r = parseInt(hex.slice(0, 2), 16);
+  //   g = parseInt(hex.slice(2, 4), 16);
+  //   b = parseInt(hex.slice(4, 6), 16);
+  //   return { r, g, b };
+  // };
+
+  // // RGB 색상에서 Luminance 값 계산 후 어두운 색인지 판단
+  // const isBlackOrDarkColor = (color) => {
+  //   const rgb = color.match(/\d+/g); // rgb 값을 추출
+  //   if (rgb && rgb.length === 3) {
+  //     const [r, g, b] = rgb.map(Number);
+  //     const luminance = calculateLuminance(r, g, b);
+  //     return luminance < 50; // Luminance가 50 미만이면 검은색 또는 어두운 색
+  //   }
+  //   return false;
+  // };
+
+  // // const [isDarkMode, setIsDarkMode] = useState(true); // 기본 다크모드 상태
+  // const [originalStyles, setOriginalStyles] = useState({}); // 원본 스타일 저장
+  // // 버튼 클릭 시 색상 변경
+
+  // // 첫 렌더링 후 모든 스타일을 저장
+  // useEffect(() => {
+  //   const elements = document.querySelectorAll("*"); // 모든 요소 선택
+  //   const styles = {};
+
+  //   elements.forEach((element) => {
+  //     // 각 요소의 스타일을 가져옵니다.
+  //     const computedStyle = window.getComputedStyle(element);
+  //     const backgroundColor = computedStyle.backgroundColor;
+  //     const color = computedStyle.color;
+  //     const backgroundImage = computedStyle.backgroundImage;
+  //     const borderColor = computedStyle.borderColor;
+
+  //     // 스타일을 저장합니다.
+  //     styles[element] = {
+  //       backgroundColor,
+  //       color,
+  //       backgroundImage,
+  //       borderColor
+  //     };
+  //   });
+
+  //   setOriginalStyles(styles); // 원본 스타일 저장
+  // }, []); // 첫 렌더링 시 한 번만 실행
+
+  // // 다크모드 / 라이트모드 변경 시 처리
+  // useEffect(() => {
+  //   const elements = document.querySelectorAll("*"); // 모든 요소 선택
+
+  //   elements.forEach((element) => {
+  //     const { backgroundColor, color, backgroundImage, borderColor } = originalStyles[element] || {};
+
+  //     if (isDarkMode) {
+  //       // 다크모드: 원래 색상으로 복원
+  //       if (backgroundColor) element.style.backgroundColor = backgroundColor;
+  //       if (color) element.style.color = color;
+  //       if (backgroundImage) element.style.backgroundImage = backgroundImage;
+  //       if (borderColor) element.style.borderColor = borderColor;
+  //     } else {
+  //       // 라이트모드: 검은색 계열 색상만 변경
+  //       if (isBlackOrDarkColor(backgroundColor) || isBlackOrDarkColor(color)) {
+  //         element.style.backgroundColor = "#ecf0f1"; // 라이트모드 배경색
+  //         element.style.color = "#2c3e50"; // 라이트모드 텍스트 색상
+  //         if (backgroundImage) element.style.backgroundImage = ""; // 그라디언트도 초기화
+  //       }
+  //     }
+  //   });
+  // }, [isDarkMode, originalStyles]); // isDarkMode 또는 originalStyles가 변경될 때마다 실
+
+  // // 테마 전환 함수
+  // const toggleTheme = () => {
+  //   setIsDarkMode((prevMode) => !prevMode);
+  // };
+
+  const handleAuthNavigation = (navigate, path, state = {}) => {
     const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigate(path); // 로그인 상태면 경로로 이동
+    onAuthStateChanged(auth, (isLoggedIn) => {
+      if (isLoggedIn) {
+        navigate(path, { state }); // 로그인 상태면 경로와 함께 state 전달
       } else {
-        alert("로그인 후 이용 가능합니다."); // 비로그인 상태 경고
+        alert("로그인을 먼저 해주세요"); // 비로그인 상태 경고
       }
     });
   };
@@ -53,7 +145,7 @@ function Home() {
     const texts = [
       "😍 한성대 근처 맛집 알려줄래",
       "🌆 서울에서 괜찮은 일식 맛집 알려줄래",
-      "🍝 건대역 근처에서 데이트하기 좋은 맛집 알려줄래",
+      "🍝 성수역 근처에서 데이트하기 좋은 맛집 알려줄래",
       "❄ 국내에서 겨울에 놀러갈만한 분위기 좋은 맛집을 찾아줘",
     ]; // 여러 텍스트 배열
 
@@ -152,6 +244,7 @@ function Home() {
         setSignUpFormVisible(false);
         setProfileFormVisible(false);
         setIsPasswordVerified(false);
+        navigate("/Home"); // 로그아웃 이후 새로고침
       })
       .catch((error) => {
         // 로그아웃 중 오류 처리
@@ -159,8 +252,21 @@ function Home() {
       });
   };
 
-  const handleMenuClick = (menu) => {
-    alert(`${menu} 버튼 클릭!`); // 메뉴 버튼 클릭 시 알림
+  // const handleMenuClick = (menu) => {
+  //   alert(`${menu} 버튼 클릭!`); // 메뉴 버튼 클릭 시 알림
+  // };
+
+  const handleRndSearch = (event) => {
+    const searchInput = "오늘 괜찮은 메뉴 뭐 있을까? \n맛집으로 추천해주라";
+
+    // 자식 컴포넌트에서 전달된 ref를 사용
+    if (textareaRef.current) {
+      textareaRef.current.value = searchInput;
+    }
+
+    console.log(searchInput);
+
+    navigate("/Main", { state: { searchInput } });
   };
 
   const handleSearch = (event) => {
@@ -183,6 +289,10 @@ function Home() {
   };
 
   const toggleProfileForm = () => {
+    if (!isLoggedIn) {
+      alert('로그인을 먼저 해주세요!');
+      return;
+    }
     setProfileFormVisible(!isProfileFormVisible); // 프로필 수정 양식 토글
     setLoginFormVisible(false); // 로그인 양식 숨김
     setSignUpFormVisible(false); // 회원가입 양식 숨김
@@ -197,27 +307,27 @@ function Home() {
       setIsPasswordVerified(true); // 비밀번호 확인 완료
       setCurrentPassword("");
     } catch (error) {
-      alert("현재 비밀번호가 일치하지 않습니다.");
+      alert("현재 비밀번호가 일치하지 않아요");
     }
   };
 
   // 새 비밀번호 변경 함수
   const handlePasswordChange = async () => {
     if (newPassword !== confirmNewPassword) {
-      alert("새 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+      alert("새 비밀번호와 비밀번호 확인이 일치하지 않아요");
       return;
     }
 
     try {
       const user = auth.currentUser;
-      if (!user) throw new Error("로그인된 사용자가 없습니다.");
+      if (!user) throw new Error("로그인된 사용자가 없어요");
 
       // 새 비밀번호를 설정하는 함수
       await updatePassword(user, newPassword);
-      alert("비밀번호가 성공적으로 변경되었습니다.");
+      alert("비밀번호가 성공적으로 변경되었어요!");
       toggleProfileForm(); // 비밀번호 변경 후 양식 닫기
     } catch (error) {
-      alert("비밀번호 변경 실패: " + error.message);
+      alert("비밀번호 변경에 실패했어요... " + error.message);
     }
   };
 
@@ -246,56 +356,65 @@ function Home() {
         </button>
         <button
           className="menu-button"
-          onClick={() => handleAuthNavigation(navigate, "/Main")}
+          onClick={() => handleRndSearch()}
         >메뉴추천
         </button>
         <button
           className="menu-button"
-          onClick={() => handleAuthNavigation(navigate, "/Main")}
+          onClick={() => handleAuthNavigation(navigate, "/Main", { activeTab: "즐겨찾기" })}
         >즐겨찾기
         </button>
         <button
           className="menu-button"
-          onClick={() => handleAuthNavigation(navigate, "/Main")}
-        > 리뷰 보기
+          onClick={() => handleAuthNavigation(navigate, "/Main", { activeTab: "리뷰보기" })}
+        > 리뷰보기
         </button>
-        <button className="menu-button" onClick={() => navigate("/Main")}>
+        {/* <button className="menu-button" onClick={() => navigate("/Main")}>
           메인으로 이동
-        </button>
+        </button> */}
+
+        {/* vunalnc setIsDarkMode dmdk..vunalnc etIsDarkMode dmdk..   */}
 
         {/* 라이트, 다크 모드 토글 버튼 */}
-      <div className={isDarkMode ? "" : "light-mode"}> {/* 다크모드/라이트모드 상태에 따라 클래스를 변경 */}
-        <div style={{ marginLeft: "500pt", display: "flex", alignItems: "center", gap: "10px" }}>
-        <span style={{ color: "white", fontSize: "18pt" }}>☀︎</span>
-        <div
-          onClick={handleLiteDarkToggle}
-          style={{
-            width: "50px",
-            height: "25px",
-            background: isDarkMode ? "#333" : "#ccc",
-            borderRadius: "15px",
-            position: "relative",
-            cursor: "pointer",
-            transition: "background 0.3s",
-          }}
-        >
-          <div
-            style={{
-              width: "20px",
-              height: "20px",
-              background: "white",
-              borderRadius: "50%",
-              position: "absolute",
-              top: "50%",
-              left: isDarkMode ? "26px" : "4px",
-              transform: "translateY(-50%)",
-              transition: "left 0.3s",
-            }}
-          ></div>
+        <div className={isDarkMode ? "" : "light-mode"}>
+          {/* 다크모드/라이트모드 상태에 따라 클래스를 변경 */}
+          <div style={{ marginLeft: "500pt", display: "flex", alignItems: "center", gap: "10px" }}>
+
+            {/* <button onClick={toggleTheme}>
+              Toggle to {isDarkMode ? "Light Mode" : "Dark Mode"}
+            </button> */}
+
+            {/* <span style={{ color: "white", fontSize: "18pt" }}>☀︎</span>
+            <div
+              onClick={handleLiteDarkToggle}
+              style={{
+                width: "50px",
+                height: "25px",
+                background: isDarkMode ? "#333" : "#ccc",
+                borderRadius: "15px",
+                position: "relative",
+                cursor: "pointer",
+                transition: "background 0.3s",
+              }}
+            >
+              <div
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  background: "white",
+                  borderRadius: "50%",
+                  position: "absolute",
+                  top: "50%",
+                  left: isDarkMode ? "26px" : "4px",
+                  transform: "translateY(-50%)",
+                  transition: "left 0.3s",
+                }}
+              ></div>
+            </div>
+            <span style={{ color: "white", fontSize: "18pt" }}>☾</span> */}
+
+          </div>
         </div>
-        <span style={{ color: "white", fontSize: "18pt" }}>☾</span>
-      </div>
-      </div>
 
         <button className="profile-button" onClick={toggleProfileForm}>
           프로필
@@ -304,7 +423,7 @@ function Home() {
           className="login-button"
           onClick={isLoggedIn ? handleLogout : toggleLoginForm}
         >
-          {isLoggedIn ? "로그아웃" : isLoginFormVisible ? "Cancel" : "로그인"}
+          {isLoggedIn ? "로그아웃" : isLoginFormVisible ? "취소" : "로그인"}
         </button>
       </nav>
 
@@ -317,9 +436,9 @@ function Home() {
         <h2 style={{ color: "white", fontFamily: "Noto Sans KR", fontWeight: 400, fontSize: "20px" }}>
           {isLoggedIn
             ? username && username.split("@")[0] // username이 있을 경우 처리
-              ? `어서오세요, ${username.split("@")[0]}님!`
+              ? `환영해요, ${username.split("@")[0]}님!`
               : "유저 이름을 불러오는데 실패했어요... 새로고침을 해보세요 😂" // username이 없을 경우 로직
-            : "환영합니다! 지금 바로 로그인을 해보세요"}
+            : "어서오세요! 지금 바로 로그인을 해보세요"}
         </h2>
 
         {/* 로그인 양식 또는 회원가입 양식 보이기 */}
@@ -337,7 +456,7 @@ function Home() {
         ) : isProfileFormVisible && isLoggedIn ? (
           // 프로필 수정 양식
           <div className="profile-form-container">
-            <h2 style={{ color: "rgb(235,59,0" }}>프로필 관리</h2>
+            <h2 style={{ color: "rgb(235,60,0" }}>프로필 관리</h2>
             {/* 현재 비밀번호 확인 */}
             {!isPasswordVerified ? (
               <form className="form">
@@ -353,7 +472,7 @@ function Home() {
                   className="form-submit"
                   onClick={verifyCurrentPassword}
                 >
-                  <span style={{ color: "rgb(235,59,0)", fontWeight: "bold" }}>
+                  <span style={{ color: "rgb(235,60,0)", fontWeight: "bold" }}>
                     확인
                   </span>
                 </button>
@@ -380,7 +499,7 @@ function Home() {
                   className="form-submit"
                   onClick={handlePasswordChange}
                 >
-                  <span style={{ fontWeight: "bold", color: "rgb(235,59,0" }}>
+                  <span style={{ fontWeight: "bold", color: "rgb(235,60,0" }}>
                     비밀번호 변경
                   </span>
                 </button>
@@ -396,7 +515,7 @@ function Home() {
           </div>
         ) : (
           <form className="search-container" onSubmit={handleSearch}>
-             <FontAwesomeIcon icon={faSearch} style={{ fontSize: "24px", color: "rgb(235,59,0)", marginLeft: 10, marginRight: 20 }} />
+            <FontAwesomeIcon icon={faSearch} style={{ fontSize: "24px", color: "rgb(235,60,0)", marginLeft: 10, marginRight: 20 }} />
             <input
               type="text"
               name="search"
@@ -419,7 +538,7 @@ function Home() {
               </div>
             )}
             <button type="submit" className="search-button">
-              챗봇으로 이동
+              채팅하기
             </button>
           </form>
         )}
@@ -432,6 +551,7 @@ function Home() {
 const LoginForm = ({ onLoginSuccess, onSignUpClick }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -448,11 +568,12 @@ const LoginForm = ({ onLoginSuccess, onSignUpClick }) => {
 
       // 로그인 성공
       onLoginSuccess(user.displayName); // 사용자 이름을 설정
-
       setEmail("");
       setPassword("");
+      navigate("/Home"); // 로그인 이후 새로고침 및 메인 이동 방지
+
     } catch (error) {
-      alert("로그인 실패: " + error.message);
+      alert("로그인에 실패했어요... " + error.message);
     }
   };
 
@@ -473,7 +594,7 @@ const LoginForm = ({ onLoginSuccess, onSignUpClick }) => {
         required
       />
       <button type="submit" className="form-submit">
-        <span style={{ color: "rgb(235,59,0", fontWeight: "bold" }}>
+        <span style={{ color: "rgb(235,60,0", fontWeight: "bold" }}>
           로그인
         </span>
       </button>
@@ -493,7 +614,7 @@ const SignUpForm = ({ onLoginSuccess }) => {
   const handleSignUp = async (event) => {
     event.preventDefault();
     if (password !== confirmPassword) {
-      alert("비밀번호가 일치하지 않습니다.");
+      alert("비밀번호가 일치하지 않아요");
       return;
     }
 
@@ -503,7 +624,7 @@ const SignUpForm = ({ onLoginSuccess }) => {
       // 이메일 중복 확인
       const methods = await fetchSignInMethodsForEmail(auth, email); // 이메일로 등록된 방법 확인
       if (methods.length > 0) {
-        alert("이미 가입된 이메일입니다. 다른 이메일을 사용해주세요.");
+        alert("이미 가입된 이메일이에요");
         return;
       }
 
@@ -525,7 +646,7 @@ const SignUpForm = ({ onLoginSuccess }) => {
       setPassword("");
       setConfirmPassword("");
     } catch (error) {
-      alert("회원가입 실패: " + error.message);
+      alert("회원가입에 실패했어요... " + error.message);
     }
   };
 
@@ -553,7 +674,7 @@ const SignUpForm = ({ onLoginSuccess }) => {
         required
       />
       <button type="submit" className="form-submit">
-        <span style={{ fontWeight: "bold", color: "rgb(235,59,0" }}>
+        <span style={{ fontWeight: "bold", color: "rgb(235,60,0" }}>
           회원가입 완료
         </span>
       </button>

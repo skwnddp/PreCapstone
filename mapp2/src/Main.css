@@ -14,32 +14,38 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    grid-template-columns: 2fr 2fr;
-    grid-template-rows: 2fr 2fr;
+    /* justify-content: center; */
+    /* grid-template-columns: 2fr 2fr;
+    grid-template-rows: 2fr 2fr; */
     height: 100vh;
-    background:  #1e1e1e;
+    background: #1e1e1e;
     color: #ffffff;
     /* place-items: center; 내부 요소를 수직 및 수평으로 중앙 정렬 */
     box-sizing: border-box;
+    /* 높이 설정해야 nav 공백없이 뜸 */
 }
 
 .navbar {
-    position: fixed; /* 화면 상단에 고정 */
-    top: 0; /* 페이지 상단 위치 */
+    position: fixed;
+    /* 화면 상단에 고정 */
+    top: 0;
+    /* 페이지 상단 위치 */
     left: 0;
     height: 30px;
-    width: 100%; /* 네비게이션 바 전체 너비 */
+    width: 100%;
+    /* 네비게이션 바 전체 너비 */
     background-color: #1b1b1b;
-    z-index: 1001; /* 다른 요소 위에 표시되도록 */
+    z-index: 1001;
+    /* 다른 요소 위에 표시되도록 */
     display: flex;
-    justify-content: space-around; /* 버튼 간 간격 균등 */
+    justify-content: space-around;
+    /* 버튼 간 간격 균등 */
     align-items: center;
     padding: 20px 0;
     gap: 10px;
-    box-shadow: 0 2px 3px rgba(235, 59, 0, 0.537);
+    box-shadow: 0 2px 3px rgba(235, 60, 0, 0.5);
     white-space: nowrap;
-  }
+}
 
 .header {
     display: flex;
@@ -70,7 +76,7 @@ body {
     right: 20px;
     top: 20px;
     background-color: #2f2f2f;
-    color: rgb(235, 59, 0);
+    color: rgb(235, 60, 0);
     padding: 10px 20px;
     border: none;
     border-radius: 20px;
@@ -78,36 +84,25 @@ body {
     cursor: pointer;
 } */
 
-.back-btn {
-    margin-top:70px;
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    background-color: rgb(31, 31, 31);
-    color: rgb(235, 59, 0);
-    padding: 10px 20px;
-    border: none;
-    border-radius: 20px;
-    font-weight: bold;
-}
-
 .chatmap-container {
     display: flex;
     width: 1600px;
-    /* align-items: center;   세로 중앙 정렬 */
+    /* height: 800px; */
+    /* align-items: center; */
+    /* 세로 중앙 정렬 */
     justify-content: center;
     /* 가로 중앙 정렬 */
     gap: 10px;
     /* 챗과 지도 사이 간격 */
-
 }
 
 .map-container {
-    /* margin-top:70px; */
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    /* 요소를 세로로 정렬 */
+    /* padding: 20px; */
     width: 1000px;
-    height: 500px;
-    
+    /* height: 500px; */
 }
 
 .map {
@@ -115,9 +110,127 @@ body {
     border-radius: 30px;
     width: 100%;
     height: 550px;
-    background-color: transparent;  /* 배경을 투명으로 설정 */
-    border: 4px solid rgb(235, 59, 0); /* 테두리 설정 */
-    box-sizing: border-box;  /* padding과 border를 전체 크기에 포함시킴 */
+    background-color: transparent;
+    /* 배경을 투명으로 설정 */
+    border: 4px solid rgb(235, 60, 0);
+    /* 테두리 설정 */
+    box-sizing: border-box;
+    /* padding과 border를 전체 크기에 포함시킴 */
+}
+
+.sidebar-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    margin-right: 5px;
+    padding: 5px;
+    width: 500px;
+    /* 컨테이너가 부모의 전체 높이를 차지하도록 설정 */
+    /* box-sizing: border-box; */
+}
+
+.sidebar {
+    font-size: large;
+    font-family: "Gugi", sans-serif;
+    display: flex;
+    /* grid-template-columns: repeat(5, 1fr); */
+    grid-gap: 10px;
+    margin: 10px;
+    padding: 10px;
+    height: 20px;
+    /* 충분한 높이를 지정 */
+    background-color: #5280ff00;
+    justify-items: center;
+    /* 가로 가운데 정렬 */
+    align-items: center;
+    /* 세로 가운데 정렬 */
+}
+
+.sidebar div {
+    display: flex;
+    padding: 10px 10px;
+    /* 기본 padding을 조금 더 크게 설정 */
+    justify-items: center;
+    /* 가로 가운데 정렬 */
+    align-items: center;
+    /* 세로 가운데 정렬 */
+    transition: border-radius 0.4s ease, background-color 0.2s ease, padding 0.4s ease;
+    /* 부드러운 전환 효과 */
+    white-space: nowrap;
+    /* 글자가 줄바꿈 없이 한 줄로 표시 */
+    cursor: pointer;
+}
+
+.sidebar div:hover {
+    background-color: #ffffff1f;
+    /* 호버 시 배경색 변화 */
+    padding: 10px 10px;
+    /* 호버 시 padding을 조금 더 크게 설정하여 영역 확대 */
+    width: 100%;
+    /* 100% 너비 설정 */
+    box-sizing: border-box;
+    /* padding이 너비에 포함되도록 설정 */
+    justify-items: center;
+    /* 가로 가운데 정렬 */
+    align-items: center;
+    /* 세로 가운데 정렬 */
+    white-space: nowrap;
+    /* 글자가 줄바꿈 없이 한 줄로 표시 */
+    border-radius: 20px;
+    /* 둥글게 만들기 */
+
+}
+
+.active-tab {
+    border-radius: 20px;
+    background-color: rgba(123, 123, 123, 0.1);
+    font-size: larger;
+    color: rgb(235, 60, 0);
+    /* 활성화된 탭의 글자색 비활성화 */
+    font-weight: bold;
+    /* 글자 두껍게 */
+    transition: font-size 0.4s ease, background-color 0.4s ease, padding 0.4s ease;
+    /* 부드러운 전환 효과 */
+}
+
+.hide {
+    display: none;
+    /* 모든 요소 숨김 */
+}
+
+.filter-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #2f2f2f;
+    border: none;
+    border-radius: 10px;
+    padding: 4px 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, opacity 0.3s;
+}
+
+.filter-label.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.filter-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: white;
+}
+
+.filter-text {
+    font-size: 14px;
+    font-weight: bold;
+    color: #000;
+}
+
+.filter-label:hover {
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 .recommendations {
@@ -139,119 +252,56 @@ body {
     padding: 5px 10px;
 }
 
-.sidebar-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    /* justify-content: center; */
-    align-items: center;
-    margin-right: 5px;
-    width: 500px;
-    /* 컨테이너가 부모의 전체 높이를 차지하도록 설정 */
-    box-sizing: border-box;
-    
-}
-
-.sidebar {
-    font-size: large;
-    font-family: "Gugi", sans-serif;
-    display: flex;
-    /* grid-template-columns: repeat(5, 1fr); */
-    grid-gap: 20px;
-    margin: 10px;
-    padding: 10px;
-    height: 20px;
-    /* 충분한 높이를 지정 */
-    background-color: #5280ff00;
-    justify-items: center;
-    /* 가로 가운데 정렬 */
-    align-items: center;
-    /* 세로 가운데 정렬 */
-    
-}
-
-.sidebar div {
-    display: flex;
+.floating-button {
+    width: 80px;
+    height: 60px;
+    border: none;
     padding: 10px 10px;
-    /* 기본 padding을 조금 더 크게 설정 */
-    justify-items: center;
-    /* 가로 가운데 정렬 */
-    align-items: center;
-    /* 세로 가운데 정렬 */
-    transition: border-radius 0.4s ease, background-color 0.2s ease, padding 0.4s ease;
-    /* 부드러운 전환 효과 */
-    white-space: nowrap;
-    /* 글자가 줄바꿈 없이 한 줄로 표시 */
-    
-}
-
-.sidebar div:hover {
-    background-color: #ffffff1f;
-    /* 호버 시 배경색 변화 */
-    padding: 10px 10px;
-    /* 호버 시 padding을 조금 더 크게 설정하여 영역 확대 */
-    width: 100%;
-    /* 100% 너비 설정 */
-    box-sizing: border-box;
-    /* padding이 너비에 포함되도록 설정 */
-    justify-items: center;
-    /* 가로 가운데 정렬 */
-    align-items: center;
-    /* 세로 가운데 정렬 */
-    white-space: nowrap;
-    /* 글자가 줄바꿈 없이 한 줄로 표시 */
-    border-radius: 20px;
-    /* 둥글게 만들기 */
-    
-}
-
-.active-tab {
-    border-radius: 20px;
-    background-color: rgba(123, 123, 123, 0.1);
-    font-size: larger;
-    color: rgb(235, 59, 0);
-    /* 활성화된 탭의 글자색 비활성화 */
-    font-weight: bold;
-    /* 글자 두껍게 */
-    transition: font-size 0.4s ease, background-color 0.4s ease, padding 0.4s ease;
-    /* 부드러운 전환 효과 */
-}
-
-.hide {
-    display: none;
-    /* 모든 요소 숨김 */
-}
-
-.filter-label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: #ececec;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 4px 4px;
-    cursor: pointer;
-    transition: background-color 0.3s, opacity 0.3s;
-  }
-  
-  .filter-label.disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-  
-  .filter-checkbox {
-    width: 18px;
-    height: 18px;
-    accent-color: white;
-  }
-  
-  .filter-text {
     font-size: 14px;
+    /* font-weight: bold; */
+    cursor: pointer;
+    transition: all 1s ease;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    text-align: center;
+    display: inline-block;
+
+    border-Radius: 20px;
+    background-color: rgb(32, 32, 32, 0.8);
+    background-color: linear-gradient(rgb(32, 32, 32), rgb(32, 32, 32));
+    color: rgb(235, 60, 0);
+}
+
+/* 애니메이션 정의 */
+@keyframes wiggle {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(4px);
+    }
+
+    75% {
+        transform: translateX(-3px);
+    }
+}
+
+.floating-button:hover {
+    padding: 10px 10px;
     font-weight: bold;
-    color: #000;
-  }
-  
-  .filter-label:hover {
-    background: #ffffff9e;
-  }
-  
+    background-color: rgb(32, 32, 32);
+    background-color: linear-gradient(rgb(32, 32, 32), rgb(32, 32, 32));
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+    animation: wiggle 0.5s ease-in-out infinite;
+    transition: all 1s ease;
+    /* 애니메이션 추가 */
+}
+
+.floating-button:active {
+    box-shadow: 0 5px 10px rgb(235, 60, 0);
+    animation: 0.5s ease-in-out infinite;
+    transition: all 1s ease;
+    /* 애니메이션 추가 */
+}

@@ -1,0 +1,72 @@
+:root {
+    --toastify-color-light: #fff;
+    --toastify-color-dark: #121212;
+    --toastify-color-info: #3498db;
+    --toastify-color-success: #07bc0c;
+    --toastify-color-warning: #f1c40f;
+    --toastify-color-error: #e74c3c;
+    --toastify-color-transparent: rgba(255, 255, 255, 0.7);
+
+    --toastify-icon-color-info: var(--toastify-color-info);
+    --toastify-icon-color-success: var(--toastify-color-success);
+    --toastify-icon-color-warning: var(--toastify-color-warning);
+    --toastify-icon-color-error: var(--toastify-color-error);
+
+    --toastify-toast-width: 320px;
+    --toastify-toast-background: #fff;
+    --toastify-toast-min-height: 64px;
+    --toastify-toast-max-height: 800px;
+    --toastify-font-family: sans-serif;
+    --toastify-z-index: 9999;
+
+    --toastify-text-color-light: #757575;
+    --toastify-text-color-dark: #fff;
+
+    --toastify-text-color-info: #fff;
+    --toastify-text-color-success: #fff;
+    --toastify-text-color-warning: #fff;
+    --toastify-text-color-error: #fff;
+
+    --toastify-spinner-color: #616161;
+    --toastify-spinner-color-empty-area: #e0e0e0;
+
+    --toastify-color-progress-light: linear-gradient(to right,
+            #4cd964,
+            #5ac8fa,
+            #007aff,
+            #34aadc,
+            #5856d6,
+            #ff2d55);
+
+    --toastify-color-progress-dark: linear-gradient(to right, rgb(235, 60, 0), rgba(0, 0, 0, 0));
+    --toastify-color-progress-info: var(--toastify-color-info);
+    --toastify-color-progress-success: var(--toastify-color-success);
+    --toastify-color-progress-warning: var(--toastify-color-warning);
+    --toastify-color-progress-error: var(--toastify-color-error);
+
+    --toastify-color-progress-bgo: .2;
+    --toastify-color-progress-width: 120px;
+}
+
+/* 블랙 + 레드 테마 */
+.black-red-theme {
+    padding: 20px;
+    background-color: black;
+    /* 배경색을 블랙으로 */
+    color: white;
+    /* 텍스트 색상을 흰색으로 */
+    border: 2px solid rgb(235, 60, 0);
+    /* 빨간색 테두리 */
+    font-size: 16px;
+    /* 글씨 크기 */
+    border-radius: 20px;
+}
+
+.black-red-theme p {
+    color: white;
+    /* 본문 색상 */
+}
+
+.custom-progress{
+    height: 16px !important; /* 프로그레스 바의 높이 설정 */
+}
