@@ -5,9 +5,12 @@
     --font-size: 2rem;
 
     /* 그림자 크기 범위 (최소, 최대) */
-    --shadow-min: 50; /* 최소 그림자 크기 (px) */
-    --shadow-max: 100; /* 최대 그림자 크기 (px) */
-    --shadow-step: 10; /* 그림자 간격 (px) */
+    --shadow-min: 50;
+    /* 최소 그림자 크기 (px) */
+    --shadow-max: 100;
+    /* 최대 그림자 크기 (px) */
+    --shadow-step: 10;
+    /* 그림자 간격 (px) */
 
     /* 깜빡임 지속 시간 */
     --flicker-duration: 2s;
@@ -23,7 +26,7 @@
     animation: flicker var(--flicker-duration) infinite;
 
     /* 그림자 생성 로직 */
-    text-shadow: 
+    text-shadow:
         0 0 calc(var(--shadow-min) * 1px) var(--neon-color),
         0 0 calc(var(--shadow-min) * 2px) var(--neon-color),
         0 0 calc(var(--shadow-min) * 3px) rgba(0, 224, 255, var(--neon-shadow-intensity)),
@@ -36,17 +39,20 @@
     0% {
         opacity: 1;
     }
+
     50% {
         opacity: 0.9;
-        text-shadow: 
+        text-shadow:
             0 0 calc(var(--shadow-min) * 1px) var(--neon-color),
             0 0 calc(var(--shadow-min) * 3px) var(--neon-color),
             0 0 calc(var(--shadow-min) * 6px) rgba(0, 224, 255, var(--neon-shadow-intensity)),
             0 0 calc(var(--shadow-max) * 0.8px) rgba(0, 224, 255, var(--neon-shadow-intensity));
     }
+
     70% {
         opacity: 1;
     }
+
     100% {
         opacity: 0.95;
     }

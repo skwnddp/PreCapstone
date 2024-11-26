@@ -23,7 +23,7 @@ function Main() {
   const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션들
   const [isDarkMode, setIsDarkMode] = useState(false);
   const mapButtonRef = useRef(null); // Map 버튼 참조 생성
-  
+
   // const currentTab = location.state?.activeTab || "채탕하기"; // 기본값 설정
 
   // Chat에서 엔터 이벤트를 처리할 핸들러
