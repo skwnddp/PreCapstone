@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, onSnapshot, deleteDoc, doc, getDocs,setDoc } from "firebase/firestore";
+import { collection, onSnapshot, deleteDoc, doc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "./firebase";  // Firestore 초기화된 객체 가져오기
 import './Review.css';  // info.css 파일 불러오기
 
