@@ -251,7 +251,7 @@ const Chat = ({ setLocations, onEnterPress }) => {
         // 사용자 메시지에서 숫자만 파싱하는 함수
         function extractNumberFromMessage(userMessage) {
           const number = userMessage.match(/\d+/); // 메시지에서 숫자 추출
-          return number ? parseInt(number[0], 10) : 5; // 숫자가 있으면 그 숫자, 없으면 기본값 5
+          return number ? parseInt(number[0], 10) : 2; // 숫자가 있으면 그 숫자, 없으면 기본값
         }
 
         const numberOfItems = extractNumberFromMessage(userMessage); // 메시지에서 숫자 추출
