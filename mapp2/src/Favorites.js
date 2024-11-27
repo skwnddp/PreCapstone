@@ -43,7 +43,7 @@ function Favorites() {
                             style={{
                                 // position: "absolute",
                                 left: "80%",
-                                marginTop: "20px",
+                                marginTop: "10px",
                                 marginLeft: "10px",
                                 backgroundColor: "rgb(235,60,0)",
                                 color: "white",

@@ -80,7 +80,7 @@ function History() {
                                 style={{
                                     // position: "absolute",
                                     left: "80%",
-                                    marginTop: "20px",
+                                    marginTop: "10px",
                                     marginLeft: "10px",
                                     backgroundColor: "rgb(235,60,0)",
                                     color: "white",
@@ -92,7 +92,7 @@ function History() {
                                 }}
                             > 삭제
                             </button><br />
-                            {/* {restaurant.description} */}
+                            {restaurant.description}
                         </div>
                     </li>
                 ))}

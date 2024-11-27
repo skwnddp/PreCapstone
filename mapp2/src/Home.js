@@ -261,7 +261,7 @@ function Home() {
       return;
     }
 
-    event.preventDefault();
+    // event.preventDefault();
     const searchInput = "오늘 괜찮은 메뉴 뭐 있을까? \n맛집으로 추천해주라";
 
     // 자식 컴포넌트에서 전달된 ref를 사용

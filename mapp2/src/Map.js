@@ -332,13 +332,13 @@ function initCustomOverlay() {
                             transform: rotateX(0deg) rotateY(0deg);
                         }
                         40% {
-                            transform: rotateX(2deg) rotateY(30deg);
+                            transform: rotateX(2deg) rotateY(15deg);
                         }
                         50% {
                             transform: rotateX(0deg) rotateY(90deg);
                         }
                         60% {
-                            transform: rotateX(-2deg) rotateY(60deg);
+                            transform: rotateX(-2deg) rotateY(-15deg);
                         }
                         100% {
                             transform: rotateX(0deg) rotateY(0deg);
@@ -763,7 +763,7 @@ export const MapComponent = ({ locations, buttonRef }) => {
                     className="floating-button"
                     style={{
                         position: 'absolute',
-                        top: '495px', // 지도에서 리스트의 상단 위치 조정
+                        top: '505px', // 지도에서 리스트의 상단 위치 조정
                         left: '440px', // 지도에서 리스트의 좌측 위치 조정}
                         width: '120px',
                         height: '40px',
