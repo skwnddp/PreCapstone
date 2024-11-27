@@ -129,17 +129,20 @@ const Chat = ({ setLocations, onEnterPress }) => {
 
     const parseRestaurants = (rawText) => {
       const restaurantRegex =
-        /\[NAME\](.*?)\[\/NAME\].*?\[INFO\](.*?)\[\/INFO\].*?\[LAT\](.*?)\[\/LAT\].*?\[LNG\](.*?)\[\/LNG\]/gs;
+        /\[NAME\](.*?)\[\/NAME\].*?\[DESC\](.*?)\[\/DESC\].*?\[INFO\](.*?)\[\/INFO\].*?\[LAT\](.*?)\[\/LAT\].*?\[LNG\](.*?)\[\/LNG\].*?\[Rev1\](.*?)\[\/Rev1\].*?\[Rev2\](.*?)\[\/Rev2\]/gs;
       const extractedRestaurants = [];
       let match;
 
       while ((match = restaurantRegex.exec(rawText)) !== null) {
-        const [_, name, description, latitude, longitude] = match;
+        const [_, name, description, information, lat, lng, review1, review2] = match;
         extractedRestaurants.push({
           name: name.trim(),
           description: description.trim(),
-          latitude: parseFloat(latitude.trim()),
-          longitude: parseFloat(longitude.trim()),
+          information: information.trim(),
+          latitude: parseFloat(lat.trim()),
+          longitude: parseFloat(lng.trim()),
+          review1: review1.trim(),
+          review2: review2.trim()
         });
       }
 
@@ -189,8 +192,11 @@ const Chat = ({ setLocations, onEnterPress }) => {
             const restaurantData = {
               name: restaurant.name,
               description: restaurant.description,
+              info: restaurant.info,
               latitude: restaurant.latitude,
               longitude: restaurant.longitude,
+              review1: restaurant.review1,
+              review2: restaurant.review2,
             };
 
             if (isChecked) {
@@ -206,11 +212,84 @@ const Chat = ({ setLocations, onEnterPress }) => {
             }
           });
 
+          // 이름 클릭 이벤트 추가
+          containerDiv.addEventListener("click", async () => {
+            const clickedName = containerDiv.textContent
+              .replace("⭐", "")
+              .trim();
+            console.log(`클릭한 맛집 이름: ${clickedName}`);
+
+            try {
+              // Firestore에서 'info' 컬렉션의 모든 데이터 삭제
+              const infoCollectionRef = collection(db, "info");
+              const snapshot = await getDocs(infoCollectionRef);
+
+              snapshot.forEach(async (doc) => {
+                await deleteDoc(doc.ref); // 모든 문서 삭제
+                console.log(`${doc.id} 삭제 완료!`);
+              });
+
+              // Firestore에서 해당 맛집 데이터를 참조할 문서 객체 생성
+              const docRef = doc(db, "info", clickedName);
+
+              // 'info' 컬렉션에서 클릭된 맛집 정보 가져오기
+              const docSnapshot = await getDocs(
+                query(
+                  collection(db, "info"),
+                  where("name", "==", clickedName)
+                )
+              );
+
+              if (!docSnapshot.empty) {
+                // 해당 이름의 문서가 존재하면 삭제
+                await deleteDoc(docRef);
+                console.log(`${clickedName} 삭제 완료!`);
+
+                // 여기서 수동으로 화면에 표시된 데이터를 제거하거나 초기화
+                const infoContainer =
+                  document.querySelector(".info-container"); // 'info-container'를 선택
+                if (infoContainer) {
+                  // 해당 요소 내부를 모두 삭제
+                  infoContainer.innerHTML = "";
+                  console.log("화면에서 데이터 삭제 완료!");
+                }
+              } else {
+                console.log(`${clickedName} 정보가 존재하지 않음.`);
+              }
+
+              // 새로운 데이터 추가
+              const HansungData = {
+                name: restaurant.name, // 맛집 이름
+                description: restaurant.description, // 맛집 설명
+                latitude: restaurant.latitude, // 맛집 위도
+                longitude: restaurant.longitude, // 맛집 경도
+                information: restaurant.information, // 맛집 상세 정보
+                review1: restaurant.review1, // 맛집 리뷰1
+                review2: restaurant.review2, // 맛집 리뷰2
+              };
+
+
+
+              console.log(HansungData)
+
+
+              // 새로 추가할 데이터를 Firestore에 저장
+              await setDoc(docRef, HansungData);
+              console.log(`${clickedName} 저장 완료!`);
+
+              // 상태 업데이트: 새로 추가된 맛집 정보를 화면에 표시
+              setSelectedInfo(HansungData);
+            } catch (error) {
+              console.error("Firestore 처리 중 오류 발생:", error);
+            }
+          });
+
           const nameDiv = document.createElement("div");
-          nameDiv.textContent = restaurant.name;
+          nameDiv.textContent = restaurant.name
 
           containerDiv.appendChild(checkbox); // 체크박스를 먼저 추가
           containerDiv.appendChild(nameDiv); // 이름 추가
+
           document.getElementById("hiddenDiv").value += containerDiv.outerHTML; // containerDiv의 전체 HTML을 추가
           // console.log(containerDiv.outerHTML)
           // console.log(containerDiv)
@@ -264,12 +343,12 @@ const Chat = ({ setLocations, onEnterPress }) => {
           sender: "gpt",
           text: randomFive.length
             ? `🥰좋아 학교 주변에서 맛집을 찾아볼게\n\n` + // 앞에 추가할 텍스트
-              randomFive
-                .map((item) => `${item.name}\n📋 ${item.description}`)
-                .join("\n\n")
+            randomFive
+              .map((item) => `${item.name}\n📋 ${item.description}`)
+              .join("\n\n")
             : "한성대와 관련된 맛집 정보를 찾을 수 없습니다.",
           timestamp: new Date().toLocaleString(),
-        };        
+        };
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         document.getElementById("hiddenDiv").value = ""; // 히든 div 값 초기화
@@ -456,7 +535,7 @@ const Chat = ({ setLocations, onEnterPress }) => {
         setIsLocked(false);
         setIsLoading(false); // 로딩 바 토글
         handleKeyPress();
-        // addMessage DOMTokenList ScriptElementKind ScriptElementKind parseRestaurantsScriptElementKind ScriptElementKind isExpressionWithTypeArguments
+        // addMessage DOMTokenList ScriptElementKind ScriptElementKind parse RestaurantsScriptElementKind ScriptElementKind isExpressionWithTypeArguments
         return; // '한성대' 키워드 처리 완료 후 반환
       }
 
@@ -478,9 +557,12 @@ const Chat = ({ setLocations, onEnterPress }) => {
           userMessage +
           `, 정확한 위도 경도, 추천 맛집 정보를 아래와 같이 제공해줘:
                 - [NAME]맛집명[/NAME]
-                - [INFO]간단한 설명[/INFO]
+                - [DESC]20 단어의 간단한 설명[/DESC]
+                - [INFO]100 단어의 자세한 설명[/INFO]
                 - [LAT]숫자[/LAT]
-                - [LNG]숫자[/LNG]`;
+                - [LNG]숫자[/LNG]
+                - [Rev1]리뷰1[/Rev1]
+                - [Rev2]리뷰2[/Rev2]`;
 
         // 필터링 입력값과 함께 프롬프트에 추가
         if (filteringInputValue && filteringInputValue.trim() !== "") {
@@ -488,8 +570,9 @@ const Chat = ({ setLocations, onEnterPress }) => {
         }
 
         isRestaurantRequest = true;
-        console.log(prompt);
+
       }
+      console.log(prompt);
 
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
@@ -510,11 +593,11 @@ const Chat = ({ setLocations, onEnterPress }) => {
         response.data.choices[0]?.message?.content?.trim() ||
         "응답을 받지 못했습니다.";
 
-      // '맛집' 관련 요청일 경우에만 [NAME]과 [INFO] 태그를 추출
+      // '맛집' 관련 요청일 경우에만 [NAME]과 [DESC] 태그를 추출
       let extractedNames;
       if (isRestaurantRequest) {
         const nameInfoMatches = rawText.match(
-          /\[NAME\](.*?)\[\/NAME\].*?\[INFO\](.*?)\[\/INFO\]/gs
+          /\[NAME\](.*?)\[\/NAME\].*?\[DESC\](.*?)\[\/DESC\]/gs
         );
         const filtering = document.querySelector(".filtering-input").value;
         const cleanfiltering = filtering.replace(/\[|\]/g, ""); // 대괄호 제거
@@ -529,12 +612,12 @@ const Chat = ({ setLocations, onEnterPress }) => {
             nameInfoMatches
               .map((match) => {
                 const [_, name, info] = match.match(
-                  /\[NAME\](.*?)\[\/NAME\].*?\[INFO\](.*?)\[\/INFO\]/s
+                  /\[NAME\](.*?)\[\/NAME\].*?\[DESC\](.*?)\[\/DESC\]/s
                 );
                 return `🍽️ ${name.trim()}\n📋 ${info.trim()}`;
               })
               .join("\n\n") || "추천된 맛집이 없습니다.";
-          console.log(123);
+          // console.log("540");
 
           // filtering 값이 있을 경우 finalFiltering 포함
           extractedNames = finalfiltering + extractedNames;
@@ -549,7 +632,7 @@ const Chat = ({ setLocations, onEnterPress }) => {
         setIsLocked(false);
         setIsLoading(false); // 로딩 바 토글
         // 일반 답변 로직이므로 필요없음 handleKeyPress();
-        // addMessage DOMTokenList ScriptElementKind ScriptElementKind parseRestaurantsScriptElementKind ScriptElementKind isExpressionWithTypeArguments
+        // addMessage DOMTokenList ScriptElementKind ScriptElementKind parse RestaurantsScriptElementKind ScriptElementKind isExpressionWithTypeArguments
       }
 
       const gptMessage = {
@@ -605,7 +688,7 @@ const Chat = ({ setLocations, onEnterPress }) => {
       setIsLocked(false);
       setIsLoading(false); // 로딩 바 토글
       handleKeyPress();
-      // addMessage DOMTokenList ScriptElementKind ScriptElementKind parseRestaurantsScriptElementKind ScriptElementKind isExpressionWithTypeArguments
+      // addMessage DOMTokenList ScriptElementKind ScriptElementKind parse RestaurantsScriptElementKind ScriptElementKind isExpressionWithTypeArguments
     } finally {
       setUserMessage("");
       handleKeyPress();
