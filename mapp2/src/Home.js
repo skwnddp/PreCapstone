@@ -33,6 +33,41 @@ function Home() {
   const [isTyping, setIsTyping] = useState(false); // 타이핑 중 여부 상태
   const [isDarkMode, setIsDarkMode] = useState(true); // 다크모드 기본값
   const darkMode = useDarkMode(true); // 기본값: 다크모드 활성화(true)
+  const [showAnimation, setShowAnimation] = useState(false);
+
+  const categories = [
+    { name: "치킨", emoji: "🍗" },
+    { name: "한식", emoji: "🍚" },
+    { name: "디저트", emoji: "🍰" },
+    { name: "중식", emoji: "🥡" },
+    { name: "분식", emoji: "🍢" },
+    { name: "샐러드", emoji: "🥗" },
+    { name: "회 초밥", emoji: "🍣" },
+    { name: "버거", emoji: "🍔" },
+    { name: "일식", emoji: "🍱" },
+    { name: "양식", emoji: "🍕" },
+    { name: "고기", emoji: "🥩" },
+    { name: "찜 탕", emoji: "🍲" },
+    { name: "족발 보쌈", emoji: "🐷" },
+  ];
+
+  const handleAnimationEnd = () => {
+    // 카테고리에서 랜덤으로 하나 선택
+    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+
+    // 랜덤 카테고리 텍스트와 이모지 조합 + "맛집 추천해줄래" 추가
+    const searchInput = `${randomCategory.name} ${randomCategory.emoji} 맛집 추천해줄래`;
+
+    // `textarea`에 값 설정
+    if (textareaRef.current) {
+      textareaRef.current.value = searchInput;
+    }
+
+    // 결과를 넘기기
+    navigate("/Main", { state: { searchInput } });
+
+    setShowAnimation(false); // 애니메이션 종료
+  };
 
   // // 색상 밝기를 계산하는 함수 (Luminance 계산)
   // const calculateLuminance = (r, g, b) => {
@@ -257,21 +292,10 @@ function Home() {
 
   const handleRndSearch = (event) => {
     if (!isLoggedIn) {
-      alert('로그인을 먼저 해주세요!');
+      alert("로그인을 먼저 해주세요!");
       return;
     }
-
-    // event.preventDefault();
-    const searchInput = "오늘 괜찮은 메뉴 뭐 있을까? \n맛집으로 추천해주라";
-
-    // 자식 컴포넌트에서 전달된 ref를 사용
-    if (textareaRef.current) {
-      textareaRef.current.value = searchInput;
-    }
-
-    console.log(searchInput);
-
-    navigate("/Main", { state: { searchInput } });
+    setShowAnimation(true); // 애니메이션 시작
   };
 
   const handleSearch = (event) => {
@@ -370,6 +394,20 @@ function Home() {
           onClick={() => handleRndSearch()}
         >메뉴추천
         </button>
+        {showAnimation && (
+          <div
+            className="animation-container"
+            onAnimationEnd={handleAnimationEnd}
+          >
+            {categories.map((category, index) => (
+              <span
+                key={index}
+                style={{ animationDelay: `${index * 0.1}s` }} // 딜레이 설정
+              >{category.emoji}
+              </span>
+            ))}
+          </div>
+        )}
         <button
           className="menu-button"
           onClick={() => handleAuthNavigation(navigate, "/Main", { activeTab: "즐겨찾기" })}
@@ -378,7 +416,7 @@ function Home() {
         <button
           className="menu-button"
           onClick={() => handleAuthNavigation(navigate, "/Main", { activeTab: "리뷰보기" })}
-        > 리뷰보기
+        >리뷰보기
         </button>
         {/* <button className="menu-button" onClick={() => navigate("/Main")}>
           메인으로 이동
