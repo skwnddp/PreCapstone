@@ -15,8 +15,8 @@ const firebaseConfig = {
   authDomain: "precap-db.firebaseapp.com",
   projectId: "precap-db",
   storageBucket: "precap-db.firebasestorage.app",
-  messagingSenderId: "608975747036",
-  appId: "1:608975747036:web:cb380f92b438d49d8b7519",
+  messagingSenderId: "598975747036",
+  appId: "1:598975747036:web:cb380f92b438d49d8b7519",
   measurementId: "G-G2F8G3NRHM"
 };
 
