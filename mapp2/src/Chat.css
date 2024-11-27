@@ -1,0 +1,243 @@
+/* 전체 섹션 스타일 */
+.chat-section {
+  display: flex;
+  flex-direction: column;
+  height: 720px;
+  /* 화면 전체 높이 */
+  width: 500px;
+  /* 대화창 너비 제한 */
+  margin: 0 auto;
+  background-color: transparent;
+  /* 배경색 */
+  border-radius: 10px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* 메시지 표시 영역 */
+.chat-messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 사용자 메시지 스타일 */
+.chat-message.user {
+  font-size: 15px;
+  font-weight: 500;
+  align-self: flex-end;
+  background-color: #3e3e3e;
+  color: #333;
+  padding: 10px 15px;
+  border-radius: 15px 15px 0 15px;
+  max-width: 70%;
+  word-wrap: break-word;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* GPT 메시지 스타일 */
+.chat-message.gpt {
+  font-size: 15px;
+  font-weight: 500;
+  align-self: flex-start;
+  background-color: rgb(180, 60, 0);
+  color: #333;
+  padding: 10px 15px;
+  border-radius: 15px 15px 15px 0;
+  max-width: 80%;
+  word-wrap: break-word;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 타임스탬프 스타일 */
+.chat-message .timestamp {
+  font-size: 0.75em;
+  color: #999;
+  text-align: right;
+  margin-top: 5px;
+}
+
+/* 입력 영역 컨테이너 */
+.chat-input-container {
+  display: flex;
+  padding: 10px;
+
+  background-color: transparent;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 입력창 스타일 */
+.chat-input {
+  flex: 1;
+  font-size: 1em;
+  padding: 10px;
+  color: white;
+  background-color: #333;
+  border-radius: 20px;
+  outline: none;
+  box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s;
+}
+
+.chat-input:focus {
+  border-color: rgb(235, 60, 0);
+}
+
+/* 전송 버튼 스타일 */
+
+/* .chat-input-container button {
+  height: 70px;
+  font-weight: bold;
+  background-color: rgb(235, 60, 0);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 15px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+} */
+
+/* .chat-input-container button:hover {
+  background-color: #ffffff;
+} */
+
+.chat-button {
+  width: 80px;
+  height: 60px;
+  background: rgb(235, 60, 0);
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 10px;
+  font-size: 14px;
+  /* font-weight: bold; */
+  cursor: pointer;
+  transition: all 1s ease;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+  text-align: center;
+  display: inline-block;
+}
+
+/* 애니메이션 정의 */
+@keyframes wiggle {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(4px);
+  }
+
+  75% {
+    transform: translateX(-3px);
+  }
+}
+
+.chat-button:hover {
+  padding: 10px 10px;
+  font-weight: bold;
+  background-color: rgb(235, 60, 0);
+  background-color: linear-gradient(15deg, rgba(235, 60, 0, 0.8), rgb(235, 60, 0));
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+  animation: wiggle 0.5s ease-in-out infinite;
+  /* 애니메이션 추가 */
+}
+
+.chat-button:active {
+  box-shadow: 0 5px 10px rgb(235, 60, 0);
+  animation: 0.5s ease-in-out infinite;
+  /* 애니메이션 추가 */
+}
+
+/* 로딩 애니메이션 loader-7 */
+
+/*-------------------------------------------
+    $ Loaders
+-------------------------------------------*/
+
+.loader {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: inline-block;
+  position: absolute;
+  top: 45%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+  /* 가운데 정렬 보정 */
+}
+
+.loader,
+.loader:before,
+.loader:after {
+  animation: 1s infinite ease-in-out;
+}
+
+.loader:before,
+.loader:after {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: absolute;
+}
+
+/* loader 7 커스터마이징 */
+
+.loader-7 {
+  animation: loader7-1 0.5s infinite linear;
+  /* 시간 간격 조절 */
+}
+
+.loader-7:before,
+.loader-7:after {
+  content: '';
+  width: 80%;
+  height: 80%;
+  background-color: rgba(255, 255, 255, 0.8);
+  /* border: 2px solid rgba(50, 50, 50, 0.5); */
+  /* box-shadow: 5px 5px 5px 5px rgba(255, 255, 255, 0.4); */
+  top: 5%;
+}
+
+.loader-7:before {
+  left: -5%;
+  animation: loader7-2 1s infinite alternate ease-in-out;
+  transform-origin: 10% 50%;
+}
+
+.loader-7:after {
+  left: auto;
+  right: -5%;
+  animation: loader7-2 1s 1s infinite alternate ease-in-out;
+  transform: scale(0);
+  transform-origin: 90% 50%;
+}
+
+@keyframes loader7-1 {
+  0% {
+    transform: rotate(20deg);
+  }
+
+  100% {
+    transform: rotate(380deg);
+  }
+}
+
+@keyframes loader7-2 {
+  0% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}

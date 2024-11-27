@@ -1,0 +1,44 @@
+.info-container {
+  text-align: left;
+  padding: 20px;
+  color: #fff;
+  /* 텍스트 색상 */
+  margin-top: 20px;
+}
+
+.info-container h2 {
+  text-align: center;
+  /* 제목은 가운데 정렬 */
+  font-size: 28px;
+  /* 제목 크기 키우기 */
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.info-container ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.info-container li {
+  padding: 20px;
+  font-size: 20px;
+  /* 본문 크기 키우기 */
+  line-height: 1.6;
+  border-bottom: 1px solid #444;
+  /* 항목 간 구분선 추가 */
+}
+
+.info-container li:last-child {
+  border-bottom: none;
+  /* 마지막 항목의 구분선 제거 */
+}
+
+.info-container li h3 {
+  font-size: 22px;
+  /* 맛집 이름 크기 키우기 */
+  font-weight: bold;
+  color: #f8a800;
+  /* 맛집 이름 강조 */
+  margin-bottom: 10px;
+}
