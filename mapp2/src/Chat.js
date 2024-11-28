@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import {
   getFirestore,
@@ -36,6 +36,15 @@ const Chat = ({ setLocations, onEnterPress }) => {
   const { searchInput } = location.state || {}; // Main에서 전달된 searchInput 값 받기
   const [inputValue, setInputValue] = useState(searchInput || ""); // 상태로 관리
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleClearChat = () => {
+    // Clear the chat or reset messages (optional)
+    setUserMessage(""); // Assuming this is the state for the chat message
+    const searchInput = ""; // Static value
+    // Navigate to "/Main" and pass searchInput as part of the state
+    navigate("/Main", { state: { searchInput } });
+  };
 
   const handleKeyPress = (e) => {
     onEnterPress(); // 부모로부터 받은 엔터 핸들러 호출
@@ -134,7 +143,8 @@ const Chat = ({ setLocations, onEnterPress }) => {
       let match;
 
       while ((match = restaurantRegex.exec(rawText)) !== null) {
-        const [_, name, description, information, lat, lng, review1, review2] = match;
+        const [_, name, description, information, lat, lng, review1, review2] =
+          match;
         extractedRestaurants.push({
           name: name.trim(),
           description: description.trim(),
@@ -142,7 +152,7 @@ const Chat = ({ setLocations, onEnterPress }) => {
           latitude: parseFloat(lat.trim()),
           longitude: parseFloat(lng.trim()),
           review1: review1.trim(),
-          review2: review2.trim()
+          review2: review2.trim(),
         });
       }
 
@@ -234,10 +244,7 @@ const Chat = ({ setLocations, onEnterPress }) => {
 
               // 'info' 컬렉션에서 클릭된 맛집 정보 가져오기
               const docSnapshot = await getDocs(
-                query(
-                  collection(db, "info"),
-                  where("name", "==", clickedName)
-                )
+                query(collection(db, "info"), where("name", "==", clickedName))
               );
 
               if (!docSnapshot.empty) {
@@ -246,8 +253,7 @@ const Chat = ({ setLocations, onEnterPress }) => {
                 console.log(`${clickedName} 삭제 완료!`);
 
                 // 여기서 수동으로 화면에 표시된 데이터를 제거하거나 초기화
-                const infoContainer =
-                  document.querySelector(".info-container"); // 'info-container'를 선택
+                const infoContainer = document.querySelector(".info-container"); // 'info-container'를 선택
                 if (infoContainer) {
                   // 해당 요소 내부를 모두 삭제
                   infoContainer.innerHTML = "";
@@ -268,10 +274,7 @@ const Chat = ({ setLocations, onEnterPress }) => {
                 review2: restaurant.review2, // 맛집 리뷰2
               };
 
-
-
-              console.log(HansungData)
-
+              console.log(HansungData);
 
               // 새로 추가할 데이터를 Firestore에 저장
               await setDoc(docRef, HansungData);
@@ -285,7 +288,7 @@ const Chat = ({ setLocations, onEnterPress }) => {
           });
 
           const nameDiv = document.createElement("div");
-          nameDiv.textContent = restaurant.name
+          nameDiv.textContent = restaurant.name;
 
           containerDiv.appendChild(checkbox); // 체크박스를 먼저 추가
           containerDiv.appendChild(nameDiv); // 이름 추가
@@ -343,9 +346,9 @@ const Chat = ({ setLocations, onEnterPress }) => {
           sender: "gpt",
           text: randomFive.length
             ? `🥰좋아 학교 주변에서 맛집을 찾아볼게\n\n` + // 앞에 추가할 텍스트
-            randomFive
-              .map((item) => `${item.name}\n📋 ${item.description}`)
-              .join("\n\n")
+              randomFive
+                .map((item) => `${item.name}\n📋 ${item.description}`)
+                .join("\n\n")
             : "한성대와 관련된 맛집 정보를 찾을 수 없습니다.",
           timestamp: new Date().toLocaleString(),
         };
@@ -364,19 +367,21 @@ const Chat = ({ setLocations, onEnterPress }) => {
         hiddenDiv.innerHTML = ""; // 기존 내용 초기화
 
         // randomFive에서 각 item의 name을 div로 감싸서 hiddenDiv에 추가
-        randomFive.forEach(item => {
+        randomFive.forEach((item) => {
           const div = document.createElement("div");
           div.innerHTML = `<div><div>R${item.name}</div></div>`; // item.name을 div로 감쌈
           hiddenDiv.value += div.innerHTML;
         });
 
         // 'randomFive'에서 latlng 배열 고르고 lat, lng 값을 hiddenLatLng에 추가
-        const latLngValues = randomFive.map(item => item.latlng); // latlng 배열 추출
+        const latLngValues = randomFive.map((item) => item.latlng); // latlng 배열 추출
         console.log(latLngValues);
 
         // lat, lng 값을 각각 hiddenLatLng에 설정
         if (latLngValues.length > 0) {
-          const latLngString = latLngValues.map(coord => `${coord[0]}, ${coord[1]}`).join('\n');
+          const latLngString = latLngValues
+            .map((coord) => `${coord[0]}, ${coord[1]}`)
+            .join("\n");
           document.getElementById("hiddenLatLng").value = latLngString;
         } else {
           document.getElementById("hiddenLatLng").value = "위치 정보 없음";
@@ -570,7 +575,6 @@ const Chat = ({ setLocations, onEnterPress }) => {
         }
 
         isRestaurantRequest = true;
-
       }
       console.log(prompt);
 
@@ -698,6 +702,13 @@ const Chat = ({ setLocations, onEnterPress }) => {
   const memoizedChat = useMemo(
     () => (
       <section className="chat-section">
+         <button
+            className="clear-button"
+            style={{ width: "80px", height: "24px" }}
+            onClick={handleClearChat}
+          >
+            채팅 ↺
+          </button>
         <div className="chat-messages">
           {isLoading && <div className="loader loader-7" />}
           {hello ? (

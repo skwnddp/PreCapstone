@@ -241,3 +241,29 @@
     transform: scale(1);
   }
 }
+
+.clear-button {
+  margin-left: auto;
+  border: none;
+  /* padding: 10px 10px; */
+  font-size: 14px;
+  /* font-weight: bold; */
+  cursor: pointer;
+  transition: all 1s ease;
+  box-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+  text-align: center;
+  /* display: inline-block; */
+  border-Radius: 20px;
+  background-color: rgb(32, 32, 32, 0.8);
+  background-color: linear-gradient(rgb(32, 32, 32), rgb(32, 32, 32));
+  color: rgb(235, 60, 0);
+}
+
+.clear-button:hover {
+  background-color: rgb(32, 32, 32);
+  background-color: linear-gradient(rgb(32, 32, 32), rgb(32, 32, 32));
+  box-shadow: 0 4px 0px rgba(0, 0, 0, 0.2);
+  animation: 0.5s ease-in-out infinite;
+  transition: all 1s ease;
+  /* 애니메이션 추가 */
+}
